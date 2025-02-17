@@ -1,0 +1,77 @@
+using UnityEngine;
+using UnityEngine.UI;
+
+public class ReadyManager : MonoBehaviour
+{
+    public GameObject[] characters; //캐릭터 변환
+    public Sprite[] characterImages; //캐릭터 이미지 모음
+    public Image characterImage; //이미지를 꽂을 곳
+    private int currentIndex = -1; //현재 인덱스
+    public Sprite unknownCharacterSprite; // ??? 이미지 (선택 해제 상태)
+    public GameObject blackCharacter; // 선택되지 않은 상태에서 보여줄 검은색 캐릭터
+    private GameObject currentCharacter;
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        ResetSelection(); //들어갈 때 리셋하고 시작
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+
+    public void OnLeftArrow()
+    {
+        currentIndex = (currentIndex -1 + characters.Length) % characters.Length;
+        UpdateCharacterDisplay(); //캐릭터 순서 정렬하고 업뎃
+    }
+
+    public void OnRightArrow()
+    {
+        currentIndex = (currentIndex + 1) % characters.Length;
+        UpdateCharacterDisplay(); //똑같이 업뎃
+    }
+
+    public void OnSelect()
+    {
+        if (currentIndex == -1) return; // 아무 캐릭터도 선택 안 되어 있을 때 예외 처리
+        Debug.Log("선택된 캐릭터: " + characters[currentIndex].name);
+    }
+
+    public void OnCancel()
+    {
+        ResetSelection(); //취소하면 다시 검은색으로 돌아감
+    }
+
+    private void UpdateCharacterDisplay()
+    {
+        // 이전 캐릭터 비활성화
+        blackCharacter.SetActive(false);
+        if (currentCharacter != null)
+        {
+            currentCharacter.SetActive(false);
+        }
+
+        // 새로운 캐릭터 활성화
+        currentCharacter = characters[currentIndex];
+        currentCharacter.SetActive(true);
+
+        // 초상화 업데이트
+        characterImage.sprite = characterImages[currentIndex];
+    }
+
+
+    private void ResetSelection()
+    {
+        if (currentCharacter != null)
+        {
+            currentCharacter.SetActive(false);
+        }
+        blackCharacter.SetActive(true);
+        currentIndex = -1;
+        characterImage.sprite = unknownCharacterSprite;
+    }
+}
