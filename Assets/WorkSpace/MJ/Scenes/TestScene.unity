@@ -392,7 +392,6 @@ GameObject:
   - component: {fileID: 590357845}
   - component: {fileID: 590357848}
   - component: {fileID: 590357847}
-  - component: {fileID: 590357846}
   m_Layer: 5
   m_Name: Inventory
   m_TagString: Untagged
@@ -421,20 +420,6 @@ RectTransform:
   m_AnchoredPosition: {x: 723.765, y: 446.62085}
   m_SizeDelta: {x: -1447.53, y: -893.2417}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &590357846
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 590357844}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 47422e18a1226de4b9721313352fb2ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  frontInven: {fileID: 1509950098}
-  terminalInven: {fileID: 621891737}
 --- !u!114 &590357847
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -664,6 +649,7 @@ GameObject:
   - component: {fileID: 831763924}
   - component: {fileID: 831763923}
   - component: {fileID: 831763922}
+  - component: {fileID: 831763927}
   m_Layer: 0
   m_Name: TMP_Player
   m_TagString: Player
@@ -789,6 +775,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &831763927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 831763921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47422e18a1226de4b9721313352fb2ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  frontInven: {fileID: 1509950098}
+  terminalInven: {fileID: 621891737}
 --- !u!1 &1032684252
 GameObject:
   m_ObjectHideFlags: 0
@@ -1454,7 +1454,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 590357846}
+      - m_Target: {fileID: 831763927}
         m_TargetAssemblyTypeName: Inventory, Assembly-CSharp
         m_MethodName: UseItem
         m_Mode: 1
