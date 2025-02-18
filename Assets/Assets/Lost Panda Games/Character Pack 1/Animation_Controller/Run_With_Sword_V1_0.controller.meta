@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a033debd5fb6f43f08d29d74ac1ca9cf
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 275556
+  packageName: Character Set 1
+  packageVersion: 1.0
+  assetPath: Assets/Lost Panda Games/Character Pack 1/Animation_Controller/Run_With_Sword_V1_0.controller
+  uploadId: 640180

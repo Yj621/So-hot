@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 654c4ea67fabd40bc8175d369cd3eb32
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 275556
+  packageName: Character Set 1
+  packageVersion: 1.0
+  assetPath: Assets/Lost Panda Games/Character Pack 1/Animation_Controller/Standing_Disarm_Underarm_V1_0.controller
+  uploadId: 640180
