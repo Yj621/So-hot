@@ -1,3 +1,4 @@
+using KJ.Player;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -5,9 +6,14 @@ using UnityEngine.UI;
 public class Inventory : MonoBehaviour
 {
     Queue<ItemData> inventory = new Queue<ItemData>(); //인벤토리
+    PlayerController itemUser; //아이템 사용자(=플레이어 자신)
     [SerializeField] Image frontInven; //인벤토리 앞칸 UI
     [SerializeField] Image terminalInven; //인벤토리 뒷칸 UI
 
+    private void Start()
+    {
+        itemUser = GetComponent<PlayerController>();
+    }
     public void GetItem(ItemData item)
     {
             if (inventory.Count == 0)
@@ -31,17 +37,17 @@ public class Inventory : MonoBehaviour
             switch (targetItem.itemType)
             {
                 case ITEMTYPE.GaugeStop:
-                    ItemManager.Instance.GaugeStop();
+                    ItemManager.Instance.GaugeStop(itemUser);
                     IconUpdate();
                     break;
 
                 case ITEMTYPE.NoDie:
-                    ItemManager.Instance.NoDie();
+                    ItemManager.Instance.NoDie(itemUser);
                     IconUpdate();
                     break;
 
                 case ITEMTYPE.UnlimitRun:
-                    ItemManager.Instance.UnlimitRun();
+                    ItemManager.Instance.UnlimitRun(itemUser);
                     IconUpdate();
                     break;
 
