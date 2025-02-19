@@ -19,7 +19,7 @@ namespace KJ.Player
         private float currentSpeed; // 현재 이동 속도 (걷기 또는 달리기 속도 반영)
         private Vector3 moveDirection; // 이동 방향 벡터
 
-        public bool runLimit;   // 달릴 시의 스태미나의 제한을 받는지에 대한 여부
+        public bool runLimit = true;   // 달릴 시의 스태미나의 제한을 받는지에 대한 여부
 
         void Start()
         {
