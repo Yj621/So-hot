@@ -1,7 +1,7 @@
 using UnityEngine;
 using Photon.Pun; // Photon 네트워크 기능을 사용하기 위해 추가
 
-namespace KJ.PlayerMovement
+namespace KJ.Player
 {
     // Rigidbody를 필요로 하는 컴포넌트임을 명시하여, 실수로 제거되지 않도록 함
     [RequireComponent(typeof(Rigidbody))]
@@ -18,6 +18,8 @@ namespace KJ.PlayerMovement
         private bool isGrounded; // 플레이어가 지면에 있는지 여부
         private float currentSpeed; // 현재 이동 속도 (걷기 또는 달리기 속도 반영)
         private Vector3 moveDirection; // 이동 방향 벡터
+
+        public bool runLimit;   // 달릴 시의 스태미나의 제한을 받는지에 대한 여부
 
         void Start()
         {
