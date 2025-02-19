@@ -1,0 +1,32 @@
+fileFormatVersion: 2
+guid: f3804f8f457685b448319a9e1b35b0cb
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 40
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Londrina Solid
+  fontNames:
+  - Londrina Solid
+  fallbackFontReferences:
+  - {instanceID: 0}
+  - {instanceID: 0}
+  - {instanceID: 0}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 179737
+  packageName: Stone & Jungle GUI / UI Kit + over 850 PNG + PDS/AI sources!
+  packageVersion: 1.0
+  assetPath: Assets/HONETi/stone_gui_elements/fonts/LondrinaSolid-Light.ttf
+  uploadId: 397814
