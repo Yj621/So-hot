@@ -3,6 +3,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using KJ.Player;
 using System.Collections;
+using JetBrains.Annotations;
 public enum ITEMTYPE
 {
     GaugeStop,
@@ -13,7 +14,8 @@ public enum ITEMTYPE
 public class ItemManager : MonoBehaviourPun
 {
     public static ItemManager Instance;
-
+    Coroutine unlimitRunCoroutine; // 실행 중인 unlimit run 코루틴 저장
+    Coroutine gaugeStopCoroutine; // 실행 중인 gauge stop 코루틴 저장
     private void Awake()
     {
         Instance = this;
@@ -21,12 +23,15 @@ public class ItemManager : MonoBehaviourPun
 
     public void GaugeStop(PlayerController player)
     {
-
+        if (gaugeStopCoroutine != null)
+        {
+            StopCoroutine(gaugeStopCoroutine);
+        }
         player.hotgauge.gaugePause = true;
         //photonView.RPC("ShowItemEffect", RpcTarget.All);
 
         //5초 뒤, 아이템 효과 해제
-        StartCoroutine(ItemEndToFalse(5f, player.hotgauge.gaugePause));
+        gaugeStopCoroutine = StartCoroutine(CorGaugeStop(5f, player));
 
     }
 
@@ -39,11 +44,15 @@ public class ItemManager : MonoBehaviourPun
 
     public void UnlimitRun(PlayerController player)
     {
+        if (unlimitRunCoroutine != null)
+        {
+            StopCoroutine(unlimitRunCoroutine);
+        }
         player.movement.runLimit = false;
         //photonView.RPC("ShowItemEffect", RpcTarget.All);
 
         //5초 뒤, 아이템 효과 해제
-        StartCoroutine(ItemEndToTrue(5f, player.movement.runLimit));
+        unlimitRunCoroutine = StartCoroutine(CorUnlimitRun(5f, player));
     }
 
 
@@ -56,16 +65,19 @@ public class ItemManager : MonoBehaviourPun
 
 
     //아이템 효과가 끝난 field가 true로 초기화 되어야 하는 경우에 사용하는 코루틴 
-    IEnumerator ItemEndToTrue(float time, bool field)
+    IEnumerator CorUnlimitRun(float time, PlayerController player)
     {
         yield return new WaitForSeconds(time); 
-        field = true;
+        player.movement.runLimit = true;
+        unlimitRunCoroutine = null;
     }
 
     //아이템 효과가 끝난 field가 false로 초기화 되어야 하는 경우에 사용하는 코루틴 
-    IEnumerator ItemEndToFalse(float time, bool field)
+    IEnumerator CorGaugeStop(float time, PlayerController player)
     {
         yield return new WaitForSeconds(time);
-        field = false;
+        player.hotgauge.gaugePause = false;
+        gaugeStopCoroutine = null;
     }
+
 }
