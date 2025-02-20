@@ -166,12 +166,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     }
 
-
     //방에 입장했을때 호출되는 메서드
     public override void OnJoinedRoom()
     {
         PhotonNetwork.LoadLevel("LobbyScene");
     }
-
 
 }
