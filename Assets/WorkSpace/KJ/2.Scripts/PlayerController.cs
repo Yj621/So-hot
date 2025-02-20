@@ -1,4 +1,7 @@
+using NUnit.Framework;
+using Photon.Pun;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace KJ.Player
 {
@@ -8,6 +11,8 @@ namespace KJ.Player
         public PlayerState state;
         public Hotgauge hotgauge;
         public PlayerAnimationController animationController;
+        public List<GameObject> effectList;
+        public PhotonView photonView;
 
         private void Awake()
         {
@@ -15,6 +20,7 @@ namespace KJ.Player
             state = GetComponent<PlayerState>();
             hotgauge = GetComponent<Hotgauge>();
             animationController = GetComponent<PlayerAnimationController>();
+            photonView = GetComponent<PhotonView>();
         }
     }
 }
