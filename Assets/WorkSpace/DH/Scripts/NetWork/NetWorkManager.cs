@@ -156,6 +156,16 @@ namespace Donghyun.Network
         {
             ui.SetNickname(name);
 
+
+            //본인은 빨간색
+            if(name == PhotonNetwork.LocalPlayer.NickName)
+            {
+                ui.SetNickNameColor(Color.red);
+            }
+            else{
+                ui.SetNickNameColor(Color.white);
+            }
+
             if (isMaster)
             {
                 ui.SetMaster();

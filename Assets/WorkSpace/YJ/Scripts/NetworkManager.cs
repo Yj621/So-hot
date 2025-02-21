@@ -5,171 +5,173 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class NetworkManager : MonoBehaviourPunCallbacks
+namespace YJ.Network
 {
-    private static string userNickName;
-    private const int MaxNicknameLenght = 8;
 
-
-    [Header("--- Panel ---")]
-    public GameObject startUI;
-    public GameObject nickNameUI;
-    public GameObject roomListUI;
-    public GameObject createRoomUI;
-    public GameObject settingUI;
-    public GameObject QuitUI;
-
-    [Header("--- Text ---")]
-    public TextMeshProUGUI nickNameStateText;
-    public TextMeshProUGUI roomListNickName;
-
-    [Header("--- InputField ---")]
-    public TMP_InputField nickNameInput;
-    public TMP_InputField roomNameInput;
-
-    [Header("--- Room List ---")]
-    public GameObject roomListContent;
-    public GameObject roomListPrefab;
-
-
-    void Start()
+    public class NetworkManager : MonoBehaviourPunCallbacks
     {
-        //Æ÷Åæ ¿¬°á ¼³Á¤
-        PhotonNetwork.ConnectUsingSettings();
-    }
+        private static string userNickName;
+        private const int MaxNicknameLenght = 8;
 
-    //¸¶½ºÅÍ ¼­¹ö ¿¬°á½Ã
-    public override void OnConnectedToMaster()
-    {
-        PhotonNetwork.JoinLobby(TypedLobby.Default);
-    }
 
-    //·Îºñ¿¡ ¼º°øÀûÀ¸·Î ÀÔÀåÇÏ¸é È£ÃâµÇ´Â ¸Ş¼­µå (StartPanelÀÌ ³ªÅ¸³²)
-    public override void OnJoinedLobby()
-    {
-        startUI.SetActive(true);
-    }
+        [Header("--- Panel ---")]
+        [SerializeField] private GameObject startUI;
+        [SerializeField] private GameObject nickNameUI;
+        [SerializeField] private GameObject roomListUI;
+        [SerializeField] private GameObject createRoomUI;
 
-    /// <summary>
-    /// NickNameUI °ü·Ã ÇÔ¼ö
-    /// ´Ğ³×ÀÓ È®Á¤ ¹öÆ°
-    /// </summary>
-    public void OnClickNameConfirm()
-    {
-        //ÀÔ·ÂÇÑ ÅØ½ºÆ®¿¡¼­ °ø¹é Á¦°Å
-        string inputNickName = nickNameInput.text.Trim();
+        [Header("--- Text ---")]
+        [SerializeField] private TextMeshProUGUI nickNameStateText;
+        [SerializeField] private TextMeshProUGUI roomListNickName;
 
-        //ÀÔ·ÂÇÑ ´Ğ³×ÀÓÀÌ ºñ¾îÀÖ´Ù¸é
-        if(string.IsNullOrEmpty(inputNickName))
+        [Header("--- InputField ---")]
+        [SerializeField] private TMP_InputField nickNameInput;
+        [SerializeField] private TMP_InputField roomNameInput;
+
+        [Header("--- Room List ---")]
+        [SerializeField] private GameObject roomListContent;
+        [SerializeField] private GameObject roomListPrefab;
+
+
+        void Start()
         {
-            nickNameStateText.text = "ÀÌ¸§ÀÌ ºñ¾ú´Ù.";
-            return;
+            //í¬í†¤ ì—°ê²° ì„¤ì •
+            PhotonNetwork.ConnectUsingSettings();
         }
 
-        if(inputNickName.Length >  MaxNicknameLenght)
+        //ë§ˆìŠ¤í„° ì„œë²„ ì—°ê²°ì‹œ
+        public override void OnConnectedToMaster()
         {
-            inputNickName = inputNickName.Substring(0, MaxNicknameLenght);
-            nickNameInput.text = inputNickName; //ÀÔ·Â ÇÊµå °»½Å
-            nickNameStateText.text = $"ÀÌ¸§Àº 8±ÛÀÚ±îÁö!";
+            PhotonNetwork.JoinLobby(TypedLobby.Default);
         }
 
-        userNickName = inputNickName;
-        PhotonNetwork.NickName = userNickName;
-        nickNameUI.SetActive(false);
-        roomListUI.SetActive(true);
-    }
-
-
-    /// <summary>
-    /// RoomList UI °ü·Ã ÇÔ¼ö
-    /// ¹æ¸ñ·ÏÀ» ¾÷µ¥ÀÌÆ®ÇÏ´Â ¸Ş¼­µå
-    /// </summary>
-    public void UpdateRoomList(List<RoomInfo> rooms)
-    {
-        Debug.Log($"roomListNickName.text : " + roomListNickName);
-        roomListNickName.text = userNickName;
-
-        foreach (Transform child in roomListContent.transform)
+        //ë¡œë¹„ì— ì„±ê³µì ìœ¼ë¡œ ì…ì¥í•˜ë©´ í˜¸ì¶œë˜ëŠ” ë©”ì„œë“œ (StartPanelì´ ë‚˜íƒ€ë‚¨)
+        public override void OnJoinedLobby()
         {
-            Destroy(child.gameObject);
+            startUI.SetActive(true);
         }
 
-        // ¹æ ¸®½ºÆ® ÇÁ¸®ÆÕ ¿¬µ¿
-        foreach(RoomInfo room in rooms)
+        /// <summary>
+        /// NickNameUI ê´€ë ¨ í•¨ìˆ˜
+        /// ë‹‰ë„¤ì„ í™•ì • ë²„íŠ¼
+        /// </summary>
+        public void OnClickNameConfirm()
         {
-            GameObject roomItem = Instantiate(roomListPrefab, roomListContent.transform);
-            TextMeshProUGUI roomNameText = roomItem.transform.Find("RoomName_Text").GetComponent<TextMeshProUGUI>();
-            TextMeshProUGUI roomPlayerCountText = roomItem.transform.Find("Count_Text").GetComponent<TextMeshProUGUI>();
+            //ì…ë ¥í•œ í…ìŠ¤íŠ¸ì—ì„œ ê³µë°± ì œê±°
+            string inputNickName = nickNameInput.text.Trim();
 
-            //¹æ ÀÌ¸§°ú ÀÎ¿ø¼ö Ç¥½Ã
-            roomNameText.text = room.Name;
-            roomPlayerCountText.text = $"{room.PlayerCount} / {room.MaxPlayers}";
+            //ì…ë ¥í•œ ë‹‰ë„¤ì„ì´ ë¹„ì–´ìˆë‹¤ë©´
+            if (string.IsNullOrEmpty(inputNickName))
+            {
+                nickNameStateText.text = "ì´ë¦„ì´ ë¹„ì—ˆë‹¤.";
+                return;
+            }
 
-            Button joinButton = roomItem.transform.Find("RoomJoin_Button").GetComponent<Button>();
-            joinButton.onClick.AddListener(() => JoinRoom(room.Name));
+            if (inputNickName.Length > MaxNicknameLenght)
+            {
+                inputNickName = inputNickName.Substring(0, MaxNicknameLenght);
+                nickNameInput.text = inputNickName; //ì…ë ¥ í•„ë“œ ê°±ì‹ 
+                nickNameStateText.text = $"ì´ë¦„ì€ 8ê¸€ìê¹Œì§€!";
+            }
+
+            userNickName = inputNickName;
+            PhotonNetwork.NickName = userNickName;
+            nickNameUI.SetActive(false);
+            roomListUI.SetActive(true);
+
+            roomListNickName.text = userNickName;
+            Debug.Log($"roomListNickName.text : " + roomListNickName);
+        }
+
+
+        /// <summary>
+        /// RoomList UI ê´€ë ¨ í•¨ìˆ˜
+        /// ë°©ëª©ë¡ì„ ì—…ë°ì´íŠ¸í•˜ëŠ” ë©”ì„œë“œ
+        /// </summary>
+        public void UpdateRoomList(List<RoomInfo> rooms)
+        {
+            foreach (Transform child in roomListContent.transform)
+            {
+                Destroy(child.gameObject);
+            }
+
+            // ë°© ë¦¬ìŠ¤íŠ¸ í”„ë¦¬íŒ¹ ì—°ë™
+            foreach (RoomInfo room in rooms)
+            {
+                GameObject roomItem = Instantiate(roomListPrefab, roomListContent.transform);
+                TextMeshProUGUI roomNameText = roomItem.transform.Find("RoomName_Text").GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI roomPlayerCountText = roomItem.transform.Find("Count_Text").GetComponent<TextMeshProUGUI>();
+
+                //ë°© ì´ë¦„ê³¼ ì¸ì›ìˆ˜ í‘œì‹œ
+                roomNameText.text = room.Name;
+                roomPlayerCountText.text = $"{room.PlayerCount} / {room.MaxPlayers}";
+
+                Button joinButton = roomItem.transform.Find("RoomJoin_Button").GetComponent<Button>();
+                joinButton.onClick.AddListener(() => JoinRoom(room.Name));
+
+            }
+        }
+
+
+        // ë¡œë¹„ì— ìˆì„ë•Œ ë°© ëª©ë¡ì´ ê°±ì‹ ë  ë•Œ í˜¸ì¶œë˜ëŠ” ì½œë°±
+        public override void OnRoomListUpdate(List<RoomInfo> roomList)
+        {
+            UpdateRoomList(roomList); // ë°© ëª©ë¡ ì—…ë°ì´íŠ¸
+        }
+
+        /// <summary>
+        /// RoomList UI ê´€ë ¨ í•¨ìˆ˜
+        /// ì‚¬ìš©ìê°€ Room UIì—ì„œ ë°©ì„ ìƒì„±í• ë•Œ í˜¸ì¶œë˜ëŠ” ë©”ì„œë“œ
+        /// </summary>
+        public void OnClickRoomCreate()
+        {
+            createRoomUI.SetActive(true);
+            roomListUI.SetActive(false);
+        }
+
+
+        // ë°©ì— ì°¸ê°€í•˜ëŠ” ë©”ì„œë“œ
+        public void JoinRoom(string roomName)
+        {
+            if (PhotonNetwork.JoinRoom(roomName)) // ë°© ì°¸ê°€ ì‹œë„
+            {
+                Debug.Log($"Trying to join room: {roomName}");
+
+            }
+            else
+            {
+                Debug.LogError($"ë°©ì— ì°¸ê°€í•˜ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.: {roomName}");
+            }
+        }
+
+        /// <summary>
+        /// CreateRoom UI ê´€ë ¨ í•¨ìˆ˜
+        /// CreateRoom UIì—ì„œ ë°©ì„ ìƒì„±í• ë•Œ í˜¸ì¶œë˜ëŠ” ë©”ì„œë“œ
+        /// </summary>
+        public void OnClickCreateConfirm()
+        {
+            RoomOptions options = new RoomOptions();
+            string roomName = roomNameInput.text.Trim();
+
+            if (string.IsNullOrEmpty(roomName))
+            {
+                string[] randomTitels = { "ì•—! ëœ¨ê±°ëœ¨ê±°", "ì†ì— ë¶ˆë‚œë‹¤~", "ë‹˜ë§Œ ì˜¤ë©´ ê³ ", "ìš°ê°€ìš°ê°€ìš°ê°€", "ë§¤ë„ˆ ê²Œì„í•´ìš”~" };
+
+                roomName = randomTitels[Random.Range(0, randomTitels.Length)];
+                Debug.Log($"ëœë¤ ë°© ì œëª© ìƒì„±: {roomName}");
+            }
+            options.MaxPlayers = 4;
+
+            PhotonNetwork.CreateRoom(roomName, options, TypedLobby.Default);
+            createRoomUI.SetActive(false);
 
         }
-    }
 
-
-    // ¹æ ¸ñ·ÏÀÌ °»½ÅµÉ ¶§ È£ÃâµÇ´Â Äİ¹é
-    public override void OnRoomListUpdate(List<RoomInfo> roomList)
-    {
-        UpdateRoomList(roomList); // ¹æ ¸ñ·Ï ¾÷µ¥ÀÌÆ®
-    }
-
-    /// <summary>
-    /// RoomList UI °ü·Ã ÇÔ¼ö
-    /// »ç¿ëÀÚ°¡ Room UI¿¡¼­ ¹æÀ» »ı¼ºÇÒ¶§ È£ÃâµÇ´Â ¸Ş¼­µå
-    /// </summary>
-    public void OnClickRoomCreate()
-    {
-        createRoomUI.SetActive(true);
-        roomListUI.SetActive(false);
-    }
-
-
-    // ¹æ¿¡ Âü°¡ÇÏ´Â ¸Ş¼­µå
-    public void JoinRoom(string roomName)
-    {
-        if (PhotonNetwork.JoinRoom(roomName)) // ¹æ Âü°¡ ½Ãµµ
+        //ë°©ì— ì…ì¥í–ˆì„ë•Œ í˜¸ì¶œë˜ëŠ” ë©”ì„œë“œ
+        public override void OnJoinedRoom()
         {
-            Debug.Log($"Trying to join room: {roomName}");
-            
+            PhotonNetwork.LoadLevel("LobbyScene");
         }
-        else
-        {
-            Debug.LogError($"¹æ¿¡ Âü°¡ÇÏÁö ¸øÇß½À´Ï´Ù.: {roomName}");
-        }
-    }
-
-    /// <summary>
-    /// CreateRoom UI °ü·Ã ÇÔ¼ö
-    /// CreateRoom UI¿¡¼­ ¹æÀ» »ı¼ºÇÒ¶§ È£ÃâµÇ´Â ¸Ş¼­µå
-    /// </summary>
-    public void OnClickCreateConfirm()
-    {
-        RoomOptions options = new RoomOptions();
-        string roomName = roomNameInput.text.Trim();
-
-        if (string.IsNullOrEmpty(roomName))
-        {
-            string[] randomTitels = { "¾Ñ! ¶ß°Å¶ß°Å", "¼Õ¿¡ ºÒ³­´Ù~", "´Ô¸¸ ¿À¸é °í", "¿ì°¡¿ì°¡¿ì°¡", "¸Å³Ê °ÔÀÓÇØ¿ä~" };
-
-            roomName = randomTitels[Random.Range(0, randomTitels.Length)];
-            Debug.Log($"·£´ı ¹æ Á¦¸ñ »ı¼º: {roomName}");
-        }
-        options.MaxPlayers = 4;
-
-        PhotonNetwork.CreateRoom(roomName, options, TypedLobby.Default);
-        createRoomUI.SetActive(false);
 
     }
-
-    //¹æ¿¡ ÀÔÀåÇßÀ»¶§ È£ÃâµÇ´Â ¸Ş¼­µå
-    public override void OnJoinedRoom()
-    {
-        PhotonNetwork.LoadLevel("LobbyScene");
-    }
-
 }

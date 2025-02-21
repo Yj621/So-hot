@@ -28,10 +28,16 @@ namespace Donghyun.Network
             readyText.SetActive(isReady);
         }
 
+        //ë‹‰ë„¤ì„ ìƒ‰ ë°”ê¾¸ëŠ” í•¨ìˆ˜
+        public void SetNickNameColor(Color color)
+        {
+            nameText.color = color;
+        }
+        
         /// <summary>
-        /// ÇÃ·¹ÀÌ¾îÀÇ ÀÌ¸§ UI¸¦ ¾÷µ¥ÀÌÆ®
+        /// í”Œë ˆì´ì–´ì˜ ì´ë¦„ UIë¥¼ ì—…ë°ì´íŠ¸
         /// </summary>
-        /// <param name="name">ÇÃ·¹ÀÌ¾î ÀÌ¸§</param>
+        /// <param name="name">í”Œë ˆì´ì–´ ì´ë¦„</param>
         public void SetNickname(string name)
         {
             nameText.text = name;
