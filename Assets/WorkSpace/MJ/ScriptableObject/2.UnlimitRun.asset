@@ -10,7 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b265b825804fa9a4fbe2b0689643a592, type: 3}
-  m_Name: GaugeStop
+  m_Name: 2.UnlimitRun
   m_EditorClassIdentifier: 
-  icon: {fileID: 21300000, guid: 0dc440169ec8991408cc6c8caf5c86e5, type: 3}
-  itemType: 0
+  icon: {fileID: 21300000, guid: 0f90e56d573e6954abcb84b49cd99327, type: 3}
+  itemType: 2
+  effectNum: 2

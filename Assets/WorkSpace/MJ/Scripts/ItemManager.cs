@@ -14,8 +14,7 @@ public enum ITEMTYPE
 public class ItemManager : MonoBehaviourPun
 {
     public static ItemManager Instance;
-    Coroutine unlimitRunCoroutine; // 실행 중인 unlimit run 코루틴 저장
-    Coroutine gaugeStopCoroutine; // 실행 중인 gauge stop 코루틴 저장
+
     private void Awake()
     {
         Instance = this;
@@ -23,61 +22,95 @@ public class ItemManager : MonoBehaviourPun
 
     public void GaugeStop(PlayerController player)
     {
-        if (gaugeStopCoroutine != null)
+        //코루틴 중복 실행 방지
+        if (player.gaugeStopCoroutine != null)
         {
-            StopCoroutine(gaugeStopCoroutine);
+            StopCoroutine(player.gaugeStopCoroutine);
         }
+
         player.hotgauge.gaugePause = true;
-        //photonView.RPC("ShowItemEffect", RpcTarget.All);
+
+        int effectIdx = player.gameObject.GetComponent<Inventory>().effectNumber;
+
+        //아이템 이펙트 효과 보이기
+        player.photonView.RPC("ItemEffectOn", RpcTarget.All, player.photonView.ViewID, effectIdx);
 
         //5초 뒤, 아이템 효과 해제
-        gaugeStopCoroutine = StartCoroutine(CorGaugeStop(5f, player));
+        player.gaugeStopCoroutine = StartCoroutine(CorGaugeStop(5f, player));
 
     }
 
     public void NoDie(PlayerController player)
     {
-        //죽음 면제 (true 상태일 때 죽는 상황이 오면, 죽기 대신 savelife를 false, 캐릭터 부활상태로 초기화)
         player.state.saveLife = true;
-        //photonView.RPC("ShowItemEffect", RpcTarget.All);
+
+        int effectIdx = player.gameObject.GetComponent<Inventory>().effectNumber;
+
+        //아이템 이펙트 효과 보이기
+        player.photonView.RPC("ItemEffectOn", RpcTarget.All, player.photonView.ViewID, effectIdx);
+
+        //NoDie의 경우, Effect 종료 및 사용 효과 종료는 플레이어의 죽음 시점이 되어야 하므로
+        //플레이어에서 RPC ItemEffectOff를 호출해주어야 함 (effectIdx는 1이다)
     }
 
     public void UnlimitRun(PlayerController player)
     {
-        if (unlimitRunCoroutine != null)
+        //코루틴 중복 실행 방지
+        if (player.unlimitRunCoroutine != null)
         {
-            StopCoroutine(unlimitRunCoroutine);
+            StopCoroutine(player.unlimitRunCoroutine);
         }
+
         player.movement.runLimit = false;
-        //photonView.RPC("ShowItemEffect", RpcTarget.All);
+
+        int effectIdx = player.gameObject.GetComponent<Inventory>().effectNumber;
+
+        //아이템 이펙트 효과 보이기
+        player.photonView.RPC("ItemEffectOn", RpcTarget.All, player.photonView.ViewID, effectIdx);
 
         //5초 뒤, 아이템 효과 해제
-        unlimitRunCoroutine = StartCoroutine(CorUnlimitRun(5f, player));
+        player.unlimitRunCoroutine = StartCoroutine(CorUnlimitRun(5f, player));
     }
 
 
     [PunRPC]
-    void ShowItemEffect()
+    void ItemEffectOn(int playerViewID, int idx)
     {
-        //TO-DO:로직 만들기
-        //(파라미터값을 받아 해당 Player에게 붙어있는 이펙트 중 아이템에 맞는를 SetActive(true);)
+        GameObject playerObj = PhotonView.Find(playerViewID).gameObject;
+        PlayerController player = playerObj.GetComponent<PlayerController>();
+
+        player.effectList[idx].SetActive(true);
+    }
+
+    [PunRPC]
+    void ItemEffectOff(int playerViewID, int idx)
+    {
+        GameObject playerObj = PhotonView.Find(playerViewID).gameObject;
+        PlayerController player = playerObj.GetComponent<PlayerController>();
+
+        player.effectList[idx].SetActive(false);
     }
 
 
     //아이템 효과가 끝난 field가 true로 초기화 되어야 하는 경우에 사용하는 코루틴 
     IEnumerator CorUnlimitRun(float time, PlayerController player)
     {
-        yield return new WaitForSeconds(time); 
+        int effectIdx = player.gameObject.GetComponent<Inventory>().effectNumber;
+        yield return new WaitForSeconds(time);
+        player.photonView.RPC("ItemEffectOff", RpcTarget.All, player.photonView.ViewID, effectIdx);
         player.movement.runLimit = true;
-        unlimitRunCoroutine = null;
+        player.unlimitRunCoroutine = null;
     }
 
     //아이템 효과가 끝난 field가 false로 초기화 되어야 하는 경우에 사용하는 코루틴 
     IEnumerator CorGaugeStop(float time, PlayerController player)
     {
+        int effectIdx = player.gameObject.GetComponent<Inventory>().effectNumber;
         yield return new WaitForSeconds(time);
+        player.photonView.RPC("ItemEffectOff", RpcTarget.All, player.photonView.ViewID, effectIdx);
         player.hotgauge.gaugePause = false;
-        gaugeStopCoroutine = null;
+        player.gaugeStopCoroutine = null;
+
     }
 
 }

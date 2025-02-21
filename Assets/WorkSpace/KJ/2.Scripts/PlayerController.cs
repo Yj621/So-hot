@@ -13,6 +13,8 @@ namespace KJ.Player
         public PlayerAnimationController animationController;
         public List<GameObject> effectList;
         public PhotonView photonView;
+        public Coroutine unlimitRunCoroutine; // 실행 중인 unlimit run 코루틴 저장
+        public Coroutine gaugeStopCoroutine; // 실행 중인 gauge stop 코루틴 저장
 
         private void Awake()
         {
@@ -21,6 +23,7 @@ namespace KJ.Player
             hotgauge = GetComponent<Hotgauge>();
             animationController = GetComponent<PlayerAnimationController>();
             photonView = GetComponent<PhotonView>();
+
         }
     }
 }
