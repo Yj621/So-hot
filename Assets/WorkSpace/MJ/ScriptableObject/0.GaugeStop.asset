@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b265b825804fa9a4fbe2b0689643a592, type: 3}
   m_Name: 0.GaugeStop
   m_EditorClassIdentifier: 
-  icon: {fileID: 21300000, guid: 0dc440169ec8991408cc6c8caf5c86e5, type: 3}
+  icon: {fileID: 21300000, guid: 01818518de8213945b4cde3cbed1eafa, type: 3}
   itemType: 0
+  effectNum: 0

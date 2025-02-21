@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b265b825804fa9a4fbe2b0689643a592, type: 3}
   m_Name: 1.NoDie
   m_EditorClassIdentifier: 
-  icon: {fileID: 21300000, guid: fda0cc9c94c14a14cbb7d07943114abb, type: 3}
+  icon: {fileID: 21300000, guid: 9f3556361e33e0e4186fc63c947dc7d2, type: 3}
   itemType: 1
   effectNum: 1
