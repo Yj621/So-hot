@@ -17,17 +17,19 @@ public class Inventory : MonoBehaviour
     }
     public void GetItem(ItemData item)
     {
-            if (inventory.Count == 0)
-            {
-                inventory.Enqueue(item);
-                frontInven.sprite = item.icon;
-            }
+        if (inventory.Count == 0)
+        {
+            inventory.Enqueue(item);
+            frontInven.sprite = item.icon;
+            frontInven.gameObject.SetActive(true);
+        }
 
-            else if (inventory.Count == 1)
-            {
-                inventory.Enqueue(item);
-                terminalInven.sprite = item.icon;
-            }
+        else if (inventory.Count == 1)
+        {
+            inventory.Enqueue(item);
+            terminalInven.sprite = item.icon;
+            terminalInven.gameObject.SetActive(true);
+        }
 
     }
     public void UseItem()
@@ -64,10 +66,12 @@ public class Inventory : MonoBehaviour
         {
             frontInven.sprite = terminalInven.sprite;
             terminalInven.sprite = null;
+            terminalInven.gameObject.SetActive(false);
         }
         else
         {
             frontInven.sprite = null;
+            frontInven.gameObject.SetActive(false);
         }
     }
 }
