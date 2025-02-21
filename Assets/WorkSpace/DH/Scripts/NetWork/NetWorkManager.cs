@@ -33,12 +33,29 @@ namespace Donghyun.Network
             //포톤 뷰
             pv = GetComponent<PhotonView>();
 
-            for (int  i = 0; i < players.Count; i++)
+            for (int i = 0; i < players.Count; i++)
             {
-                playerUIs.Add(players[i].GetComponent<PlayerUI>());
+                if (players[i] != null)
+                {
+                    PlayerUI playerUI = players[i].GetComponent<PlayerUI>();
+                    if (playerUI != null)
+                    {
+                        playerUIs.Add(playerUI);
+                    }
+                    else
+                    {
+                        Debug.LogError($"[NetWorkManager] players[{i}]에 PlayerUI 컴포넌트가 없습니다!");
+                        playerUIs.Add(null); // null을 추가하여 리스트 크기 유지
+                    }
+                }
+                else
+                {
+                    Debug.LogError($"[NetWorkManager] players[{i}]가 null입니다!");
+                    playerUIs.Add(null);
+                }
             }
 
-            PhotonNetwork.SendRate = 40; //포톤이 서버와 통신하는 빈도
+                PhotonNetwork.SendRate = 40; //포톤이 서버와 통신하는 빈도
             PhotonNetwork.SerializationRate = 20; //객체 상태 업데이트 빈도(트랜스폼, etc...)
 
             startButton = startButtonObj.GetComponent<Button>();
@@ -154,6 +171,11 @@ namespace Donghyun.Network
 
         public void SetPlayerUI(PlayerUI ui, string name, bool isMaster)
         {
+            if (ui == null)
+            {
+                Debug.LogError($"[NetWorkManager] SetPlayerUI() 호출 실패: PlayerUI가 null입니다! (name: {name}, isMaster: {isMaster})");
+                return;
+            }
             ui.SetNickname(name);
 
 

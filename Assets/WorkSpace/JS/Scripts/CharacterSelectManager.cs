@@ -3,11 +3,14 @@ using Photon.Realtime;
 using System.Collections.Generic;
 using UnityEngine;
 using ExitGames.Client.Photon;
+using UnityEngine.UI;
 
 public class CharacterSelectManager : MonoBehaviourPunCallbacks
 {
-    public ReadyManager[] playerObjects; // 씬에 미리 배치된 플레이어 오브젝트 배열
-    private static List<int> assignedSlots = new List<int>(); // 사용 중인 슬롯 추적
+    public ReadyManager readyManager;
+
+    private Dictionary<int, bool> playerReadyStatus = new Dictionary<int, bool>(); // 플레이어별 준비 상태 저장
+    private Dictionary<int, int> playerCharacterSelections = new Dictionary<int, int>(); // 플레이어별 캐릭터 선택
 
     private void Start()
     {
@@ -19,34 +22,45 @@ public class CharacterSelectManager : MonoBehaviourPunCallbacks
 
     private void AssignPlayerSlot()
     {
+        HashSet<int> usedSlots = new HashSet<int>();
+
+        // 현재 방에 있는 플레이어들의 슬롯 정보를 수집
+        foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
+        {
+            if (player.CustomProperties.ContainsKey("PlayerSlot"))
+            {
+                usedSlots.Add((int)player.CustomProperties["PlayerSlot"]);
+            }
+        }
+
         int assignedSlot = -1;
 
-        // 1P~4P 중 비어 있는 슬롯 찾기
-        for (int i = 0; i < playerObjects.Length; i++)
+        // 비어있는 슬롯 찾기
+        for (int i = 0; i < 4; i++)
         {
-            if (playerObjects[i].playerSlot == -1) // 빈 슬롯이면 할당
+            if (!usedSlots.Contains(i)) // 사용되지 않은 슬롯이면 할당
             {
                 assignedSlot = i;
-                playerObjects[i].playerSlot = assignedSlot;
-                assignedSlots.Add(assignedSlot); // 슬롯을 사용 중으로 표시
                 break;
             }
         }
 
         if (assignedSlot != -1)
         {
-            // customProperties에 저장 (멀티플레이 동기화)
             ExitGames.Client.Photon.Hashtable playerProperties = new ExitGames.Client.Photon.Hashtable
             {
                 { "PlayerSlot", assignedSlot }
             };
             PhotonNetwork.LocalPlayer.SetCustomProperties(playerProperties);
 
-            Debug.Log($"플레이어 {PhotonNetwork.LocalPlayer.NickName}가 {assignedSlot + 1}P로 배정됨.");
+            Debug.Log($"[LobbyManager] 플레이어 {PhotonNetwork.LocalPlayer.NickName}가 {assignedSlot + 1}P로 배정됨.");
+
+            // ReadyManager UI 업데이트
+            readyManager.UpdateSlotUI(assignedSlot, PhotonNetwork.LocalPlayer);
         }
         else
         {
-            Debug.LogError("슬롯 할당 실패! 모든 슬롯이 사용 중입니다.");
+            Debug.LogError("[LobbyManager] 슬롯 할당 실패! 모든 슬롯이 사용 중입니다.");
         }
     }
 
@@ -55,10 +69,37 @@ public class CharacterSelectManager : MonoBehaviourPunCallbacks
         if (otherPlayer.CustomProperties.ContainsKey("PlayerSlot"))
         {
             int freedSlot = (int)otherPlayer.CustomProperties["PlayerSlot"];
-            assignedSlots.Remove(freedSlot); // 슬롯을 다시 사용 가능하도록 해제
-            playerObjects[freedSlot].playerSlot = -1; // 슬롯 정보 초기화
 
-            Debug.Log($"플레이어 {otherPlayer.NickName}가 퇴장하여 {freedSlot + 1}P 슬롯이 비워짐.");
+            // ReadyManager 슬롯 초기화
+            //readyManager.ClearSlot(freedSlot);
+
+            Debug.Log($"[LobbyManager] 플레이어 {otherPlayer.NickName}가 퇴장하여 {freedSlot + 1}P 슬롯이 비워짐.");
         }
     }
+
+    public void SetReady(int slot, bool isReady)
+    {
+        playerReadyStatus[slot] = isReady;
+        photonView.RPC("RPC_UpdateReadyStatus", RpcTarget.AllBuffered, slot, isReady);
+        //networkManager.UpdateReadyStatus(); // NetWorkManager에게 Ready 상태 전달
+    }
+
+    public void SetCharacterSelection(int slot, int characterIndex)
+    {
+        playerCharacterSelections[slot] = characterIndex;
+        photonView.RPC("RPC_UpdateCharacterSelection", RpcTarget.AllBuffered, slot, characterIndex);
+    }
+
+    [PunRPC]
+    private void RPC_UpdateReadyStatus(int slot, bool isReady)
+    {
+        playerReadyStatus[slot] = isReady;
+    }
+
+    [PunRPC]
+    private void RPC_UpdateCharacterSelection(int slot, int characterIndex)
+    {
+        playerCharacterSelections[slot] = characterIndex;
+    }
 }
+

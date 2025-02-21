@@ -52,6 +52,14 @@ MonoBehaviour:
   - AddPlayerList
   - UpdatePlayerList
   - SetAllReadyState
+  - RPC_OnLeftArrow
+  - RPC_OnRightArrow
+  - RPC_OnSelect
+  - RPC_UpdateCharacter
+  - RPC_SyncPlayerSlot
+  - RPC_SetReady
+  - RPC_UpdateCharacterSelection
+  - RPC_UpdateReadyStatus
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
