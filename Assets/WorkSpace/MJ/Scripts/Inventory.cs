@@ -7,6 +7,7 @@ public class Inventory : MonoBehaviour
 {
     Queue<ItemData> inventory = new Queue<ItemData>(); //인벤토리
     PlayerController itemUser; //아이템 사용자(=플레이어 자신)
+    public int effectNumber; //사용 아이템의 이펙트 인덱스
     [SerializeField] Image frontInven; //인벤토리 앞칸 UI
     [SerializeField] Image terminalInven; //인벤토리 뒷칸 UI
 
@@ -34,6 +35,7 @@ public class Inventory : MonoBehaviour
         if (inventory.Count > 0)
         {
             ItemData targetItem = inventory.Dequeue();
+            effectNumber = targetItem.effectNum;
             switch (targetItem.itemType)
             {
                 case ITEMTYPE.GaugeStop:

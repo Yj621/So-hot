@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b265b825804fa9a4fbe2b0689643a592, type: 3}
-  m_Name: NoDie
+  m_Name: 0.GaugeStop
   m_EditorClassIdentifier: 
-  icon: {fileID: 21300000, guid: fda0cc9c94c14a14cbb7d07943114abb, type: 3}
-  itemType: 1
+  icon: {fileID: 21300000, guid: 0dc440169ec8991408cc6c8caf5c86e5, type: 3}
+  itemType: 0
