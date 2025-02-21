@@ -162,7 +162,9 @@ namespace Donghyun.Network
             {
                 ui.SetNickNameColor(Color.red);
             }
-            else{
+            //나머지는 흰색
+            else
+            {
                 ui.SetNickNameColor(Color.white);
             }
 

@@ -50,6 +50,7 @@ namespace YJ.UI
         // Quit버튼 관련 함수
         public void OnClickQuit()
         {
+            //종료 확인 ui 활성화
             quitUI.SetActive(true);
         }
 
