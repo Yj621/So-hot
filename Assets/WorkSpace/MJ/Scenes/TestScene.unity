@@ -1250,6 +1250,10 @@ PrefabInstance:
       propertyPath: groundLayer.m_Bits
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 5667515190572077775, guid: d4b030af034ca2b4688d41c0ee6c5df0, type: 3}
+      propertyPath: gaugePause
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6355099782688522986, guid: d4b030af034ca2b4688d41c0ee6c5df0, type: 3}
       propertyPath: sceneViewId
       value: 1
