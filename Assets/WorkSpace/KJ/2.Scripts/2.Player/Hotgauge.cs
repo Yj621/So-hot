@@ -4,70 +4,101 @@ namespace KJ.Player
 {
     public class Hotgauge : MonoBehaviour
     {
-        private Inventory inventory;    // Inventory 참조 변수
-        public bool gaugePause = false; // true면 게이지가 안 올라감, 기본적으로 false
-        private float heatGauge = 0f;   // 현재 뜨거움 게이지 (0 ~ 100)
-        private float maxHeat = 100f;   // 최대 뜨거움 게이지
-        private float heatIncreaseRate = 5f; // 초당 증가율
+        public bool gaugePause = false;
+        private float heatGauge = 0f;
+        private float maxHeat = 100f;
+        private float heatIncreaseRate = 10f;
 
-        void Start()
-        {
-            inventory = FindFirstObjectByType<Inventory>();
-        }
+        private bool hasFire = false; // 불을 들고 있는지 여부 (테스트용)
+        private bool isDead = false; // 플레이어 사망 여부
 
         void Update()
         {
-            if (!gaugePause)
+            if (isDead) return; // 사망한 경우 입력을 처리하지 않음
+
+            // F 키를 누르면 불을 들고 있는 상태 토글 (테스트용)
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                ToggleFire();
+            }
+
+            if (hasFire && !gaugePause)
             {
                 IncreaseHeat(Time.deltaTime * heatIncreaseRate);
             }
-        }
 
-        /// <summary>
-        /// 아이템 사용 시 호출되는 메서드 ( Inventory의 UseItem() 호출 )
-        /// </summary>
-        public void ItemUse()
-        {
-            if (inventory != null)
+            if (Input.GetKeyDown(KeyCode.Y))
             {
-                inventory.UseItem();
-                Debug.Log("아이템 사용: 뜨거움 게이지 감소!");
+                IncreaseHeat(5f);
+            }
+
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                ResetHeat();
             }
         }
 
         /// <summary>
-        /// 뜨거움 게이지 증가 메서드
+        /// 불을 들고 있는 상태를 토글 (테스트용)
         /// </summary>
-        public void IncreaseHeat(float amount)
+        private void ToggleFire()
         {
+            hasFire = !hasFire;
+            Debug.Log($"불 상태 변경: {(hasFire ? "불을 들고 있음" : "불 없음")}");
+        }
+
+        /// <summary>
+        /// 뜨거움 게이지 증가 (불을 들고 있을 때만)
+        /// </summary>
+        private void IncreaseHeat(float amount)
+        {
+            if (!hasFire || isDead) return; // 불이 없거나 이미 죽은 경우 증가 X
+
             heatGauge += amount;
-            heatGauge = Mathf.Clamp(heatGauge, 0, maxHeat); // 0~100 범위 유지
+            heatGauge = Mathf.Clamp(heatGauge, 0, maxHeat);
 
             Debug.Log($"현재 뜨거움 게이지: {heatGauge}");
 
             if (heatGauge >= maxHeat)
             {
-                Overheat(); // 최대치 도달 시 과열 처리
+                Overheat();
             }
         }
 
         /// <summary>
-        /// 게이지 최대치 도달 시 과열 처리
+        /// 과열 처리 (게이지 최대치 도달)
         /// </summary>
         private void Overheat()
         {
-            Debug.Log("플레이어가 과열되었습니다!");
-            gaugePause = true; // 과열 시 게이지 멈춤
+            gaugePause = true;
+            Debug.Log("플레이어가 과열되었습니다.");
+            Die(); // 과열 시 사망 처리
         }
 
         /// <summary>
-        /// 뜨거움을 식혀서 다시 움직일 수 있도록 함
+        /// 플레이어 사망 처리
         /// </summary>
-        public void ResetHeat()
+        private void Die()
         {
+            isDead = true;
+            Debug.Log("플레이어가 사망했습니다.");
+            // 추가: 사망 애니메이션 또는 리스폰 처리 가능
+        }
+
+        /// <summary>
+        /// 뜨거움 게이지 초기화 (사망한 경우 리스폰 기능 추가 가능)
+        /// </summary>
+        private void ResetHeat()
+        {
+            if (isDead)
+            {
+                Debug.Log("사망한 상태에서는 게이지를 초기화할 수 없습니다.");
+                return;
+            }
+
             heatGauge = 0;
-            gaugePause = false; // 다시 게이지 증가 가능
-            Debug.Log("게이지 초기화됨, 다시 시작 가능!");
+            gaugePause = false;
+            Debug.Log("게이지 초기화됨, 다시 시작 가능.");
         }
     }
 }

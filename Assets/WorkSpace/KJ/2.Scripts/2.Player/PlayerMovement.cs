@@ -21,13 +21,11 @@ namespace KJ.Player
         [SerializeField] private float maxStamina = 100f;   // 최대 스태미나
         private float currentStamina;   // 현재 스태미나
         [SerializeField] private float staminaDrainRate = 10f;   // 초당 스태미나 감소량
-        [SerializeField] private float staminaRegenRate = 5f;   // 초당 스태미나 회복량
 
         private Rigidbody rb; // Rigidbody 컴포넌트 참조
         private bool isGrounded; // 플레이어가 지면에 있는지 여부
         private float currentSpeed; // 현재 이동 속도 (걷기 또는 달리기 속도 반영)
         private Vector3 moveDirection; // 이동 방향 벡터
-        private Inventory inventory;   // Inventory 참조 변수
 
         void Start()
         {
@@ -35,7 +33,6 @@ namespace KJ.Player
             rb.freezeRotation = true; // 회전 고정 (물리적인 회전 방지, 넘어지지 않도록 설정)
             currentSpeed = walkSpeed; // 기본 속도를 걷기 속도로 설정
             currentStamina = maxStamina;
-            inventory = FindAnyObjectByType<Inventory>();
         }
 
         void Update()
@@ -45,7 +42,6 @@ namespace KJ.Player
 
             HandleMovementInput(); // 이동 입력 처리
             CheckGround(); // 지면 체크 (플레이어가 땅에 있는지 확인)
-            RegenerateStamina();   // 스태미나 회복
 
             if (moveDirection.magnitude >= 0.1f) // 이동 입력이 있을 때만 회전 적용
             {
@@ -56,12 +52,6 @@ namespace KJ.Player
             if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
             {
                 Jump();
-            }
-
-            // 아이템 사용 키 예시 ( 임시로 E 키 )
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                ItemUse();   // 아이템 사용 실행
             }
         }
 
@@ -110,6 +100,12 @@ namespace KJ.Player
             else
             {
                 currentSpeed = walkSpeed;   // 기본 이동 속도 유지
+
+                currentStamina += staminaDrainRate * Time.deltaTime;
+                if (currentStamina > maxStamina)
+                {
+                    currentStamina = maxStamina;
+                }
             }
         }
 
@@ -163,33 +159,13 @@ namespace KJ.Player
 
         private void DrainStamina()
         {
-            currentStamina -= staminaDrainRate * Time.deltaTime;
             if (currentStamina <= 0)
             {
                 currentStamina = 0;   // 스태미나가 0 이하로 내려가지 않도록 제한
             }
-        }
-
-        private void RegenerateStamina()
-        {
-            if (!Input.GetKey(KeyCode.LeftShift))   // 달리지 않을 때만 회복
+            else
             {
-                currentStamina += staminaDrainRate * Time.deltaTime;
-                if (currentStamina > maxStamina)
-                {
-                    currentStamina = maxStamina;
-                }
-            }
-        }
-
-        /// <summary>
-        /// 아이템 사용 시 호출되는 메서드 ( Inventory의 UseItem() 호출 )
-        /// </summary>
-        public void ItemUse()
-        {
-            if (inventory != null)
-            {
-                inventory.UseItem();   // 인벤토리에 있는 UseItem
+                currentStamina -= staminaDrainRate * Time.deltaTime;
             }
         }
     }

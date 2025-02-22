@@ -529,6 +529,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2573046728878114369, guid: d4b030af034ca2b4688d41c0ee6c5df0, type: 3}
+      propertyPath: saveLife
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3522818762960730726, guid: d4b030af034ca2b4688d41c0ee6c5df0, type: 3}
       propertyPath: m_Name
       value: Player
@@ -537,6 +541,10 @@ PrefabInstance:
       propertyPath: photonView
       value: 
       objectReference: {fileID: 543450652012242651}
+    - target: {fileID: 5667515190572077775, guid: d4b030af034ca2b4688d41c0ee6c5df0, type: 3}
+      propertyPath: gaugePause
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6355099782688522986, guid: d4b030af034ca2b4688d41c0ee6c5df0, type: 3}
       propertyPath: sceneViewId
       value: 1
