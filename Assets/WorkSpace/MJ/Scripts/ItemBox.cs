@@ -1,10 +1,12 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEditor.Progress;
-
+using Photon.Pun;
+using KJ.Player;
+using Photon.Realtime;
 namespace MJ.Item.ItemBox
 {
-    public class ItemBox : MonoBehaviour
+    public class ItemBox : MonoBehaviourPun
     {
         [SerializeField] ItemData[] items; //아이템 전체 목록
 
@@ -14,9 +16,14 @@ namespace MJ.Item.ItemBox
             {
                 int idx = Random.Range(0, items.Length);
                 other.GetComponent<Inventory>().GetItem(items[idx]);
-
-                Destroy(gameObject);
+                photonView.RPC("DestroyObject", RpcTarget.All);
             }
+        }
+
+        [PunRPC]
+        void DestroyObject()
+        {
+            Destroy(gameObject);
         }
     }
 }
