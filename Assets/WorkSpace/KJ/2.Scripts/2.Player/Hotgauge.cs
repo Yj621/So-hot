@@ -12,7 +12,14 @@ namespace KJ.Player
         private bool hasFire = false; // 불을 들고 있는지 여부 (테스트용)
         private bool isDead = false; // 플레이어 사망 여부
 
-        void Update()
+        private PlayerAnimationController animationController;
+
+        private void Awake()
+        {
+            animationController = GetComponent<PlayerAnimationController>();
+        }
+
+        private void Update()
         {
             if (isDead) return; // 사망한 경우 입력을 처리하지 않음
 
@@ -82,7 +89,9 @@ namespace KJ.Player
         {
             isDead = true;
             Debug.Log("플레이어가 사망했습니다.");
-            // 추가: 사망 애니메이션 또는 리스폰 처리 가능
+
+            // 사망 애니메이션 실행
+            animationController?.PlayDeathAnimation();
         }
 
         /// <summary>

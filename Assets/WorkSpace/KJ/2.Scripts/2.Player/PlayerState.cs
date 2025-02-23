@@ -5,10 +5,15 @@ namespace KJ.Player
     public class PlayerState : MonoBehaviour
     {
         private bool isDead = false;   // 플레이어가 죽었는지 여부
-
         public bool saveLife = false;  // 죽음 면제 활성화 여부
+        private Animator animator;     // 애니메이터 참조
 
-        void Update()
+        private void Awake()
+        {
+            animator = GetComponent<Animator>(); // 애니메이터 컴포넌트 가져오기
+        }
+
+        private void Update()
         {
             // 테스트: T 키를 누르면 즉사
             if (Input.GetKeyDown(KeyCode.T))
@@ -42,6 +47,12 @@ namespace KJ.Player
         {
             isDead = true;
             Debug.Log("플레이어가 즉사했습니다.");
+
+            // 사망 애니메이션 실행
+            if (animator != null)
+            {
+                animator.SetTrigger("Die");
+            }
         }
     }
 }

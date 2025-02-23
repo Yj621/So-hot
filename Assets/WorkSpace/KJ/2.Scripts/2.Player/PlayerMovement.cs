@@ -1,7 +1,5 @@
 using UnityEngine;
 using Photon.Pun;
-using System.Collections;
-using UnityEditor.Experimental.GraphView; // Photon 네트워크 기능을 사용하기 위해 추가
 
 namespace KJ.Player
 {
@@ -17,7 +15,7 @@ namespace KJ.Player
         [SerializeField] private float rotationSpeed = 10f; // 회전 속도
 
         [Header("스태미나 설정")]
-        public bool runLimit;   // 달릴 시의 스태미나의 제한을 받는지에 대한 여부 ( True인 상태로 시작해서 달리면 스태미너가 떨어지고  아이템을 먹을 시 False로 바뀌어서 스태미너가 안닳게 함 )
+        public bool runLimit;   // 달릴 시 스태미나 제한을 받는지 여부
         [SerializeField] private float maxStamina = 100f;   // 최대 스태미나
         private float currentStamina;   // 현재 스태미나
         [SerializeField] private float staminaDrainRate = 10f;   // 초당 스태미나 감소량
@@ -26,6 +24,10 @@ namespace KJ.Player
         private bool isGrounded; // 플레이어가 지면에 있는지 여부
         private float currentSpeed; // 현재 이동 속도 (걷기 또는 달리기 속도 반영)
         private Vector3 moveDirection; // 이동 방향 벡터
+        private Animator animator;
+        private bool isJumping = false;   // 점프 상태를 추적하는 변수 추가
+
+        public bool IsGrounded => isGrounded;
 
         void Start()
         {
@@ -33,6 +35,7 @@ namespace KJ.Player
             rb.freezeRotation = true; // 회전 고정 (물리적인 회전 방지, 넘어지지 않도록 설정)
             currentSpeed = walkSpeed; // 기본 속도를 걷기 속도로 설정
             currentStamina = maxStamina;
+            animator = GetComponent<Animator>();
         }
 
         void Update()
@@ -49,7 +52,7 @@ namespace KJ.Player
             }
 
             // 점프 입력 처리 (스페이스바를 누르고 지면에 있을 때만 점프 가능)
-            if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+            if (Input.GetKeyDown(KeyCode.Space) && isGrounded && !isJumping)
             {
                 Jump();
             }
@@ -107,6 +110,10 @@ namespace KJ.Player
                     currentStamina = maxStamina;
                 }
             }
+
+            // 애니메이션 속도 적용
+            float speedNormalized = moveDirection.magnitude > 0.1f ? GetCurrentSpeedNormalized() : 0f;
+            animator.SetFloat("Speed", speedNormalized);
         }
 
         /// <summary>
@@ -135,7 +142,11 @@ namespace KJ.Player
         /// </summary>
         private void Jump()
         {
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse); // 순간적인 힘(Impulse)로 점프 적용
+            isJumping = true; // 점프 상태 시작
+
+            // 점프 애니메이션과 점프 동작을 동시에 실행
+            animator.SetTrigger("Jump");
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, rb.linearVelocity.z);
         }
 
         /// <summary>
@@ -150,11 +161,15 @@ namespace KJ.Player
             if (Physics.Raycast(transform.position, Vector3.down, out hit, rayLength, groundLayer))
             {
                 isGrounded = true;
+                isJumping = false; // 착지하면 점프 상태 해제
             }
             else
             {
                 isGrounded = false;
             }
+
+            // 애니메이터에 isGrounded 상태 전달
+            animator.SetBool("isGrounded", isGrounded);
         }
 
         private void DrainStamina()
@@ -167,6 +182,11 @@ namespace KJ.Player
             {
                 currentStamina -= staminaDrainRate * Time.deltaTime;
             }
+        }
+
+        public float GetCurrentSpeedNormalized()
+        {
+            return currentSpeed / runSpeed;
         }
     }
 }
