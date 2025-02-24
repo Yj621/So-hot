@@ -1,7 +1,6 @@
 using UnityEngine;
 using Photon.Pun;
 using System.Collections;
-using UnityEditor.Experimental.GraphView; // Photon 네트워크 기능을 사용하기 위해 추가
 
 namespace KJ.Player
 {
@@ -17,25 +16,27 @@ namespace KJ.Player
         [SerializeField] private float rotationSpeed = 10f; // 회전 속도
 
         [Header("스태미나 설정")]
-        public bool runLimit;   // 달릴 시의 스태미나의 제한을 받는지에 대한 여부 ( True인 상태로 시작해서 달리면 스태미너가 떨어지고  아이템을 먹을 시 False로 바뀌어서 스태미너가 안닳게 함 )
+        public bool runLimit;   // 달릴 시 스태미나 제한을 받는지 여부
         [SerializeField] private float maxStamina = 100f;   // 최대 스태미나
         private float currentStamina;   // 현재 스태미나
         [SerializeField] private float staminaDrainRate = 10f;   // 초당 스태미나 감소량
-        [SerializeField] private float staminaRegenRate = 5f;   // 초당 스태미나 회복량
 
         private Rigidbody rb; // Rigidbody 컴포넌트 참조
         private bool isGrounded; // 플레이어가 지면에 있는지 여부
         private float currentSpeed; // 현재 이동 속도 (걷기 또는 달리기 속도 반영)
         private Vector3 moveDirection; // 이동 방향 벡터
-        private Inventory inventory;   // Inventory 참조 변수
+        private Animator animator;
+        private bool isJumping = false;   // 점프 상태를 추적하는 변수 추가
 
+        public bool IsGrounded => isGrounded;
+        
         void Start()
         {
             rb = GetComponent<Rigidbody>(); // Rigidbody 컴포넌트 가져오기
             rb.freezeRotation = true; // 회전 고정 (물리적인 회전 방지, 넘어지지 않도록 설정)
             currentSpeed = walkSpeed; // 기본 속도를 걷기 속도로 설정
             currentStamina = maxStamina;
-            inventory = FindAnyObjectByType<Inventory>();
+            animator = GetComponent<Animator>();
         }
 
         void Update()
@@ -45,7 +46,6 @@ namespace KJ.Player
 
             HandleMovementInput(); // 이동 입력 처리
             CheckGround(); // 지면 체크 (플레이어가 땅에 있는지 확인)
-            RegenerateStamina();   // 스태미나 회복
 
             if (moveDirection.magnitude >= 0.1f) // 이동 입력이 있을 때만 회전 적용
             {
@@ -53,15 +53,9 @@ namespace KJ.Player
             }
 
             // 점프 입력 처리 (스페이스바를 누르고 지면에 있을 때만 점프 가능)
-            if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+            if (Input.GetKeyDown(KeyCode.Space) && isGrounded && !isJumping)
             {
                 Jump();
-            }
-
-            // 아이템 사용 키 예시 ( 임시로 E 키 )
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                ItemUse();   // 아이템 사용 실행
             }
         }
 
@@ -110,7 +104,17 @@ namespace KJ.Player
             else
             {
                 currentSpeed = walkSpeed;   // 기본 이동 속도 유지
+
+                currentStamina += staminaDrainRate * Time.deltaTime;
+                if (currentStamina > maxStamina)
+                {
+                    currentStamina = maxStamina;
+                }
             }
+
+            // 애니메이션 속도 적용
+            float speedNormalized = moveDirection.magnitude > 0.1f ? GetCurrentSpeedNormalized() : 0f;
+            animator.SetFloat("Speed", speedNormalized);
         }
 
         /// <summary>
@@ -139,8 +143,27 @@ namespace KJ.Player
         /// </summary>
         private void Jump()
         {
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse); // 순간적인 힘(Impulse)로 점프 적용
+            if (isJumping) return; // 이미 점프 중이면 실행 안 함
+
+            isJumping = true; // 점프 상태 시작
+            isGrounded = false; // 점프 상태 변경
+
+            // 애니메이션 실행 (이제 점프 동작은 애니메이션 이벤트에서 실행됨)
+            animator.SetTrigger("Jump");
         }
+
+        /// <summary>
+        /// 애니메이션 이벤트에서 호출하여 점프 실행
+        /// </summary>
+        public void OnJumpStart()
+        {
+            // 점프 직전 Y축 속도를 0으로 초기화하여 즉각적인 반응을 보장
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+
+            // 실제 점프 실행
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, rb.linearVelocity.z);
+        }
+
 
         /// <summary>
         /// 플레이어가 지면에 있는지 체크하는 함수 (Raycast 사용)
@@ -148,49 +171,36 @@ namespace KJ.Player
         private void CheckGround()
         {
             RaycastHit hit;
-            float rayLength = 1.1f; // 바닥 감지 거리 설정 (캐릭터의 높이에 맞게 조정 필요)
+            float rayLength = 1.1f; // 바닥 감지 거리 설정
 
-            // 바닥을 향해 Raycast를 쏘고, groundLayer에 맞닿아 있으면 지면에 있다고 판정
             if (Physics.Raycast(transform.position, Vector3.down, out hit, rayLength, groundLayer))
             {
                 isGrounded = true;
+                isJumping = false; // 착지하면 점프 상태 해제
+                animator.SetBool("isGrounded", true);
             }
             else
             {
                 isGrounded = false;
+                animator.SetBool("isGrounded", false);
             }
         }
 
         private void DrainStamina()
         {
-            currentStamina -= staminaDrainRate * Time.deltaTime;
             if (currentStamina <= 0)
             {
                 currentStamina = 0;   // 스태미나가 0 이하로 내려가지 않도록 제한
             }
-        }
-
-        private void RegenerateStamina()
-        {
-            if (!Input.GetKey(KeyCode.LeftShift))   // 달리지 않을 때만 회복
+            else
             {
-                currentStamina += staminaDrainRate * Time.deltaTime;
-                if (currentStamina > maxStamina)
-                {
-                    currentStamina = maxStamina;
-                }
+                currentStamina -= staminaDrainRate * Time.deltaTime;
             }
         }
 
-        /// <summary>
-        /// 아이템 사용 시 호출되는 메서드 ( Inventory의 UseItem() 호출 )
-        /// </summary>
-        public void ItemUse()
+        public float GetCurrentSpeedNormalized()
         {
-            if (inventory != null)
-            {
-                inventory.UseItem();   // 인벤토리에 있는 UseItem
-            }
+            return currentSpeed / runSpeed;
         }
     }
 }

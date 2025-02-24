@@ -5,34 +5,31 @@ namespace KJ.CameraSystem
 {
     public class CameraController : MonoBehaviour
     {
-        [SerializeField] private Transform target; // 카메라가 따라갈 플레이어
-        [SerializeField] private Vector3 offset = new Vector3(0, 2, -4); // 카메라 위치 오프셋 (살짝 위, 뒤쪽)
-        [SerializeField] private float followSpeed = 5f; // 플레이어 따라가는 속도
-        [SerializeField] private float rotationSpeed = 5f; // 카메라 회전 속도
-        [SerializeField] private float mouseSensitivity = 2.0f; // 마우스 감도
-        private float pitch = 0.0f; // 위아래 각도
-        private float yaw = 0.0f; // 좌우 회전값
-        private float minPitch = -30f; // 위아래 최소 각도
-        private float maxPitch = 60f; // 위아래 최대 각도
-        private Transform playerBody; // 플레이어 본체 회전용
-        private CharacterController controller; // 플레이어 이동 컨트롤러
+        [SerializeField] private Transform playerBody; // 플레이어 캐릭터
+        [SerializeField] private Vector3 offset = new Vector3(0, 2, -4); // 카메라 오프셋
+        [SerializeField] private float followSpeed = 10f; // 카메라 따라가는 속도
+        [SerializeField] private float mouseSensitivity = 3.5f; // 마우스 감도
+        [SerializeField] private float moveSpeed = 6.5f; // 플레이어 이동 속도
 
-        [SerializeField] private float moveSpeed = 5f; // 플레이어 이동 속도
+        private float pitch = 0.0f;
+        private float yaw = 0.0f;
+        private const float minPitch = -10f;
+        private const float maxPitch = 45f;
+
+        private CharacterController controller;
 
         private void Start()
         {
-            Cursor.lockState = CursorLockMode.Locked; // 마우스 커서 고정
-            Cursor.visible = false; // 마우스 숨김
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
 
-            // 포톤을 이용해 로컬 플레이어 찾기
             foreach (GameObject player in GameObject.FindGameObjectsWithTag("Player"))
             {
                 PhotonView pv = player.GetComponent<PhotonView>();
                 if (pv != null && pv.IsMine)
                 {
-                    target = player.transform;
                     playerBody = player.transform;
-                    controller = player.GetComponent<CharacterController>(); // 플레이어 이동 제어할 컨트롤러 가져오기
+                    controller = player.GetComponent<CharacterController>();
                     break;
                 }
             }
@@ -40,49 +37,36 @@ namespace KJ.CameraSystem
 
         private void Update()
         {
-            if (target == null) return;
+            if (playerBody == null) return;
 
-            HandleMouseLook(); // 마우스 입력 처리
-            HandleMovement(); // 플레이어 이동 처리
+            HandleMouseLook();
+            HandleMovement();
         }
 
         private void LateUpdate()
         {
-            if (target == null) return;
+            if (playerBody == null) return;
 
-            RotateCamera(); // 카메라 회전 처리
-            MoveCamera(); // 카메라 이동 처리
+            MoveCamera(); // 카메라가 플레이어를 부드럽게 따라가도록 설정
         }
 
         private void HandleMouseLook()
         {
-            // 마우스 움직임을 감지하여 자동으로 카메라를 회전
             float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
             float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
 
-            yaw += mouseX; // 좌우 회전 적용
-            pitch -= mouseY; // 위아래 반전 (반대로 적용)
-            pitch = Mathf.Clamp(pitch, minPitch, maxPitch); // 위아래 각도 제한
-        }
+            yaw += mouseX;
+            pitch -= mouseY;
+            pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
 
-        private void RotateCamera()
-        {
-            // 카메라의 회전값 적용
-            Quaternion targetRotation = Quaternion.Euler(pitch, yaw, 0);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
-
-            // 플레이어 방향도 자동으로 변경
-            if (playerBody != null)
-            {
-                Quaternion playerTargetRotation = Quaternion.Euler(0, yaw, 0);
-                playerBody.rotation = Quaternion.Slerp(playerBody.rotation, playerTargetRotation, Time.deltaTime * rotationSpeed);
-            }
+            // 카메라 회전 (플레이어는 회전하지 않음)
+            transform.rotation = Quaternion.Euler(pitch, yaw, 0);
         }
 
         private void MoveCamera()
         {
-            // 목표 위치 = 플레이어 위치 + 회전된 오프셋
-            Vector3 targetPosition = target.position + transform.rotation * offset;
+            // 카메라를 플레이어 위치 + 오프셋으로 이동 (부드럽게 따라가도록 Lerp 적용)
+            Vector3 targetPosition = playerBody.position + transform.rotation * offset;
             transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * followSpeed);
         }
 
@@ -90,13 +74,14 @@ namespace KJ.CameraSystem
         {
             if (controller == null) return;
 
-            float horizontal = Input.GetAxis("Horizontal"); // A, D 키 (좌우)
-            float vertical = Input.GetAxis("Vertical"); // W, S 키 (앞뒤)
+            float horizontal = Input.GetAxis("Horizontal");
+            float vertical = Input.GetAxis("Vertical");
 
+            // 카메라가 바라보는 방향 기준으로 이동
             Vector3 moveDirection = transform.forward * vertical + transform.right * horizontal;
-            moveDirection.y = 0; // 점프 기능이 없으므로 y축 이동 제거
+            moveDirection.y = 0;
 
-            if (moveDirection.magnitude > 0.1f) // 입력이 있을 때만 이동
+            if (moveDirection.magnitude > 0.1f)
             {
                 controller.Move(moveDirection.normalized * moveSpeed * Time.deltaTime);
             }
