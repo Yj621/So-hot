@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections.Generic;
+using System.Linq;
 
 public class ReadyManager : MonoBehaviourPunCallbacks
 {
@@ -54,30 +55,40 @@ public class ReadyManager : MonoBehaviourPunCallbacks
 
     private void AssignPlayerSlot()
     {
-        int index = 0;
+        List<int> usedSlots = new List<int>();
+
+        // 이미 사용 중인 슬롯 찾기
         foreach (Player player in PhotonNetwork.PlayerList)
         {
-            if (!player.CustomProperties.ContainsKey("PlayerSlot"))
+            if (player.CustomProperties.ContainsKey("PlayerSlot"))
             {
-                player.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "PlayerSlot", index } });
-
-                //Dictionary에 해당 슬롯을 미리 추가하여 안전하게 접근할 수 있도록 함
-                playerCharacterIndex[index] = 0;
-                playerReadyState[index] = false;
-
-                index++;
+                usedSlots.Add((int)player.CustomProperties["PlayerSlot"]);
             }
+        }
+
+        // 비어있는 슬롯 찾기
+        int assignedSlot = -1;
+        for (int i = 0; i < 4; i++)
+        {
+            if (!usedSlots.Contains(i))
+            {
+                assignedSlot = i;
+                break;
+            }
+        }
+
+        if (assignedSlot != -1)
+        {
+            PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "PlayerSlot", assignedSlot } });
+
+            playerCharacterIndex[assignedSlot] = 0;
+            playerReadyState[assignedSlot] = false;
         }
     }
 
 
     private void SetupUI()
     {
-        foreach (var slot in characterSlots)
-        {
-            slot.SetActive(false);
-        }
-
         if (PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("PlayerSlot"))
         {
             mySlot = (int)PhotonNetwork.LocalPlayer.CustomProperties["PlayerSlot"];
@@ -190,15 +201,16 @@ public class ReadyManager : MonoBehaviourPunCallbacks
 
     private void UpdateCharacterDisplay()
     {
-        for (int slot = 0; slot < 4; slot++) // 모든 플레이어의 캐릭터 UI를 갱신
+        for (int slot = 0; slot < 4; slot++) // 모든 플레이어의 캐릭터 UI 갱신
         {
             if (!playerCharacterIndex.ContainsKey(slot))
             {
                 playerCharacterIndex[slot] = -1;
             }
 
-            // ??? 상태 유지
-            blackCharacters[slot].SetActive(playerCharacterIndex[slot] == -1);
+            // 슬롯이 비어 있으면 ??? 표시
+            bool isSlotEmpty = !PhotonNetwork.PlayerList.Any(p => p.CustomProperties.ContainsKey("PlayerSlot") && (int)p.CustomProperties["PlayerSlot"] == slot);
+            blackCharacters[slot].SetActive(isSlotEmpty);
 
             // 기존 캐릭터 비활성화
             if (currentCharacters.ContainsKey(slot) && currentCharacters[slot] != null)
@@ -208,12 +220,15 @@ public class ReadyManager : MonoBehaviourPunCallbacks
 
             // 새로운 캐릭터 표시
             GameObject selectedCharacter = null;
-            switch (slot)
+            if (!isSlotEmpty && playerCharacterIndex[slot] != -1)
             {
-                case 0: if (playerCharacterIndex[slot] != -1) selectedCharacter = p1Characters[playerCharacterIndex[slot]]; break;
-                case 1: if (playerCharacterIndex[slot] != -1) selectedCharacter = p2Characters[playerCharacterIndex[slot]]; break;
-                case 2: if (playerCharacterIndex[slot] != -1) selectedCharacter = p3Characters[playerCharacterIndex[slot]]; break;
-                case 3: if (playerCharacterIndex[slot] != -1) selectedCharacter = p4Characters[playerCharacterIndex[slot]]; break;
+                switch (slot)
+                {
+                    case 0: selectedCharacter = p1Characters[playerCharacterIndex[slot]]; break;
+                    case 1: selectedCharacter = p2Characters[playerCharacterIndex[slot]]; break;
+                    case 2: selectedCharacter = p3Characters[playerCharacterIndex[slot]]; break;
+                    case 3: selectedCharacter = p4Characters[playerCharacterIndex[slot]]; break;
+                }
             }
 
             if (selectedCharacter != null)
@@ -224,10 +239,11 @@ public class ReadyManager : MonoBehaviourPunCallbacks
 
             // UI 업데이트
             characterDisplay.sprite = (playerCharacterIndex[mySlot] == -1)
-            ? unknownCharacterSprite
-            : characterImages[playerCharacterIndex[mySlot]];
+                ? unknownCharacterSprite
+                : characterImages[playerCharacterIndex[mySlot]];
         }
     }
+
 
 
 
