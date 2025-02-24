@@ -9,14 +9,15 @@ namespace KJ.Player
         private float heatGauge = 0f;
         private float maxHeat = 100f;
         private float heatIncreaseRate = 10f;
+        private float heatDecreaseRate = 5f; // 불이 없을 때 감소 속도
         private float reviveDelay = 5f; // 부활 대기 시간
 
         private bool hasFire = false; // 불을 들고 있는지 여부
         private bool isDead = false; // 플레이어 사망 여부
 
         private PlayerAnimationController animationController;
-        private PlayerMovement playerMovement; // 이동 컴포넌트
-        private Rigidbody rb; // 리지드바디 참조
+        private PlayerMovement playerMovement;
+        private Rigidbody rb;
 
         private void Awake()
         {
@@ -38,6 +39,10 @@ namespace KJ.Player
             if (hasFire && !gaugePause)
             {
                 IncreaseHeat(Time.deltaTime * heatIncreaseRate);
+            }
+            else if (!hasFire && heatGauge > 0) // 불이 없을 때 게이지 감소
+            {
+                DecreaseHeat(Time.deltaTime * heatDecreaseRate);
             }
 
             if (Input.GetKeyDown(KeyCode.Y))
@@ -65,7 +70,7 @@ namespace KJ.Player
         /// </summary>
         private void IncreaseHeat(float amount)
         {
-            if (!hasFire || isDead) return; // 불이 없거나 이미 죽은 경우 증가 X
+            if (!hasFire || isDead) return;
 
             heatGauge += amount;
             heatGauge = Mathf.Clamp(heatGauge, 0, maxHeat);
@@ -76,6 +81,16 @@ namespace KJ.Player
             {
                 Overheat();
             }
+        }
+
+        /// <summary>
+        /// 뜨거움 게이지 감소 (불을 들고 있지 않을 때만)
+        /// </summary>
+        private void DecreaseHeat(float amount)
+        {
+            heatGauge -= amount;
+            heatGauge = Mathf.Clamp(heatGauge, 0, maxHeat);
+            Debug.Log($"현재 뜨거움 게이지: {heatGauge}");
         }
 
         /// <summary>
@@ -112,12 +127,12 @@ namespace KJ.Player
         /// </summary>
         private IEnumerator Revive()
         {
-            yield return new WaitForSeconds(reviveDelay); // 부활 대기
+            yield return new WaitForSeconds(reviveDelay);
 
             isDead = false;
-            heatGauge = 0; // 게이지 초기화
+            heatGauge = 0;
             gaugePause = false;
-            hasFire = false; // 불 내려놓기
+            hasFire = false;
 
             Debug.Log("플레이어가 부활했습니다! (불 없음)");
 

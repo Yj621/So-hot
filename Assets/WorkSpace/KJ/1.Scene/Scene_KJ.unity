@@ -455,10 +455,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3a2b27c2c177f14cac3f72a2c5cefcc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 543450652012242643}
-  offset: {x: 0, y: 2, z: -5}
-  followSpeed: 5
-  rotationSpeed: 5
+  playerBody: {fileID: 0}
+  offset: {x: 0, y: 2, z: -4}
+  followSpeed: 10
   mouseSensitivity: 2
   moveSpeed: 5
 --- !u!114 &417863430
@@ -505,11 +504,6 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
---- !u!4 &543450652012242643 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7582799063638328077, guid: d4b030af034ca2b4688d41c0ee6c5df0, type: 3}
-  m_PrefabInstance: {fileID: 6931311138658331595}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &543450652012242651 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6355099782688522986, guid: d4b030af034ca2b4688d41c0ee6c5df0, type: 3}
@@ -530,9 +524,17 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 221851168480198584, guid: d4b030af034ca2b4688d41c0ee6c5df0, type: 3}
+      propertyPath: m_Avatar
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 221851168480198584, guid: d4b030af034ca2b4688d41c0ee6c5df0, type: 3}
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 9ba32c3812a9ae244825ef1f1d76e847, type: 2}
+    - target: {fileID: 221851168480198584, guid: d4b030af034ca2b4688d41c0ee6c5df0, type: 3}
+      propertyPath: m_WarningMessage
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 2573046728878114369, guid: d4b030af034ca2b4688d41c0ee6c5df0, type: 3}
       propertyPath: saveLife
       value: 0
@@ -592,6 +594,18 @@ PrefabInstance:
     - target: {fileID: 7582799063638328077, guid: d4b030af034ca2b4688d41c0ee6c5df0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8969284872685831322, guid: d4b030af034ca2b4688d41c0ee6c5df0, type: 3}
+      propertyPath: m_Constraints
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8969284872685831322, guid: d4b030af034ca2b4688d41c0ee6c5df0, type: 3}
+      propertyPath: m_Interpolate
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8969284872685831322, guid: d4b030af034ca2b4688d41c0ee6c5df0, type: 3}
+      propertyPath: m_CollisionDetection
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

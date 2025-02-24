@@ -1,5 +1,6 @@
 using UnityEngine;
 using Photon.Pun;
+using System.Collections;
 
 namespace KJ.Player
 {
@@ -28,7 +29,7 @@ namespace KJ.Player
         private bool isJumping = false;   // 점프 상태를 추적하는 변수 추가
 
         public bool IsGrounded => isGrounded;
-
+        
         void Start()
         {
             rb = GetComponent<Rigidbody>(); // Rigidbody 컴포넌트 가져오기
@@ -142,12 +143,27 @@ namespace KJ.Player
         /// </summary>
         private void Jump()
         {
-            isJumping = true; // 점프 상태 시작
+            if (isJumping) return; // 이미 점프 중이면 실행 안 함
 
-            // 점프 애니메이션과 점프 동작을 동시에 실행
+            isJumping = true; // 점프 상태 시작
+            isGrounded = false; // 점프 상태 변경
+
+            // 애니메이션 실행 (이제 점프 동작은 애니메이션 이벤트에서 실행됨)
             animator.SetTrigger("Jump");
+        }
+
+        /// <summary>
+        /// 애니메이션 이벤트에서 호출하여 점프 실행
+        /// </summary>
+        public void OnJumpStart()
+        {
+            // 점프 직전 Y축 속도를 0으로 초기화하여 즉각적인 반응을 보장
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+
+            // 실제 점프 실행
             rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, rb.linearVelocity.z);
         }
+
 
         /// <summary>
         /// 플레이어가 지면에 있는지 체크하는 함수 (Raycast 사용)
@@ -155,21 +171,19 @@ namespace KJ.Player
         private void CheckGround()
         {
             RaycastHit hit;
-            float rayLength = 1.1f; // 바닥 감지 거리 설정 (캐릭터의 높이에 맞게 조정 필요)
+            float rayLength = 1.1f; // 바닥 감지 거리 설정
 
-            // 바닥을 향해 Raycast를 쏘고, groundLayer에 맞닿아 있으면 지면에 있다고 판정
             if (Physics.Raycast(transform.position, Vector3.down, out hit, rayLength, groundLayer))
             {
                 isGrounded = true;
                 isJumping = false; // 착지하면 점프 상태 해제
+                animator.SetBool("isGrounded", true);
             }
             else
             {
                 isGrounded = false;
+                animator.SetBool("isGrounded", false);
             }
-
-            // 애니메이터에 isGrounded 상태 전달
-            animator.SetBool("isGrounded", isGrounded);
         }
 
         private void DrainStamina()
