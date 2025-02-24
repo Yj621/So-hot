@@ -7,6 +7,8 @@ using System.Linq;
 
 public class ReadyManager : MonoBehaviourPunCallbacks
 {
+    public Donghyun.Network.NetWorkManager networkManager;
+
     public GameObject[] p1Characters; // P1 캐릭터 배열
     public GameObject[] p2Characters; // P2 캐릭터 배열
     public GameObject[] p3Characters; // P3 캐릭터 배열
@@ -33,10 +35,7 @@ public class ReadyManager : MonoBehaviourPunCallbacks
 
     private void Start()
     {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            AssignPlayerSlot();
-        }
+     
 
         SetupUI();
         BindButtonEvents();
@@ -53,86 +52,81 @@ public class ReadyManager : MonoBehaviourPunCallbacks
         UpdateCharacterDisplay();
     }
 
-    private void AssignPlayerSlot()
-    {
-        List<int> usedSlots = new List<int>();
 
-        // 이미 사용 중인 슬롯 찾기
-        foreach (Player player in PhotonNetwork.PlayerList)
-        {
-            if (player.CustomProperties.ContainsKey("PlayerSlot"))
-            {
-                usedSlots.Add((int)player.CustomProperties["PlayerSlot"]);
-            }
-        }
-
-        // 비어있는 슬롯 찾기
-        int assignedSlot = -1;
-        for (int i = 0; i < 4; i++)
-        {
-            if (!usedSlots.Contains(i))
-            {
-                assignedSlot = i;
-                break;
-            }
-        }
-
-        if (assignedSlot != -1)
-        {
-            PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "PlayerSlot", assignedSlot } });
-
-            playerCharacterIndex[assignedSlot] = 0;
-            playerReadyState[assignedSlot] = false;
-        }
-    }
 
 
     private void SetupUI()
     {
-        if (PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("PlayerSlot"))
+        mySlot = PhotonNetwork.LocalPlayer.ActorNumber - 1; // ActorNumber - 1을 mySlot으로 설정
+        Debug.Log($"[ReadyManager] {PhotonNetwork.LocalPlayer.NickName}의 PlayerSlot 설정 완료: {mySlot}");
+
+        if (!playerCharacterIndex.ContainsKey(mySlot))
         {
-            mySlot = (int)PhotonNetwork.LocalPlayer.CustomProperties["PlayerSlot"];
-            Debug.Log($"[ReadyManager] {PhotonNetwork.LocalPlayer.NickName}이(가) {mySlot + 1}P로 설정됨.");
-            blackCharacters[mySlot].SetActive(true);
+            playerCharacterIndex[mySlot] = 0; // 기본 캐릭터 인덱스 설정
         }
 
+        blackCharacters[mySlot].SetActive(true);
         UpdateCharacterDisplay();
     }
 
+
     private void BindButtonEvents()
     {
-        if (leftArrowButton != null)
+        Debug.Log($"[ReadyManager] BindButtonEvents() 실행됨 (현재 mySlot: {mySlot})");
+
+        if (leftArrowButton == null || rightArrowButton == null || readyButton == null || cancelButton == null)
         {
-            leftArrowButton.onClick.AddListener(() => OnLeftArrow());
-            Debug.Log("[ReadyManager] 왼쪽 화살표 버튼 이벤트 등록됨.");
+            Debug.LogError("[ReadyManager] 버튼이 할당되지 않았습니다! Inspector에서 확인하세요.");
+            return;
         }
 
-        if (rightArrowButton != null)
-        {
-            rightArrowButton.onClick.AddListener(() => OnRightArrow());
-            Debug.Log("[ReadyManager] 오른쪽 화살표 버튼 이벤트 등록됨.");
-        }
+        // 기존 이벤트 제거 후 다시 등록 (중복 방지)
+        leftArrowButton.onClick.RemoveAllListeners();
+        rightArrowButton.onClick.RemoveAllListeners();
+        readyButton.onClick.RemoveAllListeners();
+        cancelButton.onClick.RemoveAllListeners();
 
-        if (readyButton != null)
+        leftArrowButton.onClick.AddListener(() =>
         {
-            readyButton.onClick.AddListener(() => OnSelect(mySlot));
-            Debug.Log("[ReadyManager] 레디 버튼 이벤트 등록됨.");
-        }
+            Debug.Log($"[ReadyManager] 왼쪽 버튼 클릭 (mySlot: {mySlot})");
+            OnLeftArrow();
+        });
 
-        if (cancelButton != null)
+        rightArrowButton.onClick.AddListener(() =>
         {
-            cancelButton.onClick.AddListener(() => OnCancel(mySlot));
-            Debug.Log("[ReadyManager] 취소 버튼 이벤트 등록됨.");
-        }
+            Debug.Log($"[ReadyManager] 오른쪽 버튼 클릭 (mySlot: {mySlot})");
+            OnRightArrow();
+        });
+
+        readyButton.onClick.AddListener(() =>
+        {
+            Debug.Log($"[ReadyManager] 레디 버튼 클릭 (mySlot: {mySlot})");
+            OnSelect(mySlot);
+        });
+
+        cancelButton.onClick.AddListener(() =>
+        {
+            Debug.Log($"[ReadyManager] 취소 버튼 클릭 (mySlot: {mySlot})");
+            OnCancel(mySlot);
+        });
+
+        Debug.Log("[ReadyManager] 모든 버튼 이벤트가 성공적으로 등록됨.");
     }
+
 
 
     public void OnLeftArrow()
     {
-        if (!CanControl(mySlot)) return;
+        Debug.Log("1");
+        if (!CanControl(mySlot))
+        {
+            Debug.Log("2");
+            return;
+        }
 
         if (!playerCharacterIndex.ContainsKey(mySlot))
         {
+            Debug.Log("3");
             playerCharacterIndex[mySlot] = 0;
         }
 
@@ -201,26 +195,23 @@ public class ReadyManager : MonoBehaviourPunCallbacks
 
     private void UpdateCharacterDisplay()
     {
-        for (int slot = 0; slot < 4; slot++) // 모든 플레이어의 캐릭터 UI 갱신
+        for (int slot = 0; slot < 4; slot++) // 1P~4P 갱신
         {
             if (!playerCharacterIndex.ContainsKey(slot))
             {
-                playerCharacterIndex[slot] = -1;
+                playerCharacterIndex[slot] = 0; // 기본값 설정
             }
 
-            // 슬롯이 비어 있으면 ??? 표시
-            bool isSlotEmpty = !PhotonNetwork.PlayerList.Any(p => p.CustomProperties.ContainsKey("PlayerSlot") && (int)p.CustomProperties["PlayerSlot"] == slot);
+            bool isSlotEmpty = !PhotonNetwork.PlayerList.Any(p => p.ActorNumber - 1 == slot);
             blackCharacters[slot].SetActive(isSlotEmpty);
 
-            // 기존 캐릭터 비활성화
             if (currentCharacters.ContainsKey(slot) && currentCharacters[slot] != null)
             {
                 currentCharacters[slot].SetActive(false);
             }
 
-            // 새로운 캐릭터 표시
             GameObject selectedCharacter = null;
-            if (!isSlotEmpty && playerCharacterIndex[slot] != -1)
+            if (!isSlotEmpty && playerCharacterIndex.ContainsKey(slot))
             {
                 switch (slot)
                 {
@@ -237,15 +228,11 @@ public class ReadyManager : MonoBehaviourPunCallbacks
                 currentCharacters[slot] = selectedCharacter;
             }
 
-            // UI 업데이트
-            characterDisplay.sprite = (playerCharacterIndex[mySlot] == -1)
-                ? unknownCharacterSprite
-                : characterImages[playerCharacterIndex[mySlot]];
+            characterDisplay.sprite = (playerCharacterIndex.ContainsKey(mySlot) && playerCharacterIndex[mySlot] != -1)
+                ? characterImages[playerCharacterIndex[mySlot]]
+                : unknownCharacterSprite;
         }
     }
-
-
-
 
 
     public void ChangeControlToNextPlayer()
@@ -259,8 +246,7 @@ public class ReadyManager : MonoBehaviourPunCallbacks
 
     private bool CanControl(int slot)
     {
-        return PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("PlayerSlot") &&
-               (int)PhotonNetwork.LocalPlayer.CustomProperties["PlayerSlot"] == slot;
+        return slot == PhotonNetwork.LocalPlayer.ActorNumber - 1;
     }
 
     [PunRPC]

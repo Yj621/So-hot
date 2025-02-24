@@ -55,7 +55,7 @@ namespace Donghyun.Network
                 }
             }
 
-                PhotonNetwork.SendRate = 40; //포톤이 서버와 통신하는 빈도
+            PhotonNetwork.SendRate = 40; //포톤이 서버와 통신하는 빈도
             PhotonNetwork.SerializationRate = 20; //객체 상태 업데이트 빈도(트랜스폼, etc...)
 
             startButton = startButtonObj.GetComponent<Button>();
@@ -109,7 +109,7 @@ namespace Donghyun.Network
 
         public override void OnDisconnected(DisconnectCause cause)
         {
-            
+
         }
 
         //방에서 완전히 떠난 뒤 실행
@@ -125,31 +125,26 @@ namespace Donghyun.Network
             Debug.Log("LobbyScene - 인원 입장");
 
             RoomRenewal();
-            SetPlayerUI(playerUIs[newPlayer.ActorNumber-1], newPlayer.NickName, newPlayer.IsMasterClient);
+            SetPlayerUI(playerUIs[newPlayer.ActorNumber - 1], newPlayer.NickName, newPlayer.IsMasterClient);
             players[newPlayer.ActorNumber - 1].SetActive(true);
         }
 
         //누군가 방을 떠날때
         public override void OnPlayerLeftRoom(Player otherPlayer)
         {
-            Debug.Log("LobbyScene - 인원 퇴장");
+            Debug.Log($"LobbyScene - {otherPlayer.NickName} 퇴장 (ActorNumber: {otherPlayer.ActorNumber})");
+
+            int slotIndex = otherPlayer.ActorNumber - 1;
+            players[slotIndex].SetActive(false);
 
             pv.RPC("SetStartButton", RpcTarget.MasterClient);
             RoomRenewal();
             UserRenewal();
-
-            players[otherPlayer.ActorNumber-1].SetActive(false);
-
-            if (master())
-            {
-                startButtonObj.SetActive(true);
-                readyButtonObj.SetActive(false);
-            }
         }
 
 
         //방 정보 갱신
-        public void RoomRenewal() 
+        public void RoomRenewal()
         {
             Debug.Log("LobbyScene - 방 정보 갱신");
             playerNumText.text = string.Format("{0} / {1}", PhotonNetwork.CurrentRoom.PlayerCount, PhotonNetwork.CurrentRoom.MaxPlayers); //전체 플레이어 수
@@ -163,9 +158,9 @@ namespace Donghyun.Network
                 Debug.Log(PhotonNetwork.CurrentRoom.Players[i].ActorNumber);
                 int index = PhotonNetwork.CurrentRoom.Players[i].ActorNumber;
 
-                SetPlayerUI(playerUIs[index-1], PhotonNetwork.CurrentRoom.Players[index].NickName, PhotonNetwork.CurrentRoom.Players[index].IsMasterClient);
+                SetPlayerUI(playerUIs[index - 1], PhotonNetwork.CurrentRoom.Players[index].NickName, PhotonNetwork.CurrentRoom.Players[index].IsMasterClient);
 
-                players[index-1].SetActive(true);
+                players[index - 1].SetActive(true);
             }
         }
 
@@ -180,11 +175,12 @@ namespace Donghyun.Network
 
 
             //본인은 빨간색
-            if(name == PhotonNetwork.LocalPlayer.NickName)
+            if (name == PhotonNetwork.LocalPlayer.NickName)
             {
                 ui.SetNickNameColor(Color.red);
             }
-            else{
+            else
+            {
                 ui.SetNickNameColor(Color.white);
             }
 
@@ -242,7 +238,7 @@ namespace Donghyun.Network
         [PunRPC]
         public void SetStartButton()
         {
-            if((int)ht["ReadyPlayer"] > 1)
+            if ((int)ht["ReadyPlayer"] > 1)
             {
                 startButton.interactable = true;
             }
