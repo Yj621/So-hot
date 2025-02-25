@@ -14,7 +14,9 @@ namespace KJ.Player
         public List<GameObject> effectList;
         public PhotonView photonView;
         public Coroutine unlimitRunCoroutine; 
-        public Coroutine gaugeStopCoroutine; 
+        public Coroutine gaugeStopCoroutine;
+
+        private Inventory inventory;
 
         private void Awake()
         {
@@ -23,7 +25,27 @@ namespace KJ.Player
             hotgauge = GetComponent<Hotgauge>();
             animationController = GetComponent<PlayerAnimationController>();
             photonView = GetComponent<PhotonView>();
+        }
 
+        void Start()
+        {
+            inventory = FindAnyObjectByType<Inventory>();
+        }
+
+        void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.G))
+            {
+                ItemUse();
+            }
+        }
+
+        public void ItemUse()
+        {
+            if (inventory != null)
+            {
+                inventory.UseItem();
+            }
         }
     }
 }

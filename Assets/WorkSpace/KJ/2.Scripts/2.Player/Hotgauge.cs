@@ -9,15 +9,18 @@ namespace KJ.Player
         private float heatGauge = 0f;
         private float maxHeat = 100f;
         private float heatIncreaseRate = 10f;
-        private float heatDecreaseRate = 5f; // ºÒÀÌ ¾øÀ» ¶§ °¨¼Ò ¼Óµµ
-        private float reviveDelay = 5f; // ºÎÈ° ´ë±â ½Ã°£
+        private float heatDecreaseRate = 5f;
+        private float reviveDelay = 5f;
 
-        private bool hasFire = false; // ºÒÀ» µé°í ÀÖ´ÂÁö ¿©ºÎ
-        private bool isDead = false; // ÇÃ·¹ÀÌ¾î »ç¸Á ¿©ºÎ
+        private bool hasFire = false;
+        private bool isDead = false;
 
         private PlayerAnimationController animationController;
         private PlayerMovement playerMovement;
         private Rigidbody rb;
+
+        [Header("UI ì„¤ì •")]
+        [SerializeField] private KJ.UI.HotgaugeUIController hotUI; // ëœ¨ê±°ì›€ ê²Œì´ì§€ UI ì»¨íŠ¸ë¡¤ëŸ¬ ì¶”ê°€
 
         private void Awake()
         {
@@ -26,11 +29,15 @@ namespace KJ.Player
             rb = GetComponent<Rigidbody>();
         }
 
+        private void Start()
+        {
+            UpdateHotUI(); // UI ì´ˆê¸°ê°’ ì„¤ì •
+        }
+
         private void Update()
         {
-            if (isDead) return; // »ç¸Á »óÅÂ¿¡¼­´Â ÀÔ·ÂÀ» Ã³¸®ÇÏÁö ¾ÊÀ½
+            if (isDead) return;
 
-            // F Å°¸¦ ´©¸£¸é ºÒÀ» µé°í ÀÖ´Â »óÅÂ Åä±Û (Å×½ºÆ®¿ë)
             if (Input.GetKeyDown(KeyCode.F))
             {
                 ToggleFire();
@@ -40,7 +47,7 @@ namespace KJ.Player
             {
                 IncreaseHeat(Time.deltaTime * heatIncreaseRate);
             }
-            else if (!hasFire && heatGauge > 0) // ºÒÀÌ ¾øÀ» ¶§ °ÔÀÌÁö °¨¼Ò
+            else if (!hasFire && heatGauge > 0)
             {
                 DecreaseHeat(Time.deltaTime * heatDecreaseRate);
             }
@@ -56,18 +63,12 @@ namespace KJ.Player
             }
         }
 
-        /// <summary>
-        /// ºÒÀ» µé°í ÀÖ´Â »óÅÂ¸¦ Åä±Û (Å×½ºÆ®¿ë)
-        /// </summary>
         private void ToggleFire()
         {
             hasFire = !hasFire;
-            Debug.Log($"ºÒ »óÅÂ º¯°æ: {(hasFire ? "ºÒÀ» µé°í ÀÖÀ½" : "ºÒ ¾øÀ½")}");
+            Debug.Log($"ë¶ˆ ìƒíƒœ ë³€ê²½: {(hasFire ? "ë¶ˆì„ ë“¤ê³  ìˆìŒ" : "ë¶ˆ ì—†ìŒ")}");
         }
 
-        /// <summary>
-        /// ¶ß°Å¿ò °ÔÀÌÁö Áõ°¡ (ºÒÀ» µé°í ÀÖÀ» ¶§¸¸)
-        /// </summary>
         private void IncreaseHeat(float amount)
         {
             if (!hasFire || isDead) return;
@@ -75,7 +76,8 @@ namespace KJ.Player
             heatGauge += amount;
             heatGauge = Mathf.Clamp(heatGauge, 0, maxHeat);
 
-            Debug.Log($"ÇöÀç ¶ß°Å¿ò °ÔÀÌÁö: {heatGauge}");
+            Debug.Log($"í˜„ì¬ ëœ¨ê±°ì›€ ê²Œì´ì§€: {heatGauge}");
+            UpdateHotUI();
 
             if (heatGauge >= maxHeat)
             {
@@ -83,48 +85,33 @@ namespace KJ.Player
             }
         }
 
-        /// <summary>
-        /// ¶ß°Å¿ò °ÔÀÌÁö °¨¼Ò (ºÒÀ» µé°í ÀÖÁö ¾ÊÀ» ¶§¸¸)
-        /// </summary>
         private void DecreaseHeat(float amount)
         {
             heatGauge -= amount;
             heatGauge = Mathf.Clamp(heatGauge, 0, maxHeat);
-            Debug.Log($"ÇöÀç ¶ß°Å¿ò °ÔÀÌÁö: {heatGauge}");
+            Debug.Log($"í˜„ì¬ ëœ¨ê±°ì›€ ê²Œì´ì§€: {heatGauge}");
+            UpdateHotUI();
         }
 
-        /// <summary>
-        /// °ú¿­ Ã³¸® (°ÔÀÌÁö ÃÖ´ëÄ¡ µµ´Ş)
-        /// </summary>
         private void Overheat()
         {
             gaugePause = true;
-            Debug.Log("ÇÃ·¹ÀÌ¾î°¡ °ú¿­µÇ¾ú½À´Ï´Ù.");
-            Die(); // °ú¿­ ½Ã »ç¸Á Ã³¸®
+            Debug.Log("í”Œë ˆì´ì–´ê°€ ê³¼ì—´ë˜ì—ˆìŠµë‹ˆë‹¤.");
+            Die();
         }
 
-        /// <summary>
-        /// ÇÃ·¹ÀÌ¾î »ç¸Á Ã³¸®
-        /// </summary>
         private void Die()
         {
             isDead = true;
-            Debug.Log("ÇÃ·¹ÀÌ¾î°¡ »ç¸ÁÇß½À´Ï´Ù.");
+            Debug.Log("í”Œë ˆì´ì–´ê°€ ì‚¬ë§í–ˆìŠµë‹ˆë‹¤.");
 
-            // ÀÌµ¿ ºÒ°¡ Ã³¸®
             playerMovement.enabled = false;
             rb.isKinematic = true;
 
-            // »ç¸Á ¾Ö´Ï¸ŞÀÌ¼Ç ½ÇÇà
             animationController?.PlayDeathAnimation();
-
-            // ÀÏÁ¤ ½Ã°£ ÈÄ ºÎÈ°
             StartCoroutine(Revive());
         }
 
-        /// <summary>
-        /// ÀÏÁ¤ ½Ã°£ ÈÄ ºÎÈ°ÇÏ´Â ÄÚ·çÆ¾
-        /// </summary>
         private IEnumerator Revive()
         {
             yield return new WaitForSeconds(reviveDelay);
@@ -134,30 +121,35 @@ namespace KJ.Player
             gaugePause = false;
             hasFire = false;
 
-            Debug.Log("ÇÃ·¹ÀÌ¾î°¡ ºÎÈ°Çß½À´Ï´Ù! (ºÒ ¾øÀ½)");
+            Debug.Log("í”Œë ˆì´ì–´ê°€ ë¶€í™œí–ˆìŠµë‹ˆë‹¤! (ë¶ˆ ì—†ìŒ)");
 
-            // ÀÌµ¿ °¡´É Ã³¸®
             playerMovement.enabled = true;
             rb.isKinematic = false;
 
-            // ºÎÈ° ¾Ö´Ï¸ŞÀÌ¼Ç ½ÇÇà
             animationController?.PlayReviveAnimation();
+            UpdateHotUI();
         }
 
-        /// <summary>
-        /// ¶ß°Å¿ò °ÔÀÌÁö ÃÊ±âÈ­ (»ç¸ÁÇÑ °æ¿ì ¸®½ºÆù ºÒ°¡)
-        /// </summary>
         private void ResetHeat()
         {
             if (isDead)
             {
-                Debug.Log("»ç¸ÁÇÑ »óÅÂ¿¡¼­´Â °ÔÀÌÁö¸¦ ÃÊ±âÈ­ÇÒ ¼ö ¾ø½À´Ï´Ù.");
+                Debug.Log("ì‚¬ë§í•œ ìƒíƒœì—ì„œëŠ” ê²Œì´ì§€ë¥¼ ì´ˆê¸°í™”í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
                 return;
             }
 
             heatGauge = 0;
             gaugePause = false;
-            Debug.Log("°ÔÀÌÁö ÃÊ±âÈ­µÊ, ´Ù½Ã ½ÃÀÛ °¡´É.");
+            Debug.Log("ê²Œì´ì§€ ì´ˆê¸°í™”ë¨, ë‹¤ì‹œ ì‹œì‘ ê°€ëŠ¥.");
+            UpdateHotUI();
+        }
+
+        private void UpdateHotUI()
+        {
+            if (hotUI != null)
+            {
+                hotUI.UpdateHotUI(heatGauge, maxHeat);
+            }
         }
     }
 }
