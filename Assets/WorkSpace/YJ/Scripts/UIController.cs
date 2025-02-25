@@ -30,13 +30,13 @@ namespace YJ.UI
             {
                 if (escUI != null)
                 {
-                    escUI.SetActive(!escUI.activeSelf); // í˜„ì¬ ìƒíƒœì˜ ë°˜ëŒ€ë¡œ ì„¤ì •
+                    escUI.SetActive(!escUI.activeSelf); // ÇöÀç »óÅÂÀÇ ¹İ´ë·Î ¼³Á¤
                 }
             }
         }
 
- 
-        //Sound ë²„íŠ¼ ê´€ë ¨ í•¨ìˆ˜
+
+        //Sound ¹öÆ° °ü·Ã ÇÔ¼ö
         public void OnClickSound()
         {
             soundUI.SetActive(true);
@@ -47,10 +47,10 @@ namespace YJ.UI
             soundUI.SetActive(false);
         }
 
-        // Quitë²„íŠ¼ ê´€ë ¨ í•¨ìˆ˜
+        // Quit¹öÆ° °ü·Ã ÇÔ¼ö
         public void OnClickQuit()
         {
-            //ì¢…ë£Œ í™•ì¸ ui í™œì„±í™”
+            //Á¾·á È®ÀÎ ui È°¼ºÈ­
             quitUI.SetActive(true);
         }
 

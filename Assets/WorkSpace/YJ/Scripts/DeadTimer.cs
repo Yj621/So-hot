@@ -1,61 +1,63 @@
-ï»¿using System.Collections;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 
-public class DeadTimer : MonoBehaviour
+namespace YJ.Timer
 {
-    [SerializeField] private float initialTime = 15.0f; // ì´ˆê¸° ì‹œê°„
-    private float time;
-    public TextMeshProUGUI timerText;
-
-    void Start()
+    public class DeadTimer : MonoBehaviour
     {
-        
-    }
+        [SerializeField] private float initialTime = 15.0f; // ÃÊ±â ½Ã°£
+        private float time;
+        public TextMeshProUGUI timerText;
 
-    private void OnEnable()
-    {
-        ResetTimer();
-    }
-
-    private void ResetTimer()
-    {
-        StopAllCoroutines(); // í˜„ì¬ ì‹¤í–‰ ì¤‘ì¸ ì½”ë£¨í‹´ ì¤‘ì§€
-        time = initialTime; // ì‹œê°„ì„ ì´ˆê¸°ê°’ìœ¼ë¡œ ì„¤ì •
-        timerText.color = new Color32(0x5A, 0x58, 0x55, 0xFF); //í°íŠ¸ ìƒ‰ ì›ë˜ëŒ€ë¡œ
-        StartTimer(); // íƒ€ì´ë¨¸ ë‹¤ì‹œ ì‹œì‘
-    }
-
-    private void StartTimer()
-    {
-        StartCoroutine(Countdown());
-    }
-
-    private IEnumerator Countdown()
-    {
-        while (time > 0)
+        void Start()
         {
-            int minutes = Mathf.FloorToInt(time / 60); // ë¶„ ê³„ì‚°
-            int seconds = Mathf.FloorToInt(time % 60); // ì´ˆ ê³„ì‚°
-            timerText.text = $"{minutes:D2}:{seconds:D2}"; // ë‘ ìë¦¬ ë¶„:ì´ˆ í˜•ì‹
 
-            yield return new WaitForSeconds(1.0f);
-            time -= 1;
-
-            //3ì´ˆ ì´í•˜ë¶€í„° ë¹¨ê°„ ê¸€ì”¨ë¡œ
-            if(time < 4)
-            {
-                timerText.color = Color.red;
-            }
         }
-        // 0ì´ˆê°€ ë˜ì—ˆì„ë•Œ
-        timerText.text = "00:00";
-        TimerEnd();
+
+        private void OnEnable()
+        {
+            ResetTimer();
+        }
+
+        private void ResetTimer()
+        {
+            StopAllCoroutines(); // ÇöÀç ½ÇÇà ÁßÀÎ ÄÚ·çÆ¾ ÁßÁö
+            time = initialTime; // ½Ã°£À» ÃÊ±â°ªÀ¸·Î ¼³Á¤
+            timerText.color = new Color32(0x5A, 0x58, 0x55, 0xFF);
+            StartTimer(); // Å¸ÀÌ¸Ó ´Ù½Ã ½ÃÀÛ
+        }
+
+        private void StartTimer()
+        {
+            StartCoroutine(Countdown());
+        }
+
+        private IEnumerator Countdown()
+        {
+            while (time > 0)
+            {
+                int minutes = Mathf.FloorToInt(time / 60); // ºĞ °è»ê
+                int seconds = Mathf.FloorToInt(time % 60); // ÃÊ °è»ê
+                timerText.text = $"{minutes:D2}:{seconds:D2}"; // µÎ ÀÚ¸® ºĞ:ÃÊ Çü½Ä
+
+                yield return new WaitForSeconds(1.0f);
+                time -= 1;
+                if (time < 5)
+                {
+                    timerText.color = Color.red;
+                }
+            }
+            timerText.text = "00:00";
+            TimerEnd();
+        }
+
+        private void TimerEnd()
+        {
+            //ºÎÈ°½Ã Die Timer ºñÈ°¼ºÈ­
+            Debug.Log("Å¸ÀÌ¸Ó ³¡, ºÎÈ°");
+        }
     }
 
-    private void TimerEnd()
-    {
-        //ë¶€í™œì‹œ Die Timer ë¹„í™œì„±í™”
-        Debug.Log("íƒ€ì´ë¨¸ ë, ë¶€í™œ");
-    }
+
 }

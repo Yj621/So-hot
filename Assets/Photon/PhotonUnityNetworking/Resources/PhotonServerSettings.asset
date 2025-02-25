@@ -52,6 +52,9 @@ MonoBehaviour:
   - AddPlayerList
   - UpdatePlayerList
   - SetAllReadyState
+  - DestroyObject
+  - ItemEffectOff
+  - ItemEffectOn
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
