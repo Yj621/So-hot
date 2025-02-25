@@ -183,6 +183,12 @@ namespace KJ.Player
             }
         }
 
+        public void RecoverFullStamina()
+        {
+            currentStamina = maxStamina;
+            UpdateStaminaUI();
+        }
+
         public float GetCurrentSpeedNormalized()
         {
             return currentSpeed / runSpeed;
