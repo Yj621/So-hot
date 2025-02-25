@@ -35087,7 +35087,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 449b67b926bf8ec449e7373a1104f42d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  networkManager: {fileID: 0}
+  networkManager: {fileID: 636437295}
   p1Characters:
   - {fileID: 1338668550}
   - {fileID: 1964279337}
