@@ -9,7 +9,7 @@ public class MapController : MonoBehaviour
     public float RockDuration = 5f;
     public float RockSpwanTime = 5f;
 
-    public BoxCollider CherryCollider;
+    public BoxCollider[] CherryCollider;
     public GameObject CherryPrefab;
     public float DropInterval = 0.1f;
     private int CurrentCherry = 0;
@@ -44,8 +44,7 @@ public class MapController : MonoBehaviour
         {
             for (int i = 0; i < 3; i++)
             {
-                Vector3 randomPos = GetPoint();
-                SpwanCherry(randomPos);
+                SpwanCherry();
                 yield return new WaitForSeconds(DropInterval);
             }
         }
@@ -79,22 +78,26 @@ public class MapController : MonoBehaviour
 
     
 
-    void SpwanCherry(Vector3 spawnPosition)
+    void SpwanCherry()
     {
+        for (int i = 0; i < CherryCollider.Length; i++)
+        {
+            Vector3 spawnPosition = GetPoint(CherryCollider[i]);
             Instantiate(CherryPrefab, spawnPosition, Quaternion.identity);
-            CurrentCherry++; // »ı¼ºµÈ ¾ÆÀÌÅÛ °³¼ö Áõ°¡
+            CurrentCherry++; // ìƒì„±ëœ ì•„ì´í…œ ê°œìˆ˜ ì¦ê°€
+        }
     }
 
     void SpwanBamBoo()
     {
         for (int i = 0; i < BamBooCollider.Length; i++)
         {
-            Vector3 spawnPosition = GetRandomPointFromCollider(BamBooCollider[i]); // ÇØ´ç Collider¿¡¼­ ·£´ı À§Ä¡ °¡Á®¿À±â
+            Vector3 spawnPosition = GetRandomPointFromCollider(BamBooCollider[i]); // í•´ë‹¹ Colliderì—ì„œ ëœë¤ ìœ„ì¹˜ ê°€ì ¸ì˜¤ê¸°
             Quaternion rotation = Quaternion.Euler(0, 0, 90);
             GameObject bamBoo = Instantiate(BamBooPrefab, spawnPosition, rotation);
             Rigidbody rb = bamBoo.GetComponent<Rigidbody>();
 
-            // ¿ŞÂÊÀÌ¸é Vector3.left, ¿À¸¥ÂÊÀÌ¸é Vector3.right
+            // ì™¼ìª½ì´ë©´ Vector3.left, ì˜¤ë¥¸ìª½ì´ë©´ Vector3.right
             Vector3 direction = (i == 0) ? Vector3.left : Vector3.right;
             rb.linearVelocity = direction * BamBooSpeed;
 
@@ -102,16 +105,15 @@ public class MapController : MonoBehaviour
         }
     }
 
-        Vector3 GetPoint()
+        Vector3 GetPoint(BoxCollider collider)
     {
-        Vector3 areaSize = CherryCollider.bounds.size;
-        Vector3 areaCenter = CherryCollider.bounds.center;
+        Vector3 areaSize = collider.bounds.size;
+        Vector3 areaCenter = collider.bounds.center;
 
         float randomX = Random.Range(areaCenter.x - areaSize.x / 2, areaCenter.x + areaSize.x / 2);
-        float randomY = areaCenter.y; // dropHeight ´ë½Å Collider ³ôÀÌ ±âÁØ
+        float randomY = areaCenter.y; // dropHeight ëŒ€ì‹  Collider ë†’ì´ ê¸°ì¤€
         float randomZ = Random.Range(areaCenter.z - areaSize.z / 2, areaCenter.z + areaSize.z / 2);
 
-        Vector3 spawnPosition = new Vector3(randomX, randomY, randomZ);
         return new Vector3(randomX, randomY, randomZ);
     }
 
