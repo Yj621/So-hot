@@ -13,8 +13,8 @@ namespace KJ.Player
         public PlayerAnimationController animationController;
         public List<GameObject> effectList;
         public PhotonView photonView;
-        public Coroutine unlimitRunCoroutine; // ���� ���� unlimit run �ڷ�ƾ ����
-        public Coroutine gaugeStopCoroutine; // ���� ���� gauge stop �ڷ�ƾ ����
+        public Coroutine unlimitRunCoroutine; 
+        public Coroutine gaugeStopCoroutine; 
 
         private void Awake()
         {
