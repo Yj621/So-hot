@@ -5,42 +5,49 @@ namespace KJ.Player
 {
     public class PlayerState : MonoBehaviour
     {
-        private bool isDead = false;   // ÇÃ·¹ÀÌ¾î°¡ Á×¾ú´ÂÁö ¿©ºÎ
-        public bool saveLife = false;  // Á×À½ ¸éÁ¦ È°¼ºÈ­ ¿©ºÎ
-        private Animator animator;     // ¾Ö´Ï¸ŞÀÌÅÍ ÂüÁ¶
-        private PlayerMovement playerMovement; // ÇÃ·¹ÀÌ¾î ÀÌµ¿ ÄÄÆ÷³ÍÆ®
-        private Rigidbody rb; // ¸®Áöµå¹Ùµğ ÂüÁ¶
-        [SerializeField] private float reviveDelay = 5f; // ºÎÈ° ´ë±â ½Ã°£
+        private bool isDead = false;
+        public bool saveLife = false;
+        private Animator animator;
+        private PlayerMovement playerMovement;
+        private Rigidbody rb;
+        private Hotgauge hotgauge; // í•«ê²Œì´ì§€ ì°¸ì¡°
+        [SerializeField] private float reviveDelay = 5f;
 
         private void Awake()
         {
             animator = GetComponent<Animator>();
             playerMovement = GetComponent<PlayerMovement>();
             rb = GetComponent<Rigidbody>();
+            hotgauge = GetComponent<Hotgauge>(); // í•«ê²Œì´ì§€ ì°¸ì¡°
         }
 
         private void Update()
         {
-            if (isDead) return; // »ç¸Á »óÅÂ¿¡¼­´Â ÀÔ·ÂÀ» ¹ŞÁö ¾ÊÀ½
+            if (isDead) return;
 
-            // Å×½ºÆ®: T Å°¸¦ ´©¸£¸é Áï»ç
             if (Input.GetKeyDown(KeyCode.T))
             {
                 InstantKill();
             }
+
+            // í•«ê²Œì´ì§€ ê°’ ì²´í¬í•˜ì—¬ ê³¼ì—´ ì‚¬ë§ ì²˜ë¦¬
+            if (hotgauge != null && hotgauge.IsOverheated())
+            {
+                Die();
+            }
         }
 
         /// <summary>
-        /// Áï»ç ±â¹Í Å×½ºÆ®
+        /// ì¦‰ì‚¬ ê¸°ë¯¹ í…ŒìŠ¤íŠ¸
         /// </summary>
         public void InstantKill()
         {
-            if (isDead) return; // ÀÌ¹Ì Á×¾ú´Ù¸é ¹«½Ã
+            if (isDead) return;
 
             if (saveLife)
             {
-                saveLife = false; // ÇÑ ¹øÀº ¸éÁ¦ °¡´É
-                Debug.Log("Áï»ç ±â¹ÍÀ» ¸éÁ¦¹Ş¾Ò½À´Ï´Ù!");
+                saveLife = false;
+                Debug.Log("ì¦‰ì‚¬ ê¸°ë¯¹ì„ ë©´ì œë°›ì•˜ìŠµë‹ˆë‹¤!");
             }
             else
             {
@@ -49,42 +56,50 @@ namespace KJ.Player
         }
 
         /// <summary>
-        /// ÇÃ·¹ÀÌ¾î°¡ »ç¸ÁÇÒ ¶§ È£ÃâµÇ´Â ¸Ş¼­µå
+        /// í”Œë ˆì´ì–´ ì‚¬ë§ ì²˜ë¦¬
         /// </summary>
         private void Die()
         {
+            if (isDead) return;
+
             isDead = true;
-            Debug.Log("ÇÃ·¹ÀÌ¾î°¡ Áï»çÇß½À´Ï´Ù.");
+            Debug.Log("í”Œë ˆì´ì–´ê°€ ì‚¬ë§í–ˆìŠµë‹ˆë‹¤.");
 
-            // ÀÌµ¿ ºÒ°¡ Ã³¸®
+            // ì´ë™ ë¶ˆê°€ ì²˜ë¦¬
             playerMovement.enabled = false;
-            rb.isKinematic = true; // ¹°¸®Àû ÀÌµ¿ ¹æÁö
+            rb.isKinematic = true;
 
-            // »ç¸Á ¾Ö´Ï¸ŞÀÌ¼Ç ½ÇÇà
+            // ì‚¬ë§ ì• ë‹ˆë©”ì´ì…˜ ì‹¤í–‰
             if (animator != null)
             {
                 animator.SetTrigger("Die");
             }
 
-            // ÀÏÁ¤ ½Ã°£ ÈÄ ºÎÈ°
+            // í•«ê²Œì´ì§€ ì´ˆê¸°í™” (ë¬´ì¡°ê±´ ì ìš©)
+            if (hotgauge != null)
+            {
+                hotgauge.ResetHeatOnDeath();
+            }
+
+            // ì¼ì • ì‹œê°„ í›„ ë¶€í™œ
             StartCoroutine(Revive());
         }
 
         /// <summary>
-        /// ÀÏÁ¤ ½Ã°£ ÈÄ ºÎÈ°ÇÏ´Â ÄÚ·çÆ¾
+        /// ì¼ì • ì‹œê°„ í›„ ë¶€í™œ
         /// </summary>
         private IEnumerator Revive()
         {
-            yield return new WaitForSeconds(reviveDelay); // ºÎÈ° ´ë±â
+            yield return new WaitForSeconds(reviveDelay);
 
             isDead = false;
-            Debug.Log("ÇÃ·¹ÀÌ¾î°¡ ºÎÈ°Çß½À´Ï´Ù!");
+            Debug.Log("í”Œë ˆì´ì–´ê°€ ë¶€í™œí–ˆìŠµë‹ˆë‹¤!");
 
-            // ÀÌµ¿ °¡´É Ã³¸®
+            // ì´ë™ ê°€ëŠ¥ ì²˜ë¦¬
             playerMovement.enabled = true;
             rb.isKinematic = false;
 
-            // ºÎÈ° ¾Ö´Ï¸ŞÀÌ¼Ç ½ÇÇà
+            // ë¶€í™œ ì• ë‹ˆë©”ì´ì…˜ ì‹¤í–‰
             if (animator != null)
             {
                 animator.SetTrigger("Revive");

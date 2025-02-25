@@ -1,90 +1,70 @@
 using UnityEngine;
-using System.Collections;
 
 namespace KJ.Player
 {
     public class Hotgauge : MonoBehaviour
     {
         public bool gaugePause = false;
-        private float heatGauge = 0f;
+        private float heatGauge = 0f; // 🔥 초기값 명확히 설정
         private float maxHeat = 100f;
         private float heatIncreaseRate = 10f;
         private float heatDecreaseRate = 5f;
-        private float reviveDelay = 5f;
 
         private bool hasFire = false;
-        private bool isDead = false;
-
-        private PlayerAnimationController animationController;
-        private PlayerMovement playerMovement;
-        private Rigidbody rb;
 
         [Header("UI 설정")]
         [SerializeField] private KJ.UI.HotgaugeUIController hotUI; // 뜨거움 게이지 UI 컨트롤러 추가
 
-        private void Awake()
-        {
-            animationController = GetComponent<PlayerAnimationController>();
-            playerMovement = GetComponent<PlayerMovement>();
-            rb = GetComponent<Rigidbody>();
-        }
-
         private void Start()
         {
-            UpdateHotUI(); // UI 초기값 설정
+            ResetHeatOnDeath(); // ✅ 게임 시작 시 게이지 초기화
         }
 
         private void Update()
         {
-            if (isDead) return;
+            if (gaugePause) return;
 
             if (Input.GetKeyDown(KeyCode.F))
             {
                 ToggleFire();
             }
 
-            if (hasFire && !gaugePause)
+            if (hasFire)
             {
                 IncreaseHeat(Time.deltaTime * heatIncreaseRate);
             }
-            else if (!hasFire && heatGauge > 0)
+            else if (heatGauge > 0)
             {
                 DecreaseHeat(Time.deltaTime * heatDecreaseRate);
             }
-
-            if (Input.GetKeyDown(KeyCode.Y))
-            {
-                IncreaseHeat(5f);
-            }
-
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                ResetHeat();
-            }
         }
 
+        /// <summary>
+        /// 불을 들고 있는 상태 토글
+        /// </summary>
         private void ToggleFire()
         {
             hasFire = !hasFire;
             Debug.Log($"불 상태 변경: {(hasFire ? "불을 들고 있음" : "불 없음")}");
         }
 
+        /// <summary>
+        /// 뜨거움 게이지 증가
+        /// </summary>
         private void IncreaseHeat(float amount)
         {
-            if (!hasFire || isDead) return;
+            if (!hasFire) return;
 
             heatGauge += amount;
             heatGauge = Mathf.Clamp(heatGauge, 0, maxHeat);
 
             Debug.Log($"현재 뜨거움 게이지: {heatGauge}");
             UpdateHotUI();
-
-            if (heatGauge >= maxHeat)
-            {
-                Overheat();
-            }
         }
 
+        /// <summary>
+        /// 뜨거움 게이지 감소
+        /// </summary>
         private void DecreaseHeat(float amount)
         {
             heatGauge -= amount;
@@ -93,57 +73,30 @@ namespace KJ.Player
             UpdateHotUI();
         }
 
-        private void Overheat()
+        /// <summary>
+        /// 뜨거움 게이지가 최대치인지 확인
+        /// </summary>
+        public bool IsOverheated()
         {
-            gaugePause = true;
-            Debug.Log("플레이어가 과열되었습니다.");
-            Die();
+            return heatGauge >= maxHeat;
         }
 
-        private void Die()
+        /// <summary>
+        /// 사망 후 뜨거움 게이지 초기화 및 불 제거
+        /// </summary>
+        public void ResetHeatOnDeath()
         {
-            isDead = true;
-            Debug.Log("플레이어가 사망했습니다.");
-
-            playerMovement.enabled = false;
-            rb.isKinematic = true;
-
-            animationController?.PlayDeathAnimation();
-            StartCoroutine(Revive());
-        }
-
-        private IEnumerator Revive()
-        {
-            yield return new WaitForSeconds(reviveDelay);
-
-            isDead = false;
-            heatGauge = 0;
+            heatGauge = 0; // ✅ 사망 후 게이지 0으로 초기화
             gaugePause = false;
-            hasFire = false;
+            hasFire = false; // 불 제거
 
-            Debug.Log("플레이어가 부활했습니다! (불 없음)");
-
-            playerMovement.enabled = true;
-            rb.isKinematic = false;
-
-            animationController?.PlayReviveAnimation();
+            Debug.Log("핫게이지 초기화됨, 불 제거됨.");
             UpdateHotUI();
         }
 
-        private void ResetHeat()
-        {
-            if (isDead)
-            {
-                Debug.Log("사망한 상태에서는 게이지를 초기화할 수 없습니다.");
-                return;
-            }
-
-            heatGauge = 0;
-            gaugePause = false;
-            Debug.Log("게이지 초기화됨, 다시 시작 가능.");
-            UpdateHotUI();
-        }
-
+        /// <summary>
+        /// 핫게이지 UI 업데이트
+        /// </summary>
         private void UpdateHotUI()
         {
             if (hotUI != null)
