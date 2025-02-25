@@ -8,34 +8,34 @@ namespace KJ.Player
     public class PlayerMovement : MonoBehaviourPun
     {
         [Header("이동 설정")]
-        [SerializeField] private float walkSpeed = 5f;
-        [SerializeField] private float runSpeed = 8f;
-        [SerializeField] private float jumpForce = 5f;
-        [SerializeField] private LayerMask groundLayer;
-        [SerializeField] private float rotationSpeed = 10f;
+        [SerializeField] private float walkSpeed = 5f; // 걷기 속도
+        [SerializeField] private float runSpeed = 8f; // 달리기 속도
+        [SerializeField] private float jumpForce = 5f; // 점프 시 힘
+        [SerializeField] private LayerMask groundLayer; // 지면 판별을 위한 레이어
+        [SerializeField] private float rotationSpeed = 10f; // 회전 속도
 
         [Header("스태미나 설정")]
-        public bool runLimit;
-        [SerializeField] private float maxStamina = 100f;
-        private float currentStamina;
-        [SerializeField] private float staminaDrainRate = 10f;
+        public bool runLimit; // 스태미나 제한 여부 설정
+        [SerializeField] private float maxStamina = 100f; // 최대 스태미나 값
+        private float currentStamina; // 현재 스태미나 값
+        [SerializeField] private float staminaDrainRate = 10f; // 스태미나 소모율
 
         [Header("UI 설정")]
         [SerializeField] private KJ.UI.StaminaUIController staminaUI; // 스태미나 UI 연동
 
-        private Rigidbody rb;
-        private bool isGrounded;
-        private float currentSpeed;
-        private Vector3 moveDirection;
-        private Animator animator;
-        private bool isJumping = false;
+        private Rigidbody rb; // Rigidbody 컴포넌트
+        private bool isGrounded; // 지면 여부 확인
+        private float currentSpeed; // 현재 속도
+        private Vector3 moveDirection; // 이동 방향 벡터
+        private Animator animator; // 애니메이터 컴포넌트
+        private bool isJumping = false; // 점프 여부
 
         public bool IsGrounded => isGrounded;
 
         void Start()
         {
             rb = GetComponent<Rigidbody>();
-            rb.freezeRotation = true;
+            rb.freezeRotation = true; // 물리 회전 방지
             currentSpeed = walkSpeed;
             currentStamina = maxStamina;
             animator = GetComponent<Animator>();
@@ -45,33 +45,35 @@ namespace KJ.Player
 
         void Update()
         {
-            if (!photonView.IsMine) return;
+            if (!photonView.IsMine) return; // 본인 캐릭터만 조작 가능
 
-            HandleMovementInput();
-            CheckGround();
+            HandleMovementInput(); // 이동 입력 처리
+            CheckGround(); // 지면 체크
 
             if (moveDirection.magnitude >= 0.1f)
             {
-                RotateCharacter();
+                RotateCharacter(); // 캐릭터 회전
             }
 
             if (Input.GetKeyDown(KeyCode.Space) && isGrounded && !isJumping)
             {
-                Jump();
+                Jump(); // 점프 실행
             }
         }
 
         void FixedUpdate()
         {
             if (!photonView.IsMine) return;
-            Move();
+            Move(); // 물리 이동 처리
         }
 
         private void HandleMovementInput()
         {
+            // 입력 값을 받아 이동 방향 설정
             float moveX = Input.GetAxis("Horizontal");
             float moveZ = Input.GetAxis("Vertical");
 
+            // 카메라 방향을 기준으로 이동 방향 설정
             Vector3 cameraForward = Camera.main.transform.forward;
             Vector3 cameraRight = Camera.main.transform.right;
             cameraForward.y = 0;
@@ -81,6 +83,7 @@ namespace KJ.Player
 
             moveDirection = (cameraForward * moveZ + cameraRight * moveX).normalized;
 
+            // 스프린트(달리기) 처리
             if (Input.GetKey(KeyCode.LeftShift))
             {
                 if (!runLimit)
@@ -90,7 +93,7 @@ namespace KJ.Player
                 else if (currentStamina > 0)
                 {
                     currentSpeed = runSpeed;
-                    DrainStamina();
+                    DrainStamina(); // 스태미나 감소
                 }
                 else
                 {
@@ -100,11 +103,11 @@ namespace KJ.Player
             else
             {
                 currentSpeed = walkSpeed;
-                RecoverStamina();
+                RecoverStamina(); // 스태미나 회복
             }
 
             float speedNormalized = moveDirection.magnitude > 0.1f ? GetCurrentSpeedNormalized() : 0f;
-            animator.SetFloat("Speed", speedNormalized);
+            animator.SetFloat("Speed", speedNormalized); // 애니메이션 속도 설정
         }
 
         private void Move()
@@ -112,12 +115,13 @@ namespace KJ.Player
             if (moveDirection.magnitude >= 0.1f)
             {
                 Vector3 moveVelocity = moveDirection * currentSpeed;
-                rb.linearVelocity = new Vector3(moveVelocity.x, rb.linearVelocity.y, moveVelocity.z);
+                rb.linearVelocity = new Vector3(moveVelocity.x, rb.linearVelocity.y, moveVelocity.z); // 물리 이동 적용
             }
         }
 
         private void RotateCharacter()
         {
+            // 이동 방향으로 부드럽게 회전
             Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
@@ -128,17 +132,19 @@ namespace KJ.Player
 
             isJumping = true;
             isGrounded = false;
-            animator.SetTrigger("Jump");
+            animator.SetTrigger("Jump"); // 점프 애니메이션 실행
         }
 
         public void OnJumpStart()
         {
+            // 점프 시 Y축 속도 초기화 후 점프력 적용
             rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
             rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, rb.linearVelocity.z);
         }
 
         private void CheckGround()
         {
+            // 지면 체크를 위한 Raycast
             RaycastHit hit;
             float rayLength = 1.1f;
 
@@ -186,12 +192,12 @@ namespace KJ.Player
         public void RecoverFullStamina()
         {
             currentStamina = maxStamina;
-            UpdateStaminaUI();
+            UpdateStaminaUI(); // UI 업데이트
         }
 
         public float GetCurrentSpeedNormalized()
         {
-            return currentSpeed / runSpeed;
+            return currentSpeed / runSpeed; // 현재 속도를 최대 달리기 속도로 정규화하여 반환
         }
     }
 }
