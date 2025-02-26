@@ -4,7 +4,7 @@ using YJ.Network;
 
 namespace YJ.UI
 {
-    public class UIController : MonoBehaviour
+    public class ESCPanelController : MonoBehaviour
     {
         [Header("--- Panel ---")]
         [SerializeField] private GameObject escUI;
@@ -13,7 +13,7 @@ namespace YJ.UI
         [SerializeField] private GameObject startUI;
 
 
-        public static UIController Instance { get; private set; }
+        public static ESCPanelController Instance { get; private set; }
 
         void Awake()
         {

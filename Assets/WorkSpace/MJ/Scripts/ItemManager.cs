@@ -4,6 +4,8 @@ using Photon.Realtime;
 using KJ.Player;
 using System.Collections;
 using JetBrains.Annotations;
+using YJ.UIManager;
+
 public enum ITEMTYPE
 {
     GaugeStop,
@@ -22,20 +24,20 @@ public class ItemManager : MonoBehaviourPun
 
     public void GaugeStop(PlayerController player)
     {
-        //ÄÚ·çÆ¾ Áßº¹ ½ÇÇà ¹æÁö
+        //ì½”ë£¨í‹´ ì¤‘ë³µ ì‹¤í–‰ ë°©ì§€
         if (player.gaugeStopCoroutine != null)
         {
             StopCoroutine(player.gaugeStopCoroutine);
         }
 
-        player.hotgauge.gaugePause = true;
+        UIManager.Instance.gaugePause = true;
 
         int effectIdx = player.gameObject.GetComponent<Inventory>().effectNumber;
 
-        //¾ÆÀÌÅÛ ÀÌÆåÆ® È¿°ú º¸ÀÌ±â
+        //ì•„ì´í…œ ì´í™íŠ¸ íš¨ê³¼ ë³´ì´ê¸°
         player.photonView.RPC("ItemEffectOn", RpcTarget.All, player.photonView.ViewID, effectIdx);
 
-        //5ÃÊ µÚ, ¾ÆÀÌÅÛ È¿°ú ÇØÁ¦
+        //5ì´ˆ ë’¤, ì•„ì´í…œ íš¨ê³¼ í•´ì œ
         player.gaugeStopCoroutine = StartCoroutine(CorGaugeStop(5f, player));
 
     }
@@ -46,29 +48,29 @@ public class ItemManager : MonoBehaviourPun
 
         int effectIdx = player.gameObject.GetComponent<Inventory>().effectNumber;
 
-        //¾ÆÀÌÅÛ ÀÌÆåÆ® È¿°ú º¸ÀÌ±â
+        //ì•„ì´í…œ ì´í™íŠ¸ íš¨ê³¼ ë³´ì´ê¸°
         player.photonView.RPC("ItemEffectOn", RpcTarget.All, player.photonView.ViewID, effectIdx);
 
-        //NoDieÀÇ °æ¿ì, Effect Á¾·á ¹× »ç¿ë È¿°ú Á¾·á´Â ÇÃ·¹ÀÌ¾îÀÇ Á×À½ ½ÃÁ¡ÀÌ µÇ¾î¾ß ÇÏ¹Ç·Î
-        //ÇÃ·¹ÀÌ¾î¿¡¼­ RPC ItemEffectOff¸¦ È£ÃâÇØÁÖ¾î¾ß ÇÔ (effectIdx´Â 1ÀÌ´Ù)
+        //NoDieì˜ ê²½ìš°, Effect ì¢…ë£Œ ë° ì‚¬ìš© íš¨ê³¼ ì¢…ë£ŒëŠ” í”Œë ˆì´ì–´ì˜ ì£½ìŒ ì‹œì ì´ ë˜ì–´ì•¼ í•˜ë¯€ë¡œ
+        //í”Œë ˆì´ì–´ì—ì„œ RPC ItemEffectOffë¥¼ í˜¸ì¶œí•´ì£¼ì–´ì•¼ í•¨ (effectIdxëŠ” 1ì´ë‹¤)
     }
 
     public void UnlimitRun(PlayerController player)
     {
-        //ÄÚ·çÆ¾ Áßº¹ ½ÇÇà ¹æÁö
+        //ì½”ë£¨í‹´ ì¤‘ë³µ ì‹¤í–‰ ë°©ì§€
         if (player.unlimitRunCoroutine != null)
         {
             StopCoroutine(player.unlimitRunCoroutine);
         }
 
-        player.movement.runLimit = false;
+        UIManager.Instance.runLimit = false;
 
         int effectIdx = player.gameObject.GetComponent<Inventory>().effectNumber;
 
-        //¾ÆÀÌÅÛ ÀÌÆåÆ® È¿°ú º¸ÀÌ±â
+        //ì•„ì´í…œ ì´í™íŠ¸ íš¨ê³¼ ë³´ì´ê¸°
         player.photonView.RPC("ItemEffectOn", RpcTarget.All, player.photonView.ViewID, effectIdx);
 
-        //5ÃÊ µÚ, ¾ÆÀÌÅÛ È¿°ú ÇØÁ¦
+        //5ì´ˆ ë’¤, ì•„ì´í…œ íš¨ê³¼ í•´ì œ
         player.unlimitRunCoroutine = StartCoroutine(CorUnlimitRun(5f, player));
     }
 
@@ -92,23 +94,23 @@ public class ItemManager : MonoBehaviourPun
     }
 
 
-    //¾ÆÀÌÅÛ È¿°ú°¡ ³¡³­ field°¡ true·Î ÃÊ±âÈ­ µÇ¾î¾ß ÇÏ´Â °æ¿ì¿¡ »ç¿ëÇÏ´Â ÄÚ·çÆ¾ 
+    //ì•„ì´í…œ íš¨ê³¼ê°€ ëë‚œ fieldê°€ trueë¡œ ì´ˆê¸°í™” ë˜ì–´ì•¼ í•˜ëŠ” ê²½ìš°ì— ì‚¬ìš©í•˜ëŠ” ì½”ë£¨í‹´ 
     IEnumerator CorUnlimitRun(float time, PlayerController player)
     {
         int effectIdx = player.gameObject.GetComponent<Inventory>().effectNumber;
         yield return new WaitForSeconds(time);
         player.photonView.RPC("ItemEffectOff", RpcTarget.All, player.photonView.ViewID, effectIdx);
-        player.movement.runLimit = true;
+        UIManager.Instance.runLimit = true;
         player.unlimitRunCoroutine = null;
     }
 
-    //¾ÆÀÌÅÛ È¿°ú°¡ ³¡³­ field°¡ false·Î ÃÊ±âÈ­ µÇ¾î¾ß ÇÏ´Â °æ¿ì¿¡ »ç¿ëÇÏ´Â ÄÚ·çÆ¾ 
+    //ì•„ì´í…œ íš¨ê³¼ê°€ ëë‚œ fieldê°€ falseë¡œ ì´ˆê¸°í™” ë˜ì–´ì•¼ í•˜ëŠ” ê²½ìš°ì— ì‚¬ìš©í•˜ëŠ” ì½”ë£¨í‹´ 
     IEnumerator CorGaugeStop(float time, PlayerController player)
     {
         int effectIdx = player.gameObject.GetComponent<Inventory>().effectNumber;
         yield return new WaitForSeconds(time);
         player.photonView.RPC("ItemEffectOff", RpcTarget.All, player.photonView.ViewID, effectIdx);
-        player.hotgauge.gaugePause = false;
+        UIManager.Instance.gaugePause = false;
         player.gaugeStopCoroutine = null;
 
     }

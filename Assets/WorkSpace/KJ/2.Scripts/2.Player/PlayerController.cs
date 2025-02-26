@@ -2,6 +2,7 @@ using NUnit.Framework;
 using Photon.Pun;
 using UnityEngine;
 using System.Collections.Generic;
+using YJ.UIManager;
 
 namespace KJ.Player
 {
@@ -9,7 +10,6 @@ namespace KJ.Player
     {
         public PlayerMovement movement;
         public PlayerState state;
-        public Hotgauge hotgauge;
         public PlayerAnimationController animationController;
         public List<GameObject> effectList;
         public PhotonView photonView;
@@ -22,7 +22,6 @@ namespace KJ.Player
         {
             movement = GetComponent<PlayerMovement>();
             state = GetComponent<PlayerState>();
-            hotgauge = GetComponent<Hotgauge>();
             animationController = GetComponent<PlayerAnimationController>();
             photonView = GetComponent<PhotonView>();
         }
