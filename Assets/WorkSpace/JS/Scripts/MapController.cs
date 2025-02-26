@@ -1,7 +1,9 @@
 using System.Collections;
 using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
 
-public class MapController : MonoBehaviour
+public class MapController : MonoBehaviourPunCallbacks
 {
     public Transform[] RockFallPoints;
     public GameObject RockPrefab;
@@ -23,9 +25,12 @@ public class MapController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        StartCoroutine(SpwanRockRoutine());
-        StartCoroutine(SpwanCherryRoutine());
-        StartCoroutine(SpwanBamBooRoutine());
+        if (PhotonNetwork.IsMasterClient)
+        {
+            StartCoroutine(SpwanRockRoutine());
+            StartCoroutine(SpwanCherryRoutine());
+            StartCoroutine(SpwanBamBooRoutine());
+        }
     }
 
     
@@ -67,7 +72,7 @@ public class MapController : MonoBehaviour
     {
         for (int i = 0; i < RockFallPoints.Length; i++)
         {
-            GameObject rock = Instantiate(RockPrefab, RockFallPoints[i].position, Quaternion.identity);
+            GameObject rock = PhotonNetwork.Instantiate(RockPrefab.name, RockFallPoints[i].position, Quaternion.identity);
             Rigidbody rb = rock.GetComponent<Rigidbody>();
 
             rb.linearVelocity = Vector3.down * RockSpeed;
@@ -83,7 +88,7 @@ public class MapController : MonoBehaviour
         for (int i = 0; i < CherryCollider.Length; i++)
         {
             Vector3 spawnPosition = GetPoint(CherryCollider[i]);
-            Instantiate(CherryPrefab, spawnPosition, Quaternion.identity);
+            PhotonNetwork.Instantiate(CherryPrefab.name, spawnPosition, Quaternion.identity);
             CurrentCherry++; // 생성된 아이템 개수 증가
         }
     }
@@ -94,7 +99,7 @@ public class MapController : MonoBehaviour
         {
             Vector3 spawnPosition = GetRandomPointFromCollider(BamBooCollider[i]); // 해당 Collider에서 랜덤 위치 가져오기
             Quaternion rotation = Quaternion.Euler(0, 0, 90);
-            GameObject bamBoo = Instantiate(BamBooPrefab, spawnPosition, rotation);
+            GameObject bamBoo = PhotonNetwork.Instantiate(BamBooPrefab.name, spawnPosition, rotation);
             Rigidbody rb = bamBoo.GetComponent<Rigidbody>();
 
             // 왼쪽이면 Vector3.left, 오른쪽이면 Vector3.right

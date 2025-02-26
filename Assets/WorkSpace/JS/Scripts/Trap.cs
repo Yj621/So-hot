@@ -1,14 +1,16 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
 
-public class Trap : MonoBehaviour
+public class Trap : MonoBehaviourPunCallbacks
 {
-    public Rigidbody[] spikeRigidbodies; // ÀÚ½Ä °¡½ÃµéÀÇ Rigidbody ¹è¿­
-    public float upwardForce = 10.0f; // À§·Î ¹Ğ¾î ¿Ã¸®´Â Èû
-    public float moveDownSpeed = 2.0f;  // ´Ù½Ã ³»·Á°¡´Â ½Ã°£
-    public float triggerDelay = 2.0f; // Æ®¸®°Å ÈÄ °¡½Ã ¹ßµ¿ ´ë±â ½Ã°£
-    public float reloadTime = 5.0f; // Æ®·¦ÀÌ Àç»ç¿ë °¡´ÉÇØÁö´Â ½Ã°£
+    public Rigidbody[] spikeRigidbodies; // ìì‹ ê°€ì‹œë“¤ì˜ Rigidbody ë°°ì—´
+    public float upwardForce = 10.0f; // ìœ„ë¡œ ë°€ì–´ ì˜¬ë¦¬ëŠ” í˜
+    public float moveDownSpeed = 2.0f;  // ë‹¤ì‹œ ë‚´ë ¤ê°€ëŠ” ì‹œê°„
+    public float triggerDelay = 2.0f; // íŠ¸ë¦¬ê±° í›„ ê°€ì‹œ ë°œë™ ëŒ€ê¸° ì‹œê°„
+    public float reloadTime = 5.0f; // íŠ¸ë©ì´ ì¬ì‚¬ìš© ê°€ëŠ¥í•´ì§€ëŠ” ì‹œê°„
 
     private Vector3[] originalPositions;
     private bool isActivated = false;
@@ -16,13 +18,13 @@ public class Trap : MonoBehaviour
 
     private void Start()
     {
-        // ¸ğµç °¡½ÃÀÇ ¿ø·¡ À§Ä¡ ÀúÀå
+        // ëª¨ë“  ê°€ì‹œì˜ ì›ë˜ ìœ„ì¹˜ ì €ì¥
         originalPositions = new Vector3[spikeRigidbodies.Length];
         for (int i = 0; i < spikeRigidbodies.Length; i++)
         {
             originalPositions[i] = spikeRigidbodies[i].transform.localPosition;
-            spikeRigidbodies[i].useGravity = true;   // Áß·Â »ç¿ë
-            spikeRigidbodies[i].isKinematic = true;  // ±âº»ÀûÀ¸·Î Á¤Áö »óÅÂ À¯Áö
+            spikeRigidbodies[i].useGravity = true;   // ì¤‘ë ¥ ì‚¬ìš©
+            spikeRigidbodies[i].isKinematic = true;  // ê¸°ë³¸ì ìœ¼ë¡œ ì •ì§€ ìƒíƒœ ìœ ì§€
         }
     }
 
@@ -30,10 +32,10 @@ public class Trap : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            playerInside = true; // ÇÃ·¹ÀÌ¾î°¡ ¹üÀ§ ³»¿¡ ÀÖÀ½À» ±â·Ï
-            if (!isActivated)
+            playerInside = true; // í”Œë ˆì´ì–´ê°€ ë²”ìœ„ ë‚´ì— ìˆìŒì„ ê¸°ë¡
+            if (!isActivated && PhotonNetwork.IsMasterClient)
             {
-                StartCoroutine(ActivateTrap());
+                photonView.RPC("ActivateTrap", RpcTarget.All);
             }
         }
     }
@@ -42,7 +44,7 @@ public class Trap : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            playerInside = false; // ÇÃ·¹ÀÌ¾î°¡ ¹üÀ§¿¡¼­ ³ª°¨
+            playerInside = false; // í”Œë ˆì´ì–´ê°€ ë²”ìœ„ì—ì„œ ë‚˜ê°
         }
     }
 
@@ -51,22 +53,22 @@ public class Trap : MonoBehaviour
         isActivated = true;
         yield return new WaitForSeconds(triggerDelay);
 
-        // 1? ¸ğµç °¡½Ã¸¦ À§·Î ¹Ğ¾î ¿Ã¸®±â
+        // 1? ëª¨ë“  ê°€ì‹œë¥¼ ìœ„ë¡œ ë°€ì–´ ì˜¬ë¦¬ê¸°
         foreach (Rigidbody rb in spikeRigidbodies)
         {
-            rb.isKinematic = false; // ¹°¸® È°¼ºÈ­
+            rb.isKinematic = false; // ë¬¼ë¦¬ í™œì„±í™”
             rb.AddForce(Vector3.up * upwardForce, ForceMode.Impulse);
         }
 
-        // 2? ÀÏÁ¤ ½Ã°£ ÈÄ ºÎµå·´°Ô ³»·Á°¡±â
-        yield return new WaitForSeconds(0.5f); // »ìÂ¦ ¶°¿À¸¥ ÈÄ ³»·Á°¡±â ½ÃÀÛ
+        // 2? ì¼ì • ì‹œê°„ í›„ ë¶€ë“œëŸ½ê²Œ ë‚´ë ¤ê°€ê¸°
+        yield return new WaitForSeconds(0.5f); // ì‚´ì§ ë– ì˜¤ë¥¸ í›„ ë‚´ë ¤ê°€ê¸° ì‹œì‘
         StartCoroutine(SmoothlyMoveSpikesDown());
 
-        // 3? 5ÃÊ ÈÄ ´Ù½Ã È°¼ºÈ­ °¡´É
+        // 3? 5ì´ˆ í›„ ë‹¤ì‹œ í™œì„±í™” ê°€ëŠ¥
         yield return new WaitForSeconds(reloadTime);
         isActivated = false;
 
-        // 4? ÇÃ·¹ÀÌ¾î°¡ ¾ÆÁ÷ Æ®·¦ ¹üÀ§ ³»¿¡ ÀÖÀ¸¸é ´Ù½Ã ¹ßµ¿
+        // 4? í”Œë ˆì´ì–´ê°€ ì•„ì§ íŠ¸ë© ë²”ìœ„ ë‚´ì— ìˆìœ¼ë©´ ë‹¤ì‹œ ë°œë™
         if (playerInside)
         {
             StartCoroutine(ActivateTrap());
@@ -76,7 +78,7 @@ public class Trap : MonoBehaviour
     private IEnumerator SmoothlyMoveSpikesDown()
     {
         float elapsedTime = 0f;
-        float duration = 1.5f / moveDownSpeed; // ºÎµå·´°Ô ³»·Á¿À´Â ½Ã°£ Á¶Àı
+        float duration = 1.5f / moveDownSpeed; // ë¶€ë“œëŸ½ê²Œ ë‚´ë ¤ì˜¤ëŠ” ì‹œê°„ ì¡°ì ˆ
 
         Vector3[] startPositions = new Vector3[spikeRigidbodies.Length];
         for (int i = 0; i < spikeRigidbodies.Length; i++)
@@ -97,11 +99,11 @@ public class Trap : MonoBehaviour
             yield return null;
         }
 
-        // ÃÖÁ¾ÀûÀ¸·Î À§Ä¡¸¦ Á¤È®È÷ ¿ø·¡ À§Ä¡·Î ¼³Á¤
+        // ìµœì¢…ì ìœ¼ë¡œ ìœ„ì¹˜ë¥¼ ì •í™•íˆ ì›ë˜ ìœ„ì¹˜ë¡œ ì„¤ì •
         for (int i = 0; i < spikeRigidbodies.Length; i++)
         {
             spikeRigidbodies[i].transform.localPosition = originalPositions[i];
-            spikeRigidbodies[i].isKinematic = true; // ´Ù½Ã Á¤Áö
+            spikeRigidbodies[i].isKinematic = true; // ë‹¤ì‹œ ì •ì§€
         }
     }
 }
