@@ -11,108 +11,60 @@ using System;
 namespace Donghyun.Network
 {
     [Serializable]
-    public struct PlayerInfo
+    public class Slot
     {
-        public int playerNumber;
-        public bool isReady;
-        public PlayerInfo(int _playerNumber, bool _isReady)
-        {
-            this.playerNumber = _playerNumber;
-            this.isReady = _isReady;
-        }
+        public SortedSet<int> slot;
     }
 
     [Serializable]
-    public class Slot
+    public class SerializableSlot
     {
-        public List<int> slot = UnityEngine.Pool.ListPool<int>.Get();
+        public List<int> slot;
     }
 
     public class NetWorkManager : MonoBehaviourPunCallbacks
     {
-        [SerializeField] private List<GameObject> players = new List<GameObject>();
+        [Header("----- 스폰될 프리팹 이름 -----")]
+        [SerializeField] private string spawnPrefabName;
+
+        [Header("----- 플레이어가 들어갈 슬롯 -----")]
+        [SerializeField] private List<Transform> playerSlots = new List<Transform>(4); //초기용량 4
+
+        [Header("----- UI 관련 -----")]
         [SerializeField] private TextMeshProUGUI roomNameText;
         [SerializeField] private TextMeshProUGUI playerNumText;
         [SerializeField] private GameObject startButtonObj;
         [SerializeField] private GameObject readyButtonObj;
         [SerializeField] private Button exitButton;
 
+        private static NetWorkManager instance;
+
         private PhotonView pv; //포톤 뷰
 
+        private Hashtable ht; //커스텀 프로퍼티 캐싱
+
+        //플레이어 개인이 소유하는 본인 변수들
+        private int playerNumber;
+        private bool isReady;
+        private int ActorNumber;
+        private string ActorNumberString;
+        private GameObject player;
+        private LobbyPlayer playerSetting;
         private Button startButton;
         private Button readyButton;
 
-        PlayerInfo playerInfo;
-        private Hashtable ht;
+        private Slot emptyPlayer = new Slot(); //플레이어 슬롯
 
-        private List<PlayerUI> playerUIs = new List<PlayerUI>();
-            
-        private Slot emptyPlayer = new Slot();
+        public static NetWorkManager Instance => instance;
+        public List<Transform> PlayerSlots => playerSlots;
 
         void Awake()
         {
-            //포톤 뷰
-            pv = GetComponent<PhotonView>();
+            instance = this;
 
-            for (int  i = 0; i < players.Count; i++)
-            {
-                playerUIs.Add(players[i].GetComponent<PlayerUI>());
-            }
-
-            PhotonNetwork.SendRate = 40; //포톤이 서버와 통신하는 빈도
-            PhotonNetwork.SerializationRate = 20; //객체 상태 업데이트 빈도(트랜스폼, etc...)
-
-            startButton = startButtonObj.GetComponent<Button>();
-            readyButton = readyButtonObj.GetComponent<Button>();
-
-            PhotonNetwork.AutomaticallySyncScene = true; //모든 클라이언트와 함께 씬 이동
-
-            ht = PhotonNetwork.CurrentRoom.CustomProperties;
-
-            //마스터 클라이언트
-            if (master())
-            {
-                startButtonObj.SetActive(true);
-                readyButtonObj.SetActive(false);
-                startButton.interactable = false;
-
-                //빈 플레이어 슬롯에 리스트 풀 할당
-                emptyPlayer.slot = UnityEngine.Pool.ListPool<int>.Get();
-
-                //Awake에서 마스터 클라이언트라는 건 방을 만든 사람이라는 뜻. 그러므로 방의 초기값을 지정해준다
-                playerInfo = new PlayerInfo(0, false);
-                ConvertPlayerInfoToJson();
-
-                for (int i = 1; i < 4; ++i)
-                {
-                    emptyPlayer.slot.Add(i);
-                }
-            }
-            else
-            {
-                ConvertJsonToEmptyPlayerSlot(); //EmptyPlayerSlot 초기화
-
-                playerInfo = new PlayerInfo(emptyPlayer.slot[0], false);
-
-                ConvertPlayerInfoToJson(); //playerInfo 추가
-
-                emptyPlayer.slot.RemoveAt(0);
-
-                startButtonObj.SetActive(false);
-                readyButtonObj.SetActive(true);
-            }
-            ConvertEmptyPlayerSlotToJson(); //EmptyPlayerSlot를 Json화하여 커스텀 프로퍼티에 삽입
-
-            playerUIs[playerInfo.playerNumber].SetNickNameColor(Color.red);
-
-            startButton.onClick.AddListener(GameStart);
-            readyButton.onClick.AddListener(SetReady);
-            exitButton.onClick.AddListener(LeaveRoom);
-
-            roomNameText.text = string.Format("{0}", PhotonNetwork.CurrentRoom.Name); ///방 이름 설정
-
-            RoomRenewal();
-            UserRenewal();
+            RoomInitSetting(); //방 초기 포톤 설정
+            RoomUIInitSetting(); //방 UI 초기 설정
+            PlayerInitSetting(); //플레이어 초기 설정
         }
 
         /// 마스터 권한
@@ -121,61 +73,125 @@ namespace Donghyun.Network
         //마스터 바뀔 때
         public override void OnMasterClientSwitched(Player newMasterClient)
         {
-            playerInfo.isReady = false;
-            ConvertPlayerInfoToJson();
+            Debug.Log("LobbyScene - 마스터 변경");
+
+            isReady = false;
+            playerSetting.SetMasterTextRPC();
             SetStartButton();
         }
+
+
+        #region 1.방 초기세팅
+        private void RoomInitSetting()
+        {
+            //포톤 뷰
+            pv = GetComponent<PhotonView>();
+
+            PhotonNetwork.SendRate = 40; //포톤이 서버와 통신하는 빈도
+            PhotonNetwork.SerializationRate = 20; //객체 상태 업데이트 빈도(트랜스폼, etc...)
+
+            PhotonNetwork.AutomaticallySyncScene = true; //모든 클라이언트와 함께 씬 이동
+
+            ht = PhotonNetwork.CurrentRoom.CustomProperties; //커스텀 프로퍼티 캐싱
+        }
+
+        private void RoomUIInitSetting()
+        {
+            startButton = startButtonObj.GetComponent<Button>();
+            readyButton = readyButtonObj.GetComponent<Button>();
+
+            startButton.onClick.AddListener(GameStart);
+            readyButton.onClick.AddListener(SetReady);
+            exitButton.onClick.AddListener(LeaveRoom);
+
+            roomNameText.text = string.Format("{0}", PhotonNetwork.CurrentRoom.Name); ///방 이름 설정
+
+            RoomRenewal(); //방 정보 갱신
+        }
+
+        private void PlayerInitSetting()
+        {
+            //플레이어 생성 후 변수 초기화
+            player = PhotonNetwork.Instantiate(spawnPrefabName, Vector3.zero, Quaternion.identity);
+            playerSetting = player.GetComponent<LobbyPlayer>();
+
+            ActorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
+            ActorNumberString = ActorNumber.ToString();
+
+            isReady = true;
+            SetReady();
+
+            if (master())
+            {
+                playerSetting.SetMasterTextRPC();
+                startButtonObj.SetActive(true);
+                readyButtonObj.SetActive(false);
+                startButton.interactable = false;
+                emptyPlayer.slot = new SortedSet<int> { 0, 1, 2, 3 };
+            }
+            else
+            {
+                //마스터가 아닐 경우 emptyPlayer.slot을 새로 받아와서 동기화
+                ConvertJsonToEmptyPlayerSlot();
+
+                playerSetting.SetClientTextRPC();
+                startButtonObj.SetActive(false);
+                readyButtonObj.SetActive(true);
+            }
+
+            //플레이어의 본인 슬롯을 할당
+            playerNumber = emptyPlayer.slot.Min;
+            emptyPlayer.slot.Remove(playerNumber);
+            playerSetting.SetPlayerSlotRPC(playerNumber, RpcTarget.All);
+            PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable { { ActorNumberString, playerNumber } });
+
+            //빈 슬롯 할당 후 커스텀 프로퍼티 바꾸기
+            ConvertEmptyPlayerSlotToJson();
+
+            //본인이므로 이름을 빨간색으로 만들어 줌
+            playerSetting.SetNickNameColor(Color.red);
+
+            //모든 클라이언트에게 본인의 닉네임을 표시
+            playerSetting.SetNickNameRPC(PhotonNetwork.NickName, RpcTarget.All);
+
+        }
+        #endregion
+
 
         //본인이 방을 떠날 때
         public void LeaveRoom()
         {
-            ConvertJsonToEmptyPlayerSlot();
-            emptyPlayer.slot.Add(playerInfo.playerNumber);
-            ConvertEmptyPlayerSlotToJson();
-
-            //리스트 풀 회수
-            UnityEngine.Pool.ListPool<int>.Release(emptyPlayer.slot);
-
-            ht.Remove(PhotonNetwork.LocalPlayer.ActorNumber.ToString());
-
-            PhotonNetwork.AutomaticallySyncScene = false;
             PhotonNetwork.LeaveRoom();
-        }
-
-
-        private PlayerInfo ConvertJsonToPlayerInfo(int ActorNumber)
-        {
-            object JsonData;
-            ht.TryGetValue(ActorNumber.ToString(), out JsonData);
-            return JsonUtility.FromJson<PlayerInfo>((string)JsonData);
-        }
-
-        private void ConvertPlayerInfoToJson()
-        {
-            string ConvertJson = JsonUtility.ToJson(playerInfo);
-            ht[PhotonNetwork.LocalPlayer.ActorNumber.ToString()] = ConvertJson;
-            PhotonNetwork.CurrentRoom.SetCustomProperties(ht);
         }
 
         private void ConvertJsonToEmptyPlayerSlot()
         {
             object JSonData;
             ht.TryGetValue("EmptyPlayerSlot", out JSonData);
-            emptyPlayer = JsonUtility.FromJson<Slot>((string)JSonData);
-            emptyPlayer.slot.Sort();
+
+            SerializableSlot emptySlot = JsonUtility.FromJson<SerializableSlot>((string)JSonData);
+            emptyPlayer.slot = new SortedSet<int>(emptySlot.slot);
+
+            emptySlot.slot.Clear();
         }
 
         private void ConvertEmptyPlayerSlotToJson()
         {
-            emptyPlayer.slot.Sort();
-            string ConvertJson = JsonUtility.ToJson(emptyPlayer);
+            SerializableSlot emptySlot = new SerializableSlot();
+            emptySlot.slot = new List<int>(emptyPlayer.slot);
+
+            string ConvertJson = JsonUtility.ToJson(emptySlot);
             ht["EmptyPlayerSlot"] = ConvertJson;
             PhotonNetwork.CurrentRoom.SetCustomProperties(ht);
+
+            emptySlot.slot.Clear();
         }
 
         //방에서 완전히 떠난 뒤 실행
         public override void OnLeftRoom()
         {
+            PhotonNetwork.AutomaticallySyncScene = false;
+
             PhotonNetwork.Disconnect();
             SceneManager.LoadScene("StartScene");
         }
@@ -187,9 +203,16 @@ namespace Donghyun.Network
 
             RoomRenewal();
 
-            int playerNumber = emptyPlayer.slot[0];
-            SetPlayerUI(playerUIs[playerNumber], newPlayer.NickName, newPlayer.IsMasterClient);
-            players[playerNumber].SetActive(true);
+            playerSetting.SetPlayerSlotRPC(playerNumber, newPlayer);
+            playerSetting.SetNickNameRPC(PhotonNetwork.NickName, newPlayer);
+            if(master())
+            {
+                playerSetting.SetMasterTextRPC(newPlayer);
+            }
+            else
+            {
+                playerSetting.SetClientTextRPC(newPlayer);
+            }
         }
 
         //누군가 방을 떠날때
@@ -197,12 +220,13 @@ namespace Donghyun.Network
         {
             Debug.Log("LobbyScene - 인원 퇴장");
 
-            pv.RPC("SetStartButton", RpcTarget.MasterClient);
             RoomRenewal();
-            UserRenewal();
 
-            PlayerInfo info = ConvertJsonToPlayerInfo(otherPlayer.ActorNumber);
-            players[info.playerNumber].SetActive(false);
+            ConvertJsonToEmptyPlayerSlot();
+            emptyPlayer.slot.Add((int)otherPlayer.CustomProperties[otherPlayer.ActorNumber.ToString()]);
+            ConvertEmptyPlayerSlotToJson();
+
+            otherPlayer.CustomProperties.Clear();
 
             if (master())
             {
@@ -210,7 +234,8 @@ namespace Donghyun.Network
                 readyButtonObj.SetActive(false);
             }
 
-            ht.Remove(otherPlayer.ActorNumber);
+            ht.Remove(otherPlayer.ActorNumber.ToString());
+            PhotonNetwork.CurrentRoom.SetCustomProperties(ht);
         }
 
         //방 정보 갱신
@@ -218,34 +243,7 @@ namespace Donghyun.Network
         {
             Debug.Log("LobbyScene - 방 정보 갱신");
             playerNumText.text = string.Format("{0} / {1}", PhotonNetwork.CurrentRoom.PlayerCount, PhotonNetwork.CurrentRoom.MaxPlayers); //전체 플레이어 수
-        }
 
-        //유저 정보 갱신
-        public void UserRenewal()
-        {
-            foreach (int ActorNumber in PhotonNetwork.CurrentRoom.Players.Keys)
-            {
-                PlayerInfo info = ConvertJsonToPlayerInfo(ActorNumber);
-                int i = info.playerNumber;
-
-                SetPlayerUI(playerUIs[i], PhotonNetwork.CurrentRoom.Players[ActorNumber].NickName, PhotonNetwork.CurrentRoom.Players[ActorNumber].IsMasterClient);
-
-                players[i].SetActive(true);
-            }
-        }
-
-        public void SetPlayerUI(PlayerUI ui, string name, bool isMaster)
-        {
-            ui.SetNickname(name);
-
-            if (isMaster)
-            {
-                ui.SetMaster();
-            }
-            else
-            {
-                ui.SetClient();
-            }
         }
 
         //게임 시작 버튼
@@ -257,47 +255,38 @@ namespace Donghyun.Network
         //대기 상태 갱신
         public void SetReady()
         {
-            playerInfo.isReady = !playerInfo.isReady;
-            ConvertPlayerInfoToJson();
+            //레디 변경
+            isReady = !isReady;
+
+            //커스텀 프로퍼티에도 적용
+            ht[ActorNumberString] = isReady;
+            PhotonNetwork.CurrentRoom.SetCustomProperties(ht);
 
             //레디 UI 상태 변환
-            pv.RPC("SetReadyUI", RpcTarget.All, playerInfo.playerNumber, playerInfo.isReady);
+            playerSetting.SetReadytRPC(isReady);
 
             //스타트 버튼 활성화 판별
             pv.RPC("SetStartButton", RpcTarget.MasterClient);
         }
 
-        //레디 UI 상태 변환
-        [PunRPC]
-        public void SetReadyUI(int index, bool isTrue)
-        {
-            playerUIs[index].SetReady(isTrue);
-        }
-
-        //스타트 버튼 상태 갱신
+        //스타트 버튼 상태 갱신 - 마스터에서만 실행
         [PunRPC]
         public void SetStartButton()
         {
-            List<PlayerInfo> playerInfoGroup = UnityEngine.Pool.ListPool<PlayerInfo>.Get();
+            Debug.Log("LobbyScene - 스타트 버튼 상태 갱신");
+
+            int count = 1;
 
             //마스터인 본인 제외
-            foreach (int ActorNumber in PhotonNetwork.CurrentRoom.Players.Keys)
+            foreach (int actorNumber in PhotonNetwork.CurrentRoom.Players.Keys)
             {
-                if (PhotonNetwork.LocalPlayer.ActorNumber != ActorNumber)
+                if (ActorNumber != actorNumber)
                 {
-                    Debug.Log(ActorNumber);
-                    PlayerInfo info = ConvertJsonToPlayerInfo(ActorNumber);
-                    playerInfoGroup.Add(info);
+                    if ((bool)ht[actorNumber.ToString()]) count++;
                 }
             }
             
-            bool allReady = true;
-            foreach (PlayerInfo info in playerInfoGroup)
-            {
-                allReady = allReady & info.isReady;
-            }
-
-            if (allReady && playerInfoGroup.Count >= 1)
+            if (count == 2)
             {
                 startButton.interactable = true;
             }
@@ -305,8 +294,6 @@ namespace Donghyun.Network
             {
                 startButton.interactable = false;
             }
-
-            UnityEngine.Pool.ListPool<PlayerInfo>.Release(playerInfoGroup);
         }
     }
 }

@@ -57,6 +57,10 @@ MonoBehaviour:
   - ItemEffectOn
   - SetAllReadyUI
   - SetReadyUI
+  - SetNickName
+  - SetPlayerSlot
+  - SetClientText
+  - SetMasterText
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
