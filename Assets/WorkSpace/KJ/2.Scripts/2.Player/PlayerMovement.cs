@@ -81,7 +81,7 @@ namespace KJ.Player
                 //스태미나 게이지 활성화
                 UIManager.Instance.ActiveStamina();
 
-                if (UIManager.Instance.runLimit)
+                if (!UIManager.Instance.runLimit)
                 {
                     currentSpeed = runSpeed;
                 }
