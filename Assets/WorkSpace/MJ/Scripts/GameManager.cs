@@ -16,7 +16,8 @@ public class GameManager : MonoBehaviourPun
     bool player3Dead;
     bool player4Dead;
 
-    public Vector3 currentSavePoint; //현재 저장된 세이브 포인트의 위치 정보
+    public Vector3 savePoint; //현재 저장된 플레이어 세이브 포인트의 위치 정보(세이브 포인트에 trigger되면 본 필드값이 수정되어야 함)
+    public Vector3 fireSavePoint; //현재 저장된 fire 세이브 포인트의 위치 정보(세이브 포인트에 trigger되면 본 필드값이 수정되어야 함)
 
 
     void Start()
@@ -27,7 +28,7 @@ public class GameManager : MonoBehaviourPun
         }
         else 
         { 
-            Destroy(gameObject); 
+            Destroy(Instance); 
         }
 
         //플레이어 사망 여부 캐싱
@@ -36,7 +37,10 @@ public class GameManager : MonoBehaviourPun
         player3Dead = player3.GetComponent<PlayerState>().isDead;
         player4Dead = player4.GetComponent<PlayerState>().isDead;
 
-        //TO-DO: 플레이어 위치, 불 위치 등 추가 초기화 작업 필요한 부분 확인하기 (RPC 처리 필요 여부도 확인하기)
+        fireSavePoint = Fire.Instance.firstFirePos;
+        //TO-DO: savePoint = (게임 시작 시, 플레이어가 처음 로드되는 위치) 
+        photonView.RPC("AllPlayerRespawn", RpcTarget.All);
+ 
     }
 
     //플레이어 전체를 각각의 변수(player1~4)에 등록시키는 함수
@@ -58,7 +62,15 @@ public class GameManager : MonoBehaviourPun
     [PunRPC]
     void AllPlayerRespawn()
     {
-        //TO-DO: 모든 플레이어 사망 시, 세이브 포인트에서 모든 플레이어가 리스폰 되는 로직 작성 필요
+        Fire.Instance.isOnFire = true;
+        Fire.Instance.gameObject.transform.position = fireSavePoint; 
+
+        //TO-DO: 세이브 포인트 위치가 명확해지면 수정 (각 플레이어 리스폰 위치값 미세 조정 필요)
+        player1.gameObject.transform.position = savePoint;
+        player2.gameObject.transform.position = savePoint;
+        player3.gameObject.transform.position = savePoint;
+        player4.gameObject.transform.position = savePoint;
+
     }
 
     [PunRPC]
