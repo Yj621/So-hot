@@ -23,7 +23,7 @@ namespace KJ.Player
             hotgauge = GetComponent<Hotgauge>();
             animationController = GetComponent<PlayerAnimationController>();
             photonView = GetComponent<PhotonView>();
-
+            GameManager.Instance.RegisterPlayer(this);
         }
     }
 }
