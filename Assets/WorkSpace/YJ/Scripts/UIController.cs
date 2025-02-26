@@ -1,4 +1,6 @@
+using Photon.Pun;
 using UnityEngine;
+using YJ.Network;
 
 namespace YJ.UI
 {
@@ -8,6 +10,7 @@ namespace YJ.UI
         [SerializeField] private GameObject escUI;
         [SerializeField] private GameObject soundUI;
         [SerializeField] private GameObject quitUI;
+        [SerializeField] private GameObject startUI;
 
 
         public static UIController Instance { get; private set; }
@@ -30,13 +33,25 @@ namespace YJ.UI
             {
                 if (escUI != null)
                 {
-                    escUI.SetActive(!escUI.activeSelf); // ÇöÀç »óÅÂÀÇ ¹İ´ë·Î ¼³Á¤
+                    escUI.SetActive(!escUI.activeSelf); // í˜„ì¬ ìƒíƒœì˜ ë°˜ëŒ€ë¡œ ì„¤ì •
                 }
             }
         }
 
+        public void OnClickStart()
+        {
+            if (PhotonNetwork.InLobby)
+            {
+                startUI.SetActive(true); // ë¡œë¹„ì— ìˆì„ ê²½ìš° startUI í™œì„±í™”
+            }
+            else
+            {
+                PhotonNetwork.LeaveRoom();
+            }
+        }
 
-        //Sound ¹öÆ° °ü·Ã ÇÔ¼ö
+
+        //Sound ë²„íŠ¼ ê´€ë ¨ í•¨ìˆ˜
         public void OnClickSound()
         {
             soundUI.SetActive(true);
@@ -47,10 +62,10 @@ namespace YJ.UI
             soundUI.SetActive(false);
         }
 
-        // Quit¹öÆ° °ü·Ã ÇÔ¼ö
+        // Quitë²„íŠ¼ ê´€ë ¨ í•¨ìˆ˜
         public void OnClickQuit()
         {
-            //Á¾·á È®ÀÎ ui È°¼ºÈ­
+            //ì¢…ë£Œ í™•ì¸ ui í™œì„±í™”
             quitUI.SetActive(true);
         }
 

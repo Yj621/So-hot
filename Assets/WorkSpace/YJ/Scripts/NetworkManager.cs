@@ -80,7 +80,6 @@ namespace YJ.Network
             roomListUI.SetActive(true);
 
             roomListNickName.text = userNickName;
-            Debug.Log($"roomListNickName.text : " + roomListNickName);
         }
 
 
