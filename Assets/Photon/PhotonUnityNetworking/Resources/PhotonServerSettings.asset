@@ -52,6 +52,7 @@ MonoBehaviour:
   - AddPlayerList
   - UpdatePlayerList
   - SetAllReadyState
+<<<<<<< HEAD
   - RPC_OnLeftArrow
   - RPC_OnRightArrow
   - RPC_OnSelect
@@ -64,6 +65,17 @@ MonoBehaviour:
   - RPC_SetAllReadyState
   - RPC_SetLocalReady
   - RPC_UpdateLocalCharacter
+=======
+  - DestroyObject
+  - ItemEffectOff
+  - ItemEffectOn
+  - SetAllReadyUI
+  - SetReadyUI
+  - SetNickName
+  - SetPlayerSlot
+  - SetClientText
+  - SetMasterText
+>>>>>>> 86c93f92 ([FIX] Lobby)
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

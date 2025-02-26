@@ -193,6 +193,7 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+<<<<<<< HEAD
 --- !u!1001 &21691053
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -274,6 +275,137 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ceda4e5a017de9c449c4927263c37042, type: 3}
+=======
+--- !u!1 &135939159
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 135939161}
+  - component: {fileID: 135939160}
+  m_Layer: 0
+  m_Name: RainbowHierarchyRuleset
+  m_TagString: EditorOnly
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &135939160
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 135939159}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 848a85510b808ee4994e553f35ca73bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Rules:
+  - Type: 0
+    Name: 
+    GameObject: {fileID: 1162540536}
+    Ordinal: 0
+    Priority: 0
+    IconType: 325500
+    IconTexture: {fileID: 0}
+    IsIconRecursive: 0
+    BackgroundType: 3000
+    BackgroundTexture: {fileID: 0}
+    IsBackgroundRecursive: 0
+    IsHidden: 0
+  - Type: 0
+    Name: 
+    GameObject: {fileID: 1951560708}
+    Ordinal: 1
+    Priority: 0
+    IconType: 325500
+    IconTexture: {fileID: 0}
+    IsIconRecursive: 0
+    BackgroundType: 3000
+    BackgroundTexture: {fileID: 0}
+    IsBackgroundRecursive: 0
+    IsHidden: 0
+  - Type: 0
+    Name: 
+    GameObject: {fileID: 6362171}
+    Ordinal: 2
+    Priority: 0
+    IconType: 325500
+    IconTexture: {fileID: 0}
+    IsIconRecursive: 0
+    BackgroundType: 3000
+    BackgroundTexture: {fileID: 0}
+    IsBackgroundRecursive: 0
+    IsHidden: 0
+  - Type: 0
+    Name: 
+    GameObject: {fileID: 1339340300}
+    Ordinal: 3
+    Priority: 0
+    IconType: 330000
+    IconTexture: {fileID: 0}
+    IsIconRecursive: 0
+    BackgroundType: 16000
+    BackgroundTexture: {fileID: 0}
+    IsBackgroundRecursive: 0
+    IsHidden: 0
+  - Type: 0
+    Name: 
+    GameObject: {fileID: 784739159}
+    Ordinal: 4
+    Priority: 0
+    IconType: 330000
+    IconTexture: {fileID: 0}
+    IsIconRecursive: 0
+    BackgroundType: 16000
+    BackgroundTexture: {fileID: 0}
+    IsBackgroundRecursive: 0
+    IsHidden: 0
+  - Type: 0
+    Name: 
+    GameObject: {fileID: 2089502688}
+    Ordinal: 5
+    Priority: 0
+    IconType: 330000
+    IconTexture: {fileID: 0}
+    IsIconRecursive: 0
+    BackgroundType: 16000
+    BackgroundTexture: {fileID: 0}
+    IsBackgroundRecursive: 0
+    IsHidden: 0
+  - Type: 0
+    Name: 
+    GameObject: {fileID: 170192900}
+    Ordinal: 6
+    Priority: 0
+    IconType: 161000
+    IconTexture: {fileID: 0}
+    IsIconRecursive: 0
+    BackgroundType: 4000
+    BackgroundTexture: {fileID: 0}
+    IsBackgroundRecursive: 0
+    IsHidden: 0
+--- !u!4 &135939161
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 135939159}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+>>>>>>> 86c93f92 ([FIX] Lobby)
 --- !u!1 &170192900
 GameObject:
   m_ObjectHideFlags: 0
@@ -541,8 +673,7 @@ Transform:
   m_LocalPosition: {x: 4, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1542556461}
+  m_Children: []
   m_Father: {fileID: 545829306}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &545829305
@@ -683,11 +814,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca8a33988841c67488c0916275d59074, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  players:
-  - {fileID: 1884167134}
-  - {fileID: 1542556460}
-  - {fileID: 1721226202}
-  - {fileID: 1789373739}
+  spawnPrefabName: PlayerTest
+  playerSlots:
+  - {fileID: 1752959038}
+  - {fileID: 452717461}
+  - {fileID: 1732850526}
+  - {fileID: 1256957567}
   roomNameText: {fileID: 1300422849}
   playerNumText: {fileID: 1808885436}
   startButtonObj: {fileID: 1528170916}
@@ -987,6 +1119,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 784739159}
   m_CullTransparentMesh: 1
+<<<<<<< HEAD
 --- !u!1001 &1159658963
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1068,6 +1201,8 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ceda4e5a017de9c449c4927263c37042, type: 3}
+=======
+>>>>>>> 86c93f92 ([FIX] Lobby)
 --- !u!1 &1162540536
 GameObject:
   m_ObjectHideFlags: 0
@@ -1297,8 +1432,7 @@ Transform:
   m_LocalPosition: {x: 12, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1789373740}
+  m_Children: []
   m_Father: {fileID: 545829306}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1300422847
@@ -1815,6 +1949,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1528170916}
   m_CullTransparentMesh: 1
+<<<<<<< HEAD
 --- !u!1 &1542556460 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2419311478111715218, guid: ceda4e5a017de9c449c4927263c37042, type: 3}
@@ -1916,6 +2051,8 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7108685665625909788, guid: ceda4e5a017de9c449c4927263c37042, type: 3}
   m_PrefabInstance: {fileID: 21691053}
   m_PrefabAsset: {fileID: 0}
+=======
+>>>>>>> 86c93f92 ([FIX] Lobby)
 --- !u!1 &1732850525
 GameObject:
   m_ObjectHideFlags: 0
@@ -1944,8 +2081,7 @@ Transform:
   m_LocalPosition: {x: 8, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1721226203}
+  m_Children: []
   m_Father: {fileID: 545829306}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1752959037
@@ -1976,20 +2112,9 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1884167135}
+  m_Children: []
   m_Father: {fileID: 545829306}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1789373739 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2419311478111715218, guid: ceda4e5a017de9c449c4927263c37042, type: 3}
-  m_PrefabInstance: {fileID: 1159658963}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &1789373740 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7108685665625909788, guid: ceda4e5a017de9c449c4927263c37042, type: 3}
-  m_PrefabInstance: {fileID: 1159658963}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1797078640
 GameObject:
   m_ObjectHideFlags: 0
@@ -2247,16 +2372,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1808885434}
   m_CullTransparentMesh: 1
---- !u!1 &1884167134 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2419311478111715218, guid: ceda4e5a017de9c449c4927263c37042, type: 3}
-  m_PrefabInstance: {fileID: 2103372560}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &1884167135 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7108685665625909788, guid: ceda4e5a017de9c449c4927263c37042, type: 3}
-  m_PrefabInstance: {fileID: 2103372560}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1934632345
 GameObject:
   m_ObjectHideFlags: 0
@@ -2578,6 +2693,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2089502688}
   m_CullTransparentMesh: 1
+<<<<<<< HEAD
 --- !u!1001 &2103372560
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2659,6 +2775,8 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ceda4e5a017de9c449c4927263c37042, type: 3}
+=======
+>>>>>>> 86c93f92 ([FIX] Lobby)
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
