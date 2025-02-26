@@ -1,163 +1,109 @@
 using UnityEngine;
-using System.Collections;
 
 namespace KJ.Player
 {
     public class Hotgauge : MonoBehaviour
     {
-        public bool gaugePause = false;
-        private float heatGauge = 0f;
-        private float maxHeat = 100f;
-        private float heatIncreaseRate = 10f;
-        private float heatDecreaseRate = 5f; // ºÒÀÌ ¾øÀ» ¶§ °¨¼Ò ¼Óµµ
-        private float reviveDelay = 5f; // ºÎÈ° ´ë±â ½Ã°£
+        public bool gaugePause = false; // ê²Œì´ì§€ ì¼ì‹œ ì •ì§€ ìƒíƒœ (trueì´ë©´ ì¦ê°€/ê°ì†Œ ë©ˆì¶¤)
+        private float heatGauge = 0f; // í˜„ì¬ ëœ¨ê±°ì›€ ê²Œì´ì§€ ê°’
+        private float maxHeat = 100f; // ìµœëŒ€ ëœ¨ê±°ì›€ ê²Œì´ì§€ ê°’
+        private float heatIncreaseRate = 10f; // ë¶ˆì„ ë“¤ê³  ìˆì„ ë•Œ ì´ˆë‹¹ ì¦ê°€ëŸ‰
+        private float heatDecreaseRate = 5f;  // ë¶ˆì´ ì—†ì„ ë•Œ ì´ˆë‹¹ ê°ì†ŒëŸ‰
 
-        private bool hasFire = false; // ºÒÀ» µé°í ÀÖ´ÂÁö ¿©ºÎ
-        private bool isDead = false; // ÇÃ·¹ÀÌ¾î »ç¸Á ¿©ºÎ
+        private bool hasFire = false; // í”Œë ˆì´ì–´ê°€ ë¶ˆì„ ë“¤ê³  ìˆëŠ” ìƒíƒœ ì—¬ë¶€
 
-        private PlayerAnimationController animationController;
-        private PlayerMovement playerMovement;
-        private Rigidbody rb;
+        [Header("UI ì„¤ì •")]
+        [SerializeField] private KJ.UI.HotgaugeUIController hotUI; // ëœ¨ê±°ì›€ ê²Œì´ì§€ UI ì»¨íŠ¸ë¡¤ëŸ¬
 
-        private void Awake()
+        private void Start()
         {
-            animationController = GetComponent<PlayerAnimationController>();
-            playerMovement = GetComponent<PlayerMovement>();
-            rb = GetComponent<Rigidbody>();
+            ResetHeatOnDeath(); // ê²Œì„ ì‹œì‘ ì‹œ ê²Œì´ì§€ ì´ˆê¸°í™”
         }
 
         private void Update()
         {
-            if (isDead) return; // »ç¸Á »óÅÂ¿¡¼­´Â ÀÔ·ÂÀ» Ã³¸®ÇÏÁö ¾ÊÀ½
+            if (gaugePause) return; // ê²Œì´ì§€ ì¼ì‹œ ì •ì§€ ìƒíƒœë¼ë©´ ì—…ë°ì´íŠ¸ ì¤‘ë‹¨
 
-            // F Å°¸¦ ´©¸£¸é ºÒÀ» µé°í ÀÖ´Â »óÅÂ Åä±Û (Å×½ºÆ®¿ë)
-            if (Input.GetKeyDown(KeyCode.F))
+            if (Input.GetKeyDown(KeyCode.F)) // F í‚¤ë¥¼ ëˆŒëŸ¬ ë¶ˆì„ ì¼œê±°ë‚˜ ëŒ ìˆ˜ ìˆìŒ
             {
                 ToggleFire();
             }
 
-            if (hasFire && !gaugePause)
+            if (hasFire)
             {
-                IncreaseHeat(Time.deltaTime * heatIncreaseRate);
+                IncreaseHeat(Time.deltaTime * heatIncreaseRate); // ë¶ˆì„ ë“¤ê³  ìˆìœ¼ë©´ ëœ¨ê±°ì›€ ê²Œì´ì§€ ì¦ê°€
             }
-            else if (!hasFire && heatGauge > 0) // ºÒÀÌ ¾øÀ» ¶§ °ÔÀÌÁö °¨¼Ò
+            else if (heatGauge > 0)
             {
-                DecreaseHeat(Time.deltaTime * heatDecreaseRate);
-            }
-
-            if (Input.GetKeyDown(KeyCode.Y))
-            {
-                IncreaseHeat(5f);
-            }
-
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                ResetHeat();
+                DecreaseHeat(Time.deltaTime * heatDecreaseRate); // ë¶ˆì´ ì—†ìœ¼ë©´ ëœ¨ê±°ì›€ ê²Œì´ì§€ ê°ì†Œ
             }
         }
 
         /// <summary>
-        /// ºÒÀ» µé°í ÀÖ´Â »óÅÂ¸¦ Åä±Û (Å×½ºÆ®¿ë)
+        /// ë¶ˆì„ ë“¤ê³  ìˆëŠ” ìƒíƒœë¥¼ í† ê¸€ (ì¼œê¸°/ë„ê¸°)
         /// </summary>
         private void ToggleFire()
         {
-            hasFire = !hasFire;
-            Debug.Log($"ºÒ »óÅÂ º¯°æ: {(hasFire ? "ºÒÀ» µé°í ÀÖÀ½" : "ºÒ ¾øÀ½")}");
+            hasFire = !hasFire; // í˜„ì¬ ë¶ˆ ìƒíƒœ ë°˜ì „
+            Debug.Log($"ë¶ˆ ìƒíƒœ ë³€ê²½: {(hasFire ? "ë¶ˆì„ ë“¤ê³  ìˆìŒ" : "ë¶ˆ ì—†ìŒ")}");
         }
 
         /// <summary>
-        /// ¶ß°Å¿ò °ÔÀÌÁö Áõ°¡ (ºÒÀ» µé°í ÀÖÀ» ¶§¸¸)
+        /// ëœ¨ê±°ì›€ ê²Œì´ì§€ ì¦ê°€ (ìµœëŒ€ê°’ì„ ì´ˆê³¼í•˜ì§€ ì•Šë„ë¡ ì œí•œ)
         /// </summary>
         private void IncreaseHeat(float amount)
         {
-            if (!hasFire || isDead) return;
+            if (!hasFire) return; // ë¶ˆì„ ë“¤ê³  ìˆì§€ ì•Šìœ¼ë©´ ì¦ê°€í•˜ì§€ ì•ŠìŒ
 
             heatGauge += amount;
-            heatGauge = Mathf.Clamp(heatGauge, 0, maxHeat);
+            heatGauge = Mathf.Clamp(heatGauge, 0, maxHeat); // ìµœëŒ€ì¹˜ë¥¼ ë„˜ì§€ ì•Šë„ë¡ ì œí•œ
 
-            Debug.Log($"ÇöÀç ¶ß°Å¿ò °ÔÀÌÁö: {heatGauge}");
-
-            if (heatGauge >= maxHeat)
-            {
-                Overheat();
-            }
+            Debug.Log($"í˜„ì¬ ëœ¨ê±°ì›€ ê²Œì´ì§€: {heatGauge}");
+            UpdateHotUI(); // UI ê°±ì‹ 
         }
 
         /// <summary>
-        /// ¶ß°Å¿ò °ÔÀÌÁö °¨¼Ò (ºÒÀ» µé°í ÀÖÁö ¾ÊÀ» ¶§¸¸)
+        /// ëœ¨ê±°ì›€ ê²Œì´ì§€ ê°ì†Œ (ìµœì†Œê°’ì„ ì•„ë˜ë¡œ ë‚´ë ¤ê°€ì§€ ì•Šë„ë¡ ì œí•œ)
         /// </summary>
         private void DecreaseHeat(float amount)
         {
             heatGauge -= amount;
-            heatGauge = Mathf.Clamp(heatGauge, 0, maxHeat);
-            Debug.Log($"ÇöÀç ¶ß°Å¿ò °ÔÀÌÁö: {heatGauge}");
+            heatGauge = Mathf.Clamp(heatGauge, 0, maxHeat); // ìµœì†Œ 0 ì´í•˜ë¡œ ë‚´ë ¤ê°€ì§€ ì•Šë„ë¡ ì œí•œ
+
+            Debug.Log($"í˜„ì¬ ëœ¨ê±°ì›€ ê²Œì´ì§€: {heatGauge}");
+            UpdateHotUI(); // UI ê°±ì‹ 
         }
 
         /// <summary>
-        /// °ú¿­ Ã³¸® (°ÔÀÌÁö ÃÖ´ëÄ¡ µµ´Ş)
+        /// ëœ¨ê±°ì›€ ê²Œì´ì§€ê°€ ìµœëŒ€ì¹˜ì¸ì§€ í™•ì¸
         /// </summary>
-        private void Overheat()
+        public bool IsOverheated()
         {
-            gaugePause = true;
-            Debug.Log("ÇÃ·¹ÀÌ¾î°¡ °ú¿­µÇ¾ú½À´Ï´Ù.");
-            Die(); // °ú¿­ ½Ã »ç¸Á Ã³¸®
+            return heatGauge >= maxHeat;
         }
 
         /// <summary>
-        /// ÇÃ·¹ÀÌ¾î »ç¸Á Ã³¸®
+        /// ì‚¬ë§ í›„ ëœ¨ê±°ì›€ ê²Œì´ì§€ ì´ˆê¸°í™” ë° ë¶ˆ ì œê±°
         /// </summary>
-        private void Die()
+        public void ResetHeatOnDeath()
         {
-            isDead = true;
-            Debug.Log("ÇÃ·¹ÀÌ¾î°¡ »ç¸ÁÇß½À´Ï´Ù.");
+            heatGauge = 0; // ê²Œì´ì§€ 0ìœ¼ë¡œ ì´ˆê¸°í™”
+            gaugePause = false; // ê²Œì´ì§€ ì¼ì‹œ ì •ì§€ í•´ì œ
+            hasFire = false; // ë¶ˆ ì œê±°
 
-            // ÀÌµ¿ ºÒ°¡ Ã³¸®
-            playerMovement.enabled = false;
-            rb.isKinematic = true;
-
-            // »ç¸Á ¾Ö´Ï¸ŞÀÌ¼Ç ½ÇÇà
-            animationController?.PlayDeathAnimation();
-
-            // ÀÏÁ¤ ½Ã°£ ÈÄ ºÎÈ°
-            StartCoroutine(Revive());
+            Debug.Log("í•«ê²Œì´ì§€ ì´ˆê¸°í™”ë¨, ë¶ˆ ì œê±°ë¨.");
+            UpdateHotUI(); // UI ê°±ì‹ 
         }
 
         /// <summary>
-        /// ÀÏÁ¤ ½Ã°£ ÈÄ ºÎÈ°ÇÏ´Â ÄÚ·çÆ¾
+        /// í•«ê²Œì´ì§€ UI ì—…ë°ì´íŠ¸
         /// </summary>
-        private IEnumerator Revive()
+        private void UpdateHotUI()
         {
-            yield return new WaitForSeconds(reviveDelay);
-
-            isDead = false;
-            heatGauge = 0;
-            gaugePause = false;
-            hasFire = false;
-
-            Debug.Log("ÇÃ·¹ÀÌ¾î°¡ ºÎÈ°Çß½À´Ï´Ù! (ºÒ ¾øÀ½)");
-
-            // ÀÌµ¿ °¡´É Ã³¸®
-            playerMovement.enabled = true;
-            rb.isKinematic = false;
-
-            // ºÎÈ° ¾Ö´Ï¸ŞÀÌ¼Ç ½ÇÇà
-            animationController?.PlayReviveAnimation();
-        }
-
-        /// <summary>
-        /// ¶ß°Å¿ò °ÔÀÌÁö ÃÊ±âÈ­ (»ç¸ÁÇÑ °æ¿ì ¸®½ºÆù ºÒ°¡)
-        /// </summary>
-        private void ResetHeat()
-        {
-            if (isDead)
+            if (hotUI != null)
             {
-                Debug.Log("»ç¸ÁÇÑ »óÅÂ¿¡¼­´Â °ÔÀÌÁö¸¦ ÃÊ±âÈ­ÇÒ ¼ö ¾ø½À´Ï´Ù.");
-                return;
+                hotUI.UpdateHotUI(heatGauge, maxHeat); // í˜„ì¬ ê²Œì´ì§€ ìƒíƒœë¥¼ UIì— ë°˜ì˜
             }
-
-            heatGauge = 0;
-            gaugePause = false;
-            Debug.Log("°ÔÀÌÁö ÃÊ±âÈ­µÊ, ´Ù½Ã ½ÃÀÛ °¡´É.");
         }
     }
 }

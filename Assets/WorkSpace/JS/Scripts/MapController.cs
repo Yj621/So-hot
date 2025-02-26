@@ -1,7 +1,9 @@
 using System.Collections;
 using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
 
-public class MapController : MonoBehaviour
+public class MapController : MonoBehaviourPunCallbacks
 {
     public Transform[] RockFallPoints;
     public GameObject RockPrefab;
@@ -9,7 +11,7 @@ public class MapController : MonoBehaviour
     public float RockDuration = 5f;
     public float RockSpwanTime = 5f;
 
-    public BoxCollider CherryCollider;
+    public BoxCollider[] CherryCollider;
     public GameObject CherryPrefab;
     public float DropInterval = 0.1f;
     private int CurrentCherry = 0;
@@ -23,9 +25,12 @@ public class MapController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        StartCoroutine(SpwanRockRoutine());
-        StartCoroutine(SpwanCherryRoutine());
-        StartCoroutine(SpwanBamBooRoutine());
+        if (PhotonNetwork.IsMasterClient)
+        {
+            StartCoroutine(SpwanRockRoutine());
+            StartCoroutine(SpwanCherryRoutine());
+            StartCoroutine(SpwanBamBooRoutine());
+        }
     }
 
     
@@ -44,8 +49,7 @@ public class MapController : MonoBehaviour
         {
             for (int i = 0; i < 3; i++)
             {
-                Vector3 randomPos = GetPoint();
-                SpwanCherry(randomPos);
+                SpwanCherry();
                 yield return new WaitForSeconds(DropInterval);
             }
         }
@@ -68,7 +72,7 @@ public class MapController : MonoBehaviour
     {
         for (int i = 0; i < RockFallPoints.Length; i++)
         {
-            GameObject rock = Instantiate(RockPrefab, RockFallPoints[i].position, Quaternion.identity);
+            GameObject rock = PhotonNetwork.Instantiate(RockPrefab.name, RockFallPoints[i].position, Quaternion.identity);
             Rigidbody rb = rock.GetComponent<Rigidbody>();
 
             rb.linearVelocity = Vector3.down * RockSpeed;
@@ -79,22 +83,26 @@ public class MapController : MonoBehaviour
 
     
 
-    void SpwanCherry(Vector3 spawnPosition)
+    void SpwanCherry()
     {
-            Instantiate(CherryPrefab, spawnPosition, Quaternion.identity);
-            CurrentCherry++; // ª˝º∫µ» æ∆¿Ã≈€ ∞≥ºˆ ¡ı∞°
+        for (int i = 0; i < CherryCollider.Length; i++)
+        {
+            Vector3 spawnPosition = GetPoint(CherryCollider[i]);
+            PhotonNetwork.Instantiate(CherryPrefab.name, spawnPosition, Quaternion.identity);
+            CurrentCherry++; // ÏÉùÏÑ±Îêú ÏïÑÏù¥ÌÖú Í∞úÏàò Ï¶ùÍ∞Ä
+        }
     }
 
     void SpwanBamBoo()
     {
         for (int i = 0; i < BamBooCollider.Length; i++)
         {
-            Vector3 spawnPosition = GetRandomPointFromCollider(BamBooCollider[i]); // «ÿ¥Á Colliderø°º≠ ∑£¥˝ ¿ßƒ° ∞°¡Æø¿±‚
+            Vector3 spawnPosition = GetRandomPointFromCollider(BamBooCollider[i]); // Ìï¥Îãπ ColliderÏóêÏÑú ÎûúÎç§ ÏúÑÏπò Í∞ÄÏ†∏Ïò§Í∏∞
             Quaternion rotation = Quaternion.Euler(0, 0, 90);
-            GameObject bamBoo = Instantiate(BamBooPrefab, spawnPosition, rotation);
+            GameObject bamBoo = PhotonNetwork.Instantiate(BamBooPrefab.name, spawnPosition, rotation);
             Rigidbody rb = bamBoo.GetComponent<Rigidbody>();
 
-            // øﬁ¬ ¿Ã∏È Vector3.left, ø¿∏•¬ ¿Ã∏È Vector3.right
+            // ÏôºÏ™ΩÏù¥Î©¥ Vector3.left, Ïò§Î•∏Ï™ΩÏù¥Î©¥ Vector3.right
             Vector3 direction = (i == 0) ? Vector3.left : Vector3.right;
             rb.linearVelocity = direction * BamBooSpeed;
 
@@ -102,16 +110,15 @@ public class MapController : MonoBehaviour
         }
     }
 
-        Vector3 GetPoint()
+        Vector3 GetPoint(BoxCollider collider)
     {
-        Vector3 areaSize = CherryCollider.bounds.size;
-        Vector3 areaCenter = CherryCollider.bounds.center;
+        Vector3 areaSize = collider.bounds.size;
+        Vector3 areaCenter = collider.bounds.center;
 
         float randomX = Random.Range(areaCenter.x - areaSize.x / 2, areaCenter.x + areaSize.x / 2);
-        float randomY = areaCenter.y; // dropHeight ¥ÎΩ≈ Collider ≥Ù¿Ã ±‚¡ÿ
+        float randomY = areaCenter.y; // dropHeight ÎåÄÏã† Collider ÎÜíÏù¥ Í∏∞Ï§Ä
         float randomZ = Random.Range(areaCenter.z - areaSize.z / 2, areaCenter.z + areaSize.z / 2);
 
-        Vector3 spawnPosition = new Vector3(randomX, randomY, randomZ);
         return new Vector3(randomX, randomY, randomZ);
     }
 
