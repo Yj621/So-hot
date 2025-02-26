@@ -7,7 +7,7 @@ public class Fire : MonoBehaviourPun
     {
         if (other.CompareTag("Goal"))
         {
-            GameManager.Instance.photonView.RPC("GameClear", RpcTarget.All);
+            //GameManager.Instance.photonView.RPC("GameClear", RpcTarget.All);
         }
     }
 }
