@@ -1121,7 +1121,6 @@ GameObject:
   - component: {fileID: 6190217808043446783}
   - component: {fileID: 5481309853770339775}
   - component: {fileID: 4952648676142252858}
-  - component: {fileID: 5667515190572077775}
   - component: {fileID: 2573046728878114369}
   - component: {fileID: 9217565686346498495}
   - component: {fileID: 2473999270594441614}
@@ -1164,7 +1163,7 @@ Animator:
   m_GameObject: {fileID: 3522818762960730726}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 1bcae358006f145a4aa69bd9a7a002f6, type: 2}
+  m_Controller: {fileID: 9100000, guid: 9ba32c3812a9ae244825ef1f1d76e847, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -1221,9 +1220,9 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!114 &6355099782688522986
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1277,13 +1276,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movement: {fileID: 0}
   state: {fileID: 0}
-  hotgauge: {fileID: 0}
   animationController: {fileID: 0}
   effectList:
   - {fileID: 8467684939505052597}
   - {fileID: 3794773439503399285}
   - {fileID: 6650432986504248125}
-  photonView: {fileID: 0}
+  photonView: {fileID: 6355099782688522986}
 --- !u!114 &4952648676142252858
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1303,20 +1301,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   rotationSpeed: 10
-  runLimit: 1
---- !u!114 &5667515190572077775
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3522818762960730726}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 439220489503696449265903cb78d2ef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gaugePause: 0
 --- !u!114 &2573046728878114369
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1329,7 +1313,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 740ce500539fb5740945035605d7cbe2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hasFire: 0
   saveLife: 0
+  reviveDelay: 5
 --- !u!114 &9217565686346498495
 MonoBehaviour:
   m_ObjectHideFlags: 0

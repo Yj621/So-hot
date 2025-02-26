@@ -55,6 +55,8 @@ MonoBehaviour:
   - DestroyObject
   - ItemEffectOff
   - ItemEffectOn
+  - SetAllReadyUI
+  - SetReadyUI
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

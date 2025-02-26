@@ -5,11 +5,11 @@ namespace KJ.CameraSystem
 {
     public class CameraController : MonoBehaviour
     {
-        [SerializeField] private Transform playerBody; // ÇÃ·¹ÀÌ¾î Ä³¸¯ÅÍ
-        [SerializeField] private Vector3 offset = new Vector3(0, 2, -4); // Ä«¸Ş¶ó ¿ÀÇÁ¼Â
-        [SerializeField] private float followSpeed = 10f; // Ä«¸Ş¶ó µû¶ó°¡´Â ¼Óµµ
-        [SerializeField] private float mouseSensitivity = 3.5f; // ¸¶¿ì½º °¨µµ
-        [SerializeField] private float moveSpeed = 6.5f; // ÇÃ·¹ÀÌ¾î ÀÌµ¿ ¼Óµµ
+        [SerializeField] private Transform playerBody; // í”Œë ˆì´ì–´ ìºë¦­í„°
+        [SerializeField] private Vector3 offset = new Vector3(0, 2, -4); // ì¹´ë©”ë¼ ì˜¤í”„ì…‹
+        [SerializeField] private float followSpeed = 10f; // ì¹´ë©”ë¼ ë”°ë¼ê°€ëŠ” ì†ë„
+        [SerializeField] private float mouseSensitivity = 3.5f; // ë§ˆìš°ìŠ¤ ê°ë„
+        [SerializeField] private float moveSpeed = 6.5f; // í”Œë ˆì´ì–´ ì´ë™ ì†ë„
 
         private float pitch = 0.0f;
         private float yaw = 0.0f;
@@ -17,6 +17,18 @@ namespace KJ.CameraSystem
         private const float maxPitch = 45f;
 
         private CharacterController controller;
+        
+        public Transform PlayerBody
+        {
+            get
+            {
+                return playerBody;
+            }
+            set
+            {
+                playerBody = value;
+            }
+        }
 
         private void Start()
         {
@@ -47,7 +59,7 @@ namespace KJ.CameraSystem
         {
             if (playerBody == null) return;
 
-            MoveCamera(); // Ä«¸Ş¶ó°¡ ÇÃ·¹ÀÌ¾î¸¦ ºÎµå·´°Ô µû¶ó°¡µµ·Ï ¼³Á¤
+            MoveCamera(); // ì¹´ë©”ë¼ê°€ í”Œë ˆì´ì–´ë¥¼ ë¶€ë“œëŸ½ê²Œ ë”°ë¼ê°€ë„ë¡ ì„¤ì •
         }
 
         private void HandleMouseLook()
@@ -59,13 +71,13 @@ namespace KJ.CameraSystem
             pitch -= mouseY;
             pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
 
-            // Ä«¸Ş¶ó È¸Àü (ÇÃ·¹ÀÌ¾î´Â È¸ÀüÇÏÁö ¾ÊÀ½)
+            // ì¹´ë©”ë¼ íšŒì „ (í”Œë ˆì´ì–´ëŠ” íšŒì „í•˜ì§€ ì•ŠìŒ)
             transform.rotation = Quaternion.Euler(pitch, yaw, 0);
         }
 
         private void MoveCamera()
         {
-            // Ä«¸Ş¶ó¸¦ ÇÃ·¹ÀÌ¾î À§Ä¡ + ¿ÀÇÁ¼ÂÀ¸·Î ÀÌµ¿ (ºÎµå·´°Ô µû¶ó°¡µµ·Ï Lerp Àû¿ë)
+            // ì¹´ë©”ë¼ë¥¼ í”Œë ˆì´ì–´ ìœ„ì¹˜ + ì˜¤í”„ì…‹ìœ¼ë¡œ ì´ë™ (ë¶€ë“œëŸ½ê²Œ ë”°ë¼ê°€ë„ë¡ Lerp ì ìš©)
             Vector3 targetPosition = playerBody.position + transform.rotation * offset;
             transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * followSpeed);
         }
@@ -77,7 +89,7 @@ namespace KJ.CameraSystem
             float horizontal = Input.GetAxis("Horizontal");
             float vertical = Input.GetAxis("Vertical");
 
-            // Ä«¸Ş¶ó°¡ ¹Ù¶óº¸´Â ¹æÇâ ±âÁØÀ¸·Î ÀÌµ¿
+            // ì¹´ë©”ë¼ê°€ ë°”ë¼ë³´ëŠ” ë°©í–¥ ê¸°ì¤€ìœ¼ë¡œ ì´ë™
             Vector3 moveDirection = transform.forward * vertical + transform.right * horizontal;
             moveDirection.y = 0;
 

@@ -2,6 +2,7 @@ using NUnit.Framework;
 using Photon.Pun;
 using UnityEngine;
 using System.Collections.Generic;
+using YJ.UIManager;
 
 namespace KJ.Player
 {
@@ -9,21 +10,42 @@ namespace KJ.Player
     {
         public PlayerMovement movement;
         public PlayerState state;
-        public Hotgauge hotgauge;
         public PlayerAnimationController animationController;
         public List<GameObject> effectList;
         public PhotonView photonView;
         public Coroutine unlimitRunCoroutine; 
-        public Coroutine gaugeStopCoroutine; 
+        public Coroutine gaugeStopCoroutine;
+
+        private Inventory inventory;
 
         private void Awake()
         {
             movement = GetComponent<PlayerMovement>();
             state = GetComponent<PlayerState>();
-            hotgauge = GetComponent<Hotgauge>();
             animationController = GetComponent<PlayerAnimationController>();
             photonView = GetComponent<PhotonView>();
             GameManager.Instance.RegisterPlayer(this);
+        }
+
+        void Start()
+        {
+            inventory = FindAnyObjectByType<Inventory>();
+        }
+
+        void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.G))
+            {
+                ItemUse();
+            }
+        }
+
+        public void ItemUse()
+        {
+            if (inventory != null)
+            {
+                inventory.UseItem();
+            }
         }
     }
 }
