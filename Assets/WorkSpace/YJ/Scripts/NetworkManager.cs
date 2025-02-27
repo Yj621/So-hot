@@ -31,7 +31,7 @@ namespace YJ.Network
         [Header("--- Room List ---")]
         [SerializeField] private GameObject roomListContent;
         [SerializeField] private GameObject roomListPrefab;
-
+        private List<RoomInfo> cachedRoomList = new List<RoomInfo>(); // 방 목록 캐싱
 
         void Start()
         {
@@ -112,10 +112,47 @@ namespace YJ.Network
         }
 
 
-        // 로비에 있을때 방 목록이 갱신될 때 호출되는 콜백
+
+        // 로비에 있을 때 방 목록이 갱신될 때 호출되는 콜백 함수 (방 목록 정보를 최신 상태로 유지)
         public override void OnRoomListUpdate(List<RoomInfo> roomList)
         {
-            UpdateRoomList(roomList); // 방 목록 업데이트
+            // 전달받은 방 목록을 순회하며 캐싱된 방 목록(cachedRoomList)을 업데이트
+            foreach (var room in roomList)
+            {
+                // 삭제된 방은 목록에서 제거
+                if (room.RemovedFromList)
+                {
+                    //cachedRoomList에 있는 RoomInfo(r)의 이름과 roomName과 비교해서 삭제(삭제된 방 이름과 동일한 항목 제거)
+                    cachedRoomList.RemoveAll(r => r.Name == room.Name);
+                    //다음 방 정보로 넘어감
+                    continue;
+                }
+
+                // 기존 방 정보가 갱신된 경우 또는 새로운 방이 추가된 경우
+                int index = cachedRoomList.FindIndex(r => r.Name == room.Name); // 캐싱된 목록에서 동일한 이름의 방 검색
+                if (index != -1)
+                {
+                    // 동일한 이름의 방이 이미 존재하면 정보를 갱신
+                    cachedRoomList[index] = room; 
+                }
+                else
+                {
+                    // 동일한 이름의 방이 없으면 새로 추가
+                    cachedRoomList.Add(room);
+                }
+            }
+
+            // 최신 상태의 캐싱된 방 목록으로 UI 업데이트
+            UpdateRoomList(cachedRoomList);
+        }
+
+        /// <summary>
+        /// 새로고침 버튼 클릭 시 캐시된 방 목록으로 UI 갱신
+        /// </summary>
+        public void OnClickRefreshRoomList()
+        {
+            UpdateRoomList(cachedRoomList);
+            Debug.Log("방 목록 새로고침 완료");
         }
 
         /// <summary>
