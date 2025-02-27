@@ -76,7 +76,7 @@ namespace Donghyun.Network
             Debug.Log("LobbyScene - 마스터 변경");
 
             isReady = false;
-            playerSetting.SetMasterTextRPC();
+            playerSetting.SetMasterTextRPC(newMasterClient);
             SetStartButton();
         }
 
@@ -142,7 +142,7 @@ namespace Donghyun.Network
             //플레이어의 본인 슬롯을 할당
             playerNumber = emptyPlayer.slot.Min;
             emptyPlayer.slot.Remove(playerNumber);
-            playerSetting.SetPlayerSlotRPC(playerNumber, RpcTarget.All);
+            playerSetting.SetPlayerSlotRPC(playerNumber, RpcTarget.AllViaServer);
             PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable { { ActorNumberString, playerNumber } });
 
             //빈 슬롯 할당 후 커스텀 프로퍼티 바꾸기
@@ -152,7 +152,7 @@ namespace Donghyun.Network
             playerSetting.SetNickNameColor(Color.red);
 
             //모든 클라이언트에게 본인의 닉네임을 표시
-            playerSetting.SetNickNameRPC(PhotonNetwork.NickName, RpcTarget.All);
+            playerSetting.SetNickNameRPC(PhotonNetwork.NickName, RpcTarget.AllViaServer);
 
         }
         #endregion
