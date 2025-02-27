@@ -16,7 +16,7 @@ public class Fire : MonoBehaviourPun
         }
         else
         {
-            Destroy(Instance);
+            Destroy(gameObject);
         }
 
         isOnFire = true;
