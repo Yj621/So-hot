@@ -61,6 +61,11 @@ MonoBehaviour:
   - SetPlayerSlot
   - SetClientText
   - SetMasterText
+  - AllPlayerRespawn
+  - GameClear
+  - PlayerDie
+  - PlayerResurrection
+  - InitPlayerPos
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
