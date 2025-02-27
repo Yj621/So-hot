@@ -2,6 +2,7 @@ using UnityEngine;
 using Photon.Pun;
 using KJ.Player;
 using UnityEngine.UIElements;
+using System.Collections;
 public class GameManager : MonoBehaviourPun
 {
     public static GameManager Instance;
@@ -76,20 +77,15 @@ public class GameManager : MonoBehaviourPun
     [PunRPC]
     void PlayerDie(int playerViewID)
     {
-        /*
-        1.플레이어는 자신의 PlayerState에서 isDead를 변경한 후, PlayerDie() RPC 호출
-        2.플레이어 전체 사망 여부를 우선 체크하여, true일 경우에 AllPlayerRespawn() RPC 호출
-        3.1명의 플레이어라도 살아있는 경우, 파라미터로 받아온 PlayerViewID를 갖는 플레이어의 사망 처리 진행
-        */
-
+        GameObject playerObj = PhotonView.Find(playerViewID).gameObject;
+        PlayerState playerState = playerObj.GetComponent<PlayerState>();
+        playerState.Die();
         if (player1Dead && player2Dead && player3Dead && player4Dead)
         {
             photonView.RPC("AllPlayerRespawn", RpcTarget.All);
         }
         else
         {
-            //TO-DO: playerViewID에 맞는 플레이어의 사망 처리 (이 블럭에서) 진행
-            //TO-DO: PlayerResurrection() RpcTarget은 All이 맞는가?
             photonView.RPC("PlayerResurrection", RpcTarget.All, playerViewID);
         }
 
@@ -99,7 +95,9 @@ public class GameManager : MonoBehaviourPun
     void PlayerResurrection(int playerViewID)
     {
 
-        //TO-DO: playerViewID에 맞는 플레이어의 부활 처리
+        GameObject playerObj = PhotonView.Find(playerViewID).gameObject;
+        PlayerState playerState = playerObj.GetComponent<PlayerState>();
+        playerState.StartCoroutine(playerState.Revive());
     }
 
 

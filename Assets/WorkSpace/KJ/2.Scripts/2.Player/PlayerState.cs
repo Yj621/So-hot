@@ -14,6 +14,7 @@ namespace KJ.Player
         private Animator animator;     // 애니메이터 참조
         private PlayerMovement playerMovement; // 플레이어 이동 컴포넌트
         private Rigidbody rb; // 물리적 이동을 제어하는 리지드바디
+        private PlayerController playerController;
         [SerializeField] private float reviveDelay = 5f; // 부활까지의 대기 시간
 
         private void Awake()
@@ -21,6 +22,7 @@ namespace KJ.Player
             animator = GetComponent<Animator>();
             playerMovement = GetComponent<PlayerMovement>();
             rb = GetComponent<Rigidbody>();
+            playerController = GetComponent<PlayerController>();
 
         }
 
@@ -37,7 +39,7 @@ namespace KJ.Player
             // 뜨거움 게이지가 최대치일 경우 사망 처리
             if (UIManager.Instance != null && UIManager.Instance.IsOverheated())
             {
-                Die();
+                GameManager.Instance.photonView.RPC("PlayerDie", RpcTarget.All, playerController.photonView.ViewID);
             }
 
             if (hasFire)
@@ -64,14 +66,14 @@ namespace KJ.Player
             }
             else
             {
-                Die();
+                GameManager.Instance.photonView.RPC("PlayerDie", RpcTarget.All, playerController.photonView.ViewID);
             }
         }
 
         /// <summary>
         /// 플레이어가 사망할 때 호출되는 메서드
         /// </summary>
-        private void Die()
+        public void Die()
         {
             isDead = true;
             Debug.Log("플레이어가 즉사했습니다.");
@@ -91,15 +93,12 @@ namespace KJ.Player
             {
                 UIManager.Instance.ResetHeatOnDeath();
             }
-
-            // 일정 시간 후 부활
-            StartCoroutine(Revive());
         }
 
         /// <summary>
         /// 일정 시간 후 부활하는 코루틴
         /// </summary>
-        private IEnumerator Revive()
+        public IEnumerator Revive()
         {
             yield return new WaitForSeconds(reviveDelay); // 부활 대기 시간
 
