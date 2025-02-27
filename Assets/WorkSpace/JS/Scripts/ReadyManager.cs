@@ -2,25 +2,31 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
+using ExitGames.Client.Photon;
+using Donghyun.Network;
 
 public class ReadyManager : MonoBehaviourPunCallbacks
 {
-    public Text playerNameText;
     public GameObject[] characters;
     public Sprite[] characterImages;
     public Image characterImage;
     public Sprite unknownCharacterSprite;
     public GameObject blackCharacter;
 
-    private int currentIndex = -1;
+    private static int currentIndex = -1;
     private GameObject currentCharacter;
     private PhotonView pv;
+    
+    private int mySlotIndex;
 
     private void Start()
     {
         pv = GetComponent<PhotonView>();
 
-        ResetSelection();
+        if (pv.IsMine)
+        {
+            ResetSelection();
+        }
     }
 
     public void OnLeftArrow()
@@ -28,7 +34,7 @@ public class ReadyManager : MonoBehaviourPunCallbacks
         if (!pv.IsMine) return;
 
         currentIndex = (currentIndex - 1 + characters.Length) % characters.Length;
-        UpdateCharacterDisplay();
+        pv.RPC("SyncCharacterSelection", RpcTarget.All, currentIndex);
     }
 
     public void OnRightArrow()
@@ -36,30 +42,42 @@ public class ReadyManager : MonoBehaviourPunCallbacks
         if (!pv.IsMine) return;
 
         currentIndex = (currentIndex + 1) % characters.Length;
-        UpdateCharacterDisplay();
+        pv.RPC("SyncCharacterSelection", RpcTarget.All, currentIndex);
     }
 
-    
     public void OnCancel()
     {
         if (!pv.IsMine) return;
 
-        ResetSelection();
+        pv.RPC("SyncCharacterSelection", RpcTarget.All, -1);
+    }
+
+    [PunRPC]
+    private void SyncCharacterSelection(int index)
+    {
+        currentIndex = index;
+        UpdateCharacterDisplay();
     }
 
     private void UpdateCharacterDisplay()
     {
-        blackCharacter.SetActive(false);
+        blackCharacter.SetActive(currentIndex == -1);
 
         if (currentCharacter != null)
         {
             currentCharacter.SetActive(false);
         }
 
-        currentCharacter = characters[currentIndex];
-        currentCharacter.SetActive(true);
-
-        characterImage.sprite = characterImages[currentIndex];
+        if (currentIndex >= 0)
+        {
+            currentCharacter = characters[currentIndex];
+            currentCharacter.SetActive(true);
+            characterImage.sprite = characterImages[currentIndex];
+        }
+        else
+        {
+            characterImage.sprite = unknownCharacterSprite;
+        }
     }
 
     private void ResetSelection()
@@ -73,5 +91,6 @@ public class ReadyManager : MonoBehaviourPunCallbacks
         currentIndex = -1;
         characterImage.sprite = unknownCharacterSprite;
     }
+
 
 }

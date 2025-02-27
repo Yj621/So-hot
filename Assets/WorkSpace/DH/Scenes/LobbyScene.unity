@@ -657,7 +657,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca8a33988841c67488c0916275d59074, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnPrefabName: PlayerTest
+  spawnPrefabName: PlayerPick
   playerSlots:
   - {fileID: 1752959038}
   - {fileID: 452717461}

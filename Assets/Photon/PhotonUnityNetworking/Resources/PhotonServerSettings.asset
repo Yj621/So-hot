@@ -61,6 +61,13 @@ MonoBehaviour:
   - SetPlayerSlot
   - SetClientText
   - SetMasterText
+  - SyncCharacterSelection
+  - RequestCharacterSync
+  - SyncCharacterSelections
+  - SyncPlayerSelection
+  - UpdateCharacterDisplay
+  - RequestSyncSelections
+  - SyncAllSelections
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

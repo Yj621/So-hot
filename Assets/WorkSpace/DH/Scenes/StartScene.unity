@@ -13259,8 +13259,6 @@ MonoBehaviour:
   nickNameUI: {fileID: 1783070503}
   roomListUI: {fileID: 1312969315}
   createRoomUI: {fileID: 8887639}
-  settingUI: {fileID: 1683969621}
-  QuitUI: {fileID: 1023451584}
   nickNameStateText: {fileID: 1594196425}
   roomListNickName: {fileID: 1569914155}
   nickNameInput: {fileID: 452127412}
