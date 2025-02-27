@@ -2,78 +2,82 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
+using ExitGames.Client.Photon;
+using Donghyun.Network;
 
 public class ReadyManager : MonoBehaviourPunCallbacks
 {
-    public Text playerNameText;
     public GameObject[] characters;
     public Sprite[] characterImages;
     public Image characterImage;
     public Sprite unknownCharacterSprite;
     public GameObject blackCharacter;
 
-    private int currentIndex = -1;
+    private static int currentIndex = -1;
     private GameObject currentCharacter;
-    public int playerSlot = -1; // 플레이어 슬롯 (1P~4P)
+    private PhotonView pv;
+    
+    private int mySlotIndex;
 
     private void Start()
     {
-        if (PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("PlayerSlot"))
-        {
-            playerSlot = (int)PhotonNetwork.LocalPlayer.CustomProperties["PlayerSlot"];
-            Debug.Log($"내 슬롯 번호: {playerSlot + 1}P");
-        }
-        else
-        {
-            Debug.LogError("플레이어 슬롯 정보를 찾을 수 없습니다.");
-        }
+        pv = GetComponent<PhotonView>();
 
-        ResetSelection();
+        if (pv.IsMine)
+        {
+            ResetSelection();
+        }
     }
 
     public void OnLeftArrow()
     {
-        if (!CanControl()) return;
+        if (!pv.IsMine) return;
 
         currentIndex = (currentIndex - 1 + characters.Length) % characters.Length;
-        UpdateCharacterDisplay();
+        pv.RPC("SyncCharacterSelection", RpcTarget.All, currentIndex);
     }
 
     public void OnRightArrow()
     {
-        if (!CanControl()) return;
+        if (!pv.IsMine) return;
 
         currentIndex = (currentIndex + 1) % characters.Length;
-        UpdateCharacterDisplay();
-    }
-
-    public void OnSelect()
-    {
-        if (!CanControl() || currentIndex == -1) return;
-
-        Debug.Log($"{playerSlot + 1}P가 캐릭터 {characters[currentIndex].name}을(를) 선택함.");
+        pv.RPC("SyncCharacterSelection", RpcTarget.All, currentIndex);
     }
 
     public void OnCancel()
     {
-        if (!CanControl()) return;
+        if (!pv.IsMine) return;
 
-        ResetSelection();
+        pv.RPC("SyncCharacterSelection", RpcTarget.All, -1);
+    }
+
+    [PunRPC]
+    private void SyncCharacterSelection(int index)
+    {
+        currentIndex = index;
+        UpdateCharacterDisplay();
     }
 
     private void UpdateCharacterDisplay()
     {
-        blackCharacter.SetActive(false);
+        blackCharacter.SetActive(currentIndex == -1);
 
         if (currentCharacter != null)
         {
             currentCharacter.SetActive(false);
         }
 
-        currentCharacter = characters[currentIndex];
-        currentCharacter.SetActive(true);
-
-        characterImage.sprite = characterImages[currentIndex];
+        if (currentIndex >= 0)
+        {
+            currentCharacter = characters[currentIndex];
+            currentCharacter.SetActive(true);
+            characterImage.sprite = characterImages[currentIndex];
+        }
+        else
+        {
+            characterImage.sprite = unknownCharacterSprite;
+        }
     }
 
     private void ResetSelection()
@@ -88,8 +92,5 @@ public class ReadyManager : MonoBehaviourPunCallbacks
         characterImage.sprite = unknownCharacterSprite;
     }
 
-    private bool CanControl()
-    {
-        return PhotonNetwork.LocalPlayer.ActorNumber == playerSlot;
-    }
+
 }
