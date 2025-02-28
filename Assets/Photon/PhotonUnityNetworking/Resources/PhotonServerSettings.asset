@@ -67,6 +67,7 @@ MonoBehaviour:
   - PlayerResurrection
   - InitPlayerPos
   - SyncCharacterSelection
+  - RequestCharacterSelection
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

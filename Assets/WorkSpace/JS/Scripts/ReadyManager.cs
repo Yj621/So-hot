@@ -10,10 +10,9 @@ public class ReadyManager : MonoBehaviourPunCallbacks
     public GameObject[] characters;
     public Sprite[] characterImages;
     public Image characterImage;
-    public Sprite unknownCharacterSprite;
-    public GameObject blackCharacter;
+    
 
-    private static int currentIndex = -1;
+    private static int currentIndex = 0;
     private GameObject currentCharacter;
     private PhotonView pv;
     
@@ -46,22 +45,11 @@ public class ReadyManager : MonoBehaviourPunCallbacks
         UpdateProperties();
     }
 
-    public void OnCancel()
-    {
-        if (!pv.IsMine) return;
-        pv.RPC("SyncCharacterSelection", RpcTarget.All, -1);
-        UpdateProperties();
-    }
 
     private void UpdateProperties()
     {
-        PhotonNetwork.CurrentRoom.SetCustomProperties(
-           new Hashtable {
-                {
-                    "CharacterIndex" + PhotonNetwork.LocalPlayer.ActorNumber.ToString() ,
-                currentIndex }});
-        Debug.Log("CharacterIndex" + PhotonNetwork.LocalPlayer.ActorNumber.ToString() + " : " +
-                currentIndex);
+        PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable { { "CharacterIndex", currentIndex } });
+        Debug.Log("CharacterIndex updated: " + currentIndex);
     }
 
     [PunRPC]
@@ -75,7 +63,6 @@ public class ReadyManager : MonoBehaviourPunCallbacks
 
     private void UpdateCharacterDisplay()
     {
-        blackCharacter.SetActive(currentIndex == -1);
 
         if (currentCharacter != null)
         {
@@ -88,10 +75,6 @@ public class ReadyManager : MonoBehaviourPunCallbacks
             currentCharacter.SetActive(true);
             characterImage.sprite = characterImages[currentIndex];
         }
-        else
-        {
-            characterImage.sprite = unknownCharacterSprite;
-        }
     }
 
     
@@ -102,9 +85,8 @@ public class ReadyManager : MonoBehaviourPunCallbacks
             currentCharacter.SetActive(false);
         }
 
-        blackCharacter.SetActive(true);
-        currentIndex = -1;
-        characterImage.sprite = unknownCharacterSprite;
+        characters[0].SetActive(true);
+        currentIndex = 0;
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
