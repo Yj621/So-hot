@@ -27,14 +27,18 @@ public class Fire : MonoBehaviourPun
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Finish"))
+        if (!photonView.IsMine) { return; }
+
+        if (other.CompareTag("Finish") && isOnFire)
         {
             GameManager.Instance.photonView.RPC("GameClear", RpcTarget.All);
         }
-        else if (other.CompareTag("Water"))
+
+        else if (other.CompareTag("Water") && isOnFire)
         {
             FireOff();
         }
+
         else if (other.CompareTag("Ground"))
         {
             isOnGround = true;
@@ -42,6 +46,7 @@ public class Fire : MonoBehaviourPun
     }
     private void OnTriggerExit(Collider other)
     {
+        if (!photonView.IsMine) { return; }
         if (other.CompareTag("Ground"))
         {
             timer = 5f;
@@ -60,7 +65,9 @@ public class Fire : MonoBehaviourPun
 
     private void Update()
     {
-        if(isOnGround)
+        if (!photonView.IsMine) return;
+
+        if (isOnGround)
         {
             timer -= Time.deltaTime;
             if (timer < 0)
