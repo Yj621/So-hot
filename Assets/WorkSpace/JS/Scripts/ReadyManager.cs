@@ -35,21 +35,33 @@ public class ReadyManager : MonoBehaviourPunCallbacks
 
         currentIndex = (currentIndex - 1 + characters.Length) % characters.Length;
         pv.RPC("SyncCharacterSelection", RpcTarget.All, currentIndex);
+        UpdateProperties();
     }
 
     public void OnRightArrow()
     {
         if (!pv.IsMine) return;
-
         currentIndex = (currentIndex + 1) % characters.Length;
         pv.RPC("SyncCharacterSelection", RpcTarget.All, currentIndex);
+        UpdateProperties();
     }
 
     public void OnCancel()
     {
         if (!pv.IsMine) return;
-
         pv.RPC("SyncCharacterSelection", RpcTarget.All, -1);
+        UpdateProperties();
+    }
+
+    private void UpdateProperties()
+    {
+        PhotonNetwork.CurrentRoom.SetCustomProperties(
+           new Hashtable {
+                {
+                    "CharacterIndex" + PhotonNetwork.LocalPlayer.ActorNumber.ToString() ,
+                currentIndex }});
+        Debug.Log("CharacterIndex" + PhotonNetwork.LocalPlayer.ActorNumber.ToString() + " : " +
+                currentIndex);
     }
 
     [PunRPC]
@@ -58,6 +70,8 @@ public class ReadyManager : MonoBehaviourPunCallbacks
         currentIndex = index;
         UpdateCharacterDisplay();
     }
+
+
 
     private void UpdateCharacterDisplay()
     {
@@ -80,6 +94,7 @@ public class ReadyManager : MonoBehaviourPunCallbacks
         }
     }
 
+    
     private void ResetSelection()
     {
         if (currentCharacter != null)
@@ -92,5 +107,8 @@ public class ReadyManager : MonoBehaviourPunCallbacks
         characterImage.sprite = unknownCharacterSprite;
     }
 
-
+    public override void OnPlayerEnteredRoom(Player newPlayer)
+    {
+        pv.RPC("SyncCharacterSelection", RpcTarget.All, currentIndex);
+    }
 }
