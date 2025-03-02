@@ -2,7 +2,7 @@ using Photon.Pun;
 using System.Collections;
 using UnityEngine;
 
-public class DisapearPlatform : MonoBehaviourPunCallbacks
+public class DisappearPlatform : MonoBehaviourPunCallbacks
 {
     private Collider platformCollider;
     private MeshRenderer platformRenderer;
@@ -14,11 +14,12 @@ public class DisapearPlatform : MonoBehaviourPunCallbacks
         platformRenderer = GetComponent<MeshRenderer>();
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision collision)
     {
-        // 플레이어가 밟았을 때
-        if (other.CompareTag("Player") && isActive)
+        // 플레이어가 발판 위에 서면 작동
+        if (collision.gameObject.CompareTag("Player") && isActive)
         {
+            Debug.Log("플레이어가 발판을 밟음");
             photonView.RPC("StartDisappear", RpcTarget.All);
         }
     }
@@ -35,7 +36,7 @@ public class DisapearPlatform : MonoBehaviourPunCallbacks
 
     IEnumerator DisappearCoroutine()
     {
-        yield return new WaitForSeconds(2f); // 2초 대기
+        yield return new WaitForSeconds(2f); // 2초 대기 후 사라짐
         SetPlatformActive(false);
 
         yield return new WaitForSeconds(5f); // 5초 후 재생성
