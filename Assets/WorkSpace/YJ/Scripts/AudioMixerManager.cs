@@ -5,90 +5,94 @@ using UnityEngine.UI;
 
 public class AudioMixerManager : MonoBehaviour
 {
-    [SerializeField] private AudioMixer audioMixer;
+    [SerializeField] private AudioMixer audioMixer; // 오디오 믹서를 관리할 AudioMixer 객체
 
-    // 사운드 볼륨슬라이더
-    [SerializeField] private Slider masterVolumeSlider;
-    [SerializeField] private Slider bgmVolumeSlider;
-    [SerializeField] private Slider sfxVolumeSlider;
+    // 사운드 볼륨을 조절하기 위한 UI 슬라이더
+    [SerializeField] private Slider masterVolumeSlider; // 마스터 볼륨 슬라이더
+    [SerializeField] private Slider bgmVolumeSlider;    // 배경음 볼륨 슬라이더
+    [SerializeField] private Slider sfxVolumeSlider;    // 효과음 볼륨 슬라이더
 
-    public static AudioMixerManager instance { get; private set; }
+    public static AudioMixerManager instance { get; private set; } // 싱글톤 패턴을 위한 인스턴스
 
     private void Awake()
     {
+        // 싱글톤 초기화
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(gameObject); // 오브젝트를 씬 전환 시 제거하지 않음
         }
         else
         {
-            Destroy(gameObject);
+            Destroy(gameObject); // 이미 인스턴스가 존재하면 중복 방지를 위해 제거
         }
     }
 
     private void Start()
     {
-        // 오디오 슬라이더 저장 값 불러오기, 없으면 기본 값 1
-        masterVolumeSlider.value = PlayerPrefs.GetFloat("MasterVolume", 1);
-        bgmVolumeSlider.value = PlayerPrefs.GetFloat("BGMVolume", 1);
-        sfxVolumeSlider.value = PlayerPrefs.GetFloat("SFXVolume",1);
+        // 이전에 저장된 슬라이더 값을 불러옴. 값이 없으면 기본값(1)으로 설정
+        masterVolumeSlider.value = PlayerPrefs.GetFloat("MasterVolume", 1f);
+        bgmVolumeSlider.value = PlayerPrefs.GetFloat("BGMVolume", 1f);
+        sfxVolumeSlider.value = PlayerPrefs.GetFloat("SFXVolume", 1f);
 
-        // 오디오믹서의 현재 볼륨을 슬라이더 값으로 변환
-        if (audioMixer.GetFloat("Master", out float masterDb))
-            masterVolumeSlider.value = Mathf.Pow(10, masterDb / 20);
-        if (audioMixer.GetFloat("BGM", out float bgmDb))
-            bgmVolumeSlider.value = Mathf.Pow(10, bgmDb / 20);
-        if (audioMixer.GetFloat("SFX", out float sfxDb))
-            sfxVolumeSlider.value = Mathf.Pow(10, sfxDb / 20);
+        // AudioMixer에 저장된 볼륨 값을 슬라이더 값으로 변환하여 초기화
+        audioMixer.GetFloat("MasterVolume", out float masterDb);
+        masterVolumeSlider.value = Mathf.Pow(10, masterDb / 20); // 데시벨 값을 슬라이더 값으로 변환
+        audioMixer.GetFloat("BGMVolume", out float bgmDb);
+        bgmVolumeSlider.value = Mathf.Pow(10, bgmDb / 20);
+        audioMixer.GetFloat("SFXVolume", out float sfxDb);
+        sfxVolumeSlider.value = Mathf.Pow(10, sfxDb / 20);
 
-        // 슬라이더 값 변경 리스너 등록
-        masterVolumeSlider.onValueChanged.AddListener((value) =>
-        {
+        // 슬라이더 값 변경 시 호출될 이벤트 리스너를 등록
+        masterVolumeSlider.onValueChanged.AddListener((value) => {
             SetMasterVolume(value);
-            PlayerPrefs.SetFloat("MasterVolume", value); // 값 저장
-            PlayerPrefs.Save();
         });
-
-        bgmVolumeSlider.onValueChanged.AddListener((value) =>
-        {
+        bgmVolumeSlider.onValueChanged.AddListener((value) => {
             SetBGMVolume(value);
-            PlayerPrefs.SetFloat("BGMVolume", value); // 값 저장
-            PlayerPrefs.Save();
         });
-
-        sfxVolumeSlider.onValueChanged.AddListener((value) =>
-        {
+        sfxVolumeSlider.onValueChanged.AddListener((value) => {
             SetSFXVolume(value);
-            PlayerPrefs.SetFloat("SFXVolume", value); // 값 저장
-            PlayerPrefs.Save();
         });
 
-        // 초기 오디오 볼륨 설정
+        // 초기 볼륨 설정
         SetMasterVolume(masterVolumeSlider.value);
         SetBGMVolume(bgmVolumeSlider.value);
         SetSFXVolume(sfxVolumeSlider.value);
-
     }
 
-    //AudioMixer는 볼륨값이 -80~0이다.
-    /*value는 슬라이더의 값으로 최솟값 0.0001 최댓값 1로 설정한다
-    그럼 Log10을하고 *20을 하면(-80,0) 사이의 값이 도출된다.*/
-
+    // 전체 볼륨 설정
     public void SetMasterVolume(float volume)
     {
-        Debug.Log(volume);
-        audioMixer.SetFloat("Master", Mathf.Log10(volume) * 20);
+        // 슬라이더 값을 데시벨 값으로 변환
+        float dbVolume = (volume > 0.0001f) ? Mathf.Log10(volume) * 20 : -80f;
+        audioMixer.SetFloat("MasterVolume", dbVolume); // AudioMixer에 설정
+        PlayerPrefs.SetFloat("MasterVolume", volume);  // 설정값 저장
+        PlayerPrefs.Save(); // 저장된 값 즉시 디스크에 기록
+
+        // AudioMixer 값을 다시 슬라이더에 반영 (변환 과정 확인)
+        audioMixer.GetFloat("MasterVolume", out float newDbVolume);
+        masterVolumeSlider.value = Mathf.Pow(10, newDbVolume / 20);
     }
 
+    // 배경음 볼륨 설정
     public void SetBGMVolume(float volume)
     {
-        Debug.Log(volume);
-        audioMixer.SetFloat("BGM", Mathf.Log10(volume) * 20);
+        float dbVolume = (volume > 0.0001f) ? Mathf.Log10(volume) * 20 : -80f;
+        audioMixer.SetFloat("BGMVolume", dbVolume);
+        PlayerPrefs.SetFloat("BGMVolume", volume);
+        PlayerPrefs.Save();
+        audioMixer.GetFloat("BGMVolume", out float newDbVolume);
+        bgmVolumeSlider.value = Mathf.Pow(10, newDbVolume / 20);
     }
 
+    // 효과음 볼륨 설정
     public void SetSFXVolume(float volume)
     {
-        audioMixer.SetFloat("SFX", Mathf.Log10(volume) * 20);
+        float dbVolume = (volume > 0.0001f) ? Mathf.Log10(volume) * 20 : -80f;
+        audioMixer.SetFloat("SFXVolume", dbVolume);
+        PlayerPrefs.SetFloat("SFXVolume", volume);
+        PlayerPrefs.Save();
+        audioMixer.GetFloat("SFXVolume", out float newDbVolume);
+        sfxVolumeSlider.value = Mathf.Pow(10, newDbVolume / 20);
     }
 }
