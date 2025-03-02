@@ -55,6 +55,19 @@ MonoBehaviour:
   - DestroyObject
   - ItemEffectOff
   - ItemEffectOn
+  - SetAllReadyUI
+  - SetReadyUI
+  - SetNickName
+  - SetPlayerSlot
+  - SetClientText
+  - SetMasterText
+  - AllPlayerRespawn
+  - GameClear
+  - PlayerDie
+  - PlayerResurrection
+  - InitPlayerPos
+  - SyncCharacterSelection
+  - RequestCharacterSelection
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

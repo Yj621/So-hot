@@ -5,11 +5,11 @@ using UnityEngine.UI;
 
 public class Inventory : MonoBehaviour
 {
-    Queue<ItemData> inventory = new Queue<ItemData>(); //ÀÎº¥Åä¸®
-    PlayerController itemUser; //¾ÆÀÌÅÛ »ç¿ëÀÚ(=ÇÃ·¹ÀÌ¾î ÀÚ½Å)
-    public int effectNumber; //»ç¿ë ¾ÆÀÌÅÛÀÇ ÀÌÆåÆ® ÀÎµ¦½º
-    [SerializeField] Image frontInven; //ÀÎº¥Åä¸® ¾ÕÄ­ UI
-    [SerializeField] Image terminalInven; //ÀÎº¥Åä¸® µŞÄ­ UI
+    Queue<ItemData> inventory = new Queue<ItemData>(); //ì¸ë²¤í† ë¦¬
+    PlayerController itemUser; //ì•„ì´í…œ ì‚¬ìš©ì(=í”Œë ˆì´ì–´ ìì‹ )
+    public int effectNumber; //ì‚¬ìš© ì•„ì´í…œì˜ ì´í™íŠ¸ ì¸ë±ìŠ¤
+    [SerializeField] Image frontInven; //ì¸ë²¤í† ë¦¬ ì•ì¹¸ UI
+    [SerializeField] Image terminalInven; //ì¸ë²¤í† ë¦¬ ë’·ì¹¸ UI
 
     private void Start()
     {
@@ -32,6 +32,17 @@ public class Inventory : MonoBehaviour
         }
 
     }
+
+    public void InitInventory()
+    {
+        inventory.Clear();
+        frontInven.sprite = null;
+        terminalInven.sprite = null;
+        frontInven.gameObject.SetActive(false);
+        terminalInven.gameObject.SetActive(false);
+
+    }
+
     public void UseItem()
     {
         if (inventory.Count > 0)
@@ -59,7 +70,7 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    //¾ÆÀÌÅÛ »ç¿ë ÈÄ, ÀÎº¥Åä¸® UI ¾÷µ¥ÀÌÆ® ½ÃÄÑÁÖ´Â ÇÔ¼ö
+    //ì•„ì´í…œ ì‚¬ìš© í›„, ì¸ë²¤í† ë¦¬ UI ì—…ë°ì´íŠ¸ ì‹œì¼œì£¼ëŠ” í•¨ìˆ˜
     void IconUpdate()
     {
         if (inventory.Count == 1)

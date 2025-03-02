@@ -1,6 +1,7 @@
 using UnityEngine;
 using Photon.Pun;
 using System.Collections;
+using YJ.UIManager;
 
 namespace KJ.Player
 {
@@ -14,14 +15,6 @@ namespace KJ.Player
         [SerializeField] private LayerMask groundLayer; // 지면 판별을 위한 레이어
         [SerializeField] private float rotationSpeed = 10f; // 회전 속도
 
-        [Header("스태미나 설정")]
-        public bool runLimit; // 스태미나 제한 여부 설정
-        [SerializeField] private float maxStamina = 100f; // 최대 스태미나 값
-        private float currentStamina; // 현재 스태미나 값
-        [SerializeField] private float staminaDrainRate = 10f; // 스태미나 소모율
-
-        [Header("UI 설정")]
-        [SerializeField] private KJ.UI.StaminaUIController staminaUI; // 스태미나 UI 연동
 
         private Rigidbody rb; // Rigidbody 컴포넌트
         private bool isGrounded; // 지면 여부 확인
@@ -37,10 +30,9 @@ namespace KJ.Player
             rb = GetComponent<Rigidbody>();
             rb.freezeRotation = true; // 물리 회전 방지
             currentSpeed = walkSpeed;
-            currentStamina = maxStamina;
             animator = GetComponent<Animator>();
 
-            UpdateStaminaUI(); // UI 초기값 설정
+            UIManager.Instance.UpdateStaminaUI(); // UI 초기값 설정
         }
 
         void Update()
@@ -86,14 +78,18 @@ namespace KJ.Player
             // 스프린트(달리기) 처리
             if (Input.GetKey(KeyCode.LeftShift))
             {
-                if (!runLimit)
+                //스태미나 게이지 활성화
+                UIManager.Instance.ActiveStamina();
+
+                if (!UIManager.Instance.runLimit)
                 {
                     currentSpeed = runSpeed;
                 }
-                else if (currentStamina > 0)
+                else if (UIManager.Instance.currentStamina > 0)
                 {
                     currentSpeed = runSpeed;
-                    DrainStamina(); // 스태미나 감소
+                    UIManager.Instance.DrainStamina(); // 스태미나 감소
+                    Debug.Log("대쉬중");
                 }
                 else
                 {
@@ -102,8 +98,11 @@ namespace KJ.Player
             }
             else
             {
+                //스태미나 게이지 비활성화
+                UIManager.Instance.DeactiveStamina();
+
                 currentSpeed = walkSpeed;
-                RecoverStamina(); // 스태미나 회복
+                UIManager.Instance.RecoverStamina(); // 스태미나 회복
             }
 
             float speedNormalized = moveDirection.magnitude > 0.1f ? GetCurrentSpeedNormalized() : 0f;
@@ -161,38 +160,10 @@ namespace KJ.Player
             }
         }
 
-        private void DrainStamina()
-        {
-            currentStamina -= staminaDrainRate * Time.deltaTime;
-            if (currentStamina < 0)
-            {
-                currentStamina = 0;
-            }
-            UpdateStaminaUI(); // UI 업데이트
-        }
-
-        private void RecoverStamina()
-        {
-            currentStamina += staminaDrainRate * Time.deltaTime;
-            if (currentStamina > maxStamina)
-            {
-                currentStamina = maxStamina;
-            }
-            UpdateStaminaUI(); // UI 업데이트
-        }
-
-        private void UpdateStaminaUI()
-        {
-            if (staminaUI != null)
-            {
-                staminaUI.UpdateStaminaUI(currentStamina, maxStamina);
-            }
-        }
-
         public void RecoverFullStamina()
         {
-            currentStamina = maxStamina;
-            UpdateStaminaUI(); // UI 업데이트
+            UIManager.Instance.currentStamina = UIManager.Instance.maxStamina;
+            UIManager.Instance.UpdateStaminaUI(); // UI 업데이트
         }
 
         public float GetCurrentSpeedNormalized()

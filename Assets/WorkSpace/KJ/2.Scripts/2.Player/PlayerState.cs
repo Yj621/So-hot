@@ -1,16 +1,20 @@
+using KJ.Player;
+using Photon.Pun;
 using System.Collections;
 using UnityEngine;
+using YJ.UIManager;
 
 namespace KJ.Player
 {
     public class PlayerState : MonoBehaviour
     {
-        private bool isDead = false;   // 플레이어 사망 상태
+        public bool hasFire = false; // 플레이어가 불을 들고 있는 상태 여부
+        public bool isDead = false;   // 플레이어 사망 상태
         public bool saveLife = false;  // 한 번의 죽음을 면제받을 수 있는 상태
         private Animator animator;     // 애니메이터 참조
         private PlayerMovement playerMovement; // 플레이어 이동 컴포넌트
         private Rigidbody rb; // 물리적 이동을 제어하는 리지드바디
-        private Hotgauge hotgauge; // 뜨거움 게이지 시스템
+        private PlayerController playerController;
         [SerializeField] private float reviveDelay = 5f; // 부활까지의 대기 시간
 
         private void Awake()
@@ -18,7 +22,8 @@ namespace KJ.Player
             animator = GetComponent<Animator>();
             playerMovement = GetComponent<PlayerMovement>();
             rb = GetComponent<Rigidbody>();
-            hotgauge = GetComponent<Hotgauge>();
+            playerController = GetComponent<PlayerController>();
+
         }
 
         private void Update()
@@ -32,9 +37,18 @@ namespace KJ.Player
             }
 
             // 뜨거움 게이지가 최대치일 경우 사망 처리
-            if (hotgauge != null && hotgauge.IsOverheated())
+            if (UIManager.Instance != null && UIManager.Instance.IsOverheated())
             {
-                Die();
+                GameManager.Instance.photonView.RPC("PlayerDie", RpcTarget.All, playerController.photonView.ViewID);
+            }
+
+            if (hasFire)
+            {
+                UIManager.Instance.IncreaseHeat(Time.deltaTime * UIManager.Instance.heatIncreaseRate); // 불을 들고 있으면 뜨거움 게이지 증가
+            }
+            else if (UIManager.Instance.heatGauge > 0)
+            {
+                UIManager.Instance.DecreaseHeat(Time.deltaTime * UIManager.Instance.heatDecreaseRate); // 불이 없으면 뜨거움 게이지 감소
             }
         }
 
@@ -52,14 +66,14 @@ namespace KJ.Player
             }
             else
             {
-                Die();
+                GameManager.Instance.photonView.RPC("PlayerDie", RpcTarget.All, playerController.photonView.ViewID);
             }
         }
 
         /// <summary>
         /// 플레이어가 사망할 때 호출되는 메서드
         /// </summary>
-        private void Die()
+        public void Die()
         {
             isDead = true;
             Debug.Log("플레이어가 즉사했습니다.");
@@ -75,19 +89,16 @@ namespace KJ.Player
             }
 
             // 뜨거움 게이지 초기화
-            if (hotgauge != null)
+            if (UIManager.Instance != null)
             {
-                hotgauge.ResetHeatOnDeath();
+                UIManager.Instance.ResetHeatOnDeath();
             }
-
-            // 일정 시간 후 부활
-            StartCoroutine(Revive());
         }
 
         /// <summary>
         /// 일정 시간 후 부활하는 코루틴
         /// </summary>
-        private IEnumerator Revive()
+        public IEnumerator Revive()
         {
             yield return new WaitForSeconds(reviveDelay); // 부활 대기 시간
 
