@@ -48,6 +48,7 @@ namespace YJ.Ability
                 // 스킬 이름과 이미지 배열의 길이가 다를 경우 경고 메시지 출력
                 Debug.Log("뭔가 잘못됨");
             }
+            skillCoolTimeImage.fillAmount = 0f;
         }
 
         void Update()
@@ -56,6 +57,7 @@ namespace YJ.Ability
             if (Input.GetKeyDown(KeyCode.E) && !isCooldownActive)
             {
                 StartCoroutine(CoolTime());
+                skillCoolTimeImage.fillAmount = 1f;
             }
         }
 
@@ -69,14 +71,23 @@ namespace YJ.Ability
                 coolTime -= Time.deltaTime;
 
                 // 스킬 쿨타임 UI 업데이트 (Fill Amount를 비율로 설정)
-                skillCoolTimeImage.fillAmount = coolTime / maxCoolTime;
-                timerText.text = $"{coolTime:F1}"; // 소수점 1자리로 제한
+                skillCoolTimeImage.fillAmount = coolTime / maxCoolTime; 
+
+                // 2초 이상일 때는 정수, 2초 이하일 때는 소수점 1자리로 표시
+                if (coolTime > 2f)
+                {
+                    timerText.text = $"{Mathf.CeilToInt(coolTime)}"; // 올림 처리로 정수로 표시
+                }
+                else
+                {
+                    timerText.text = $"{coolTime:F1}"; // 소수점 1자리로 표시
+                }
 
                 yield return null; // 매 프레임 업데이트
             }
             // 쿨타임 종료 후 초기화
             coolTime = maxCoolTime;
-            skillCoolTimeImage.fillAmount = 1f;
+            skillCoolTimeImage.fillAmount = 0f;
             timerText.text = "  ";
 
             isCooldownActive = false; // 쿨타임 종료 플래그 해제
