@@ -28,7 +28,7 @@ public class GameManager : MonoBehaviourPun
     public Vector3 fireSavePoint; //현재 저장된 fire 세이브 포인트의 위치 정보(세이브 포인트에 trigger되면 본 필드값이 수정되어야 함)
 
 
-    void Start()
+    void Awake()
     {
         if (Instance == null) 
         {
@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviourPun
 
         fireSavePoint = Fire.Instance.firstFirePos;
 
-        photonView.RPC("InitPlayerPos",RpcTarget.All);
+        //photonView.RPC("InitPlayerPos",RpcTarget.All);
  
     }
 
