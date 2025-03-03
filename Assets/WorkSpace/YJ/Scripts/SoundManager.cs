@@ -31,13 +31,13 @@ public class SoundManager : MonoBehaviour
     public Audio[] audios; // 여러 오디오 데이터를 저장
     private Dictionary<AudioType, AudioSource> audioDic; // 오디오 타입과 소스를 매핑하는 딕셔너리
 
-    public static SoundManager instance { get; private set; }
+    public static SoundManager Instance { get; private set; }
 
     private void Awake()
     {
-        if (instance == null)
+        if (Instance == null)
         {
-            instance = this;
+            Instance = this;
             DontDestroyOnLoad(gameObject);
         }
         else
