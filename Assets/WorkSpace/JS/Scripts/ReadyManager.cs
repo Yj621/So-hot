@@ -18,6 +18,14 @@ public class ReadyManager : MonoBehaviourPunCallbacks
     
     private int mySlotIndex;
 
+    public enum CharacterName
+    {
+        WomanWooga,
+        ManWooga,
+        OrangeWooga,
+        MaskWooga
+    }
+
     private void Start()
     {
         pv = GetComponent<PhotonView>();
@@ -48,9 +56,16 @@ public class ReadyManager : MonoBehaviourPunCallbacks
 
     private void UpdateProperties()
     {
-        PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable { { "CharacterIndex", currentIndex } });
-        Debug.Log("CharacterIndex updated: " + currentIndex);
+        CharacterName selectedCharacter = (CharacterName)currentIndex;
+
+        PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable
+    {
+        { "Character", selectedCharacter.ToString() }  // Enum 값을 문자열로 저장
+    });
+
+        Debug.Log("Character updated: " + selectedCharacter);
     }
+
 
     [PunRPC]
     private void SyncCharacterSelection(int index)
