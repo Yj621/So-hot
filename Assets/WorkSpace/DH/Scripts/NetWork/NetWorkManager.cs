@@ -247,7 +247,7 @@ namespace Donghyun.Network
         //게임 시작 버튼
         public void GameStart()
         {
-            PhotonNetwork.LoadLevel("PlayScene");
+            PhotonNetwork.LoadLevel("MapScene");
         }
 
         //대기 상태 갱신

@@ -10,7 +10,7 @@ namespace Donghyun.Builder
         private static SpawnManager instance;
         private static PlayerSetting playerSetting = new PlayerSetting();
 
-        [SerializeField] private List<Vector3> spanwPoints = new List<Vector3>(4);
+        [SerializeField] private List<Transform> spanwPoints = new List<Transform>(4);
 
         private PhotonView pv;
         private GameObject player;
@@ -40,7 +40,7 @@ namespace Donghyun.Builder
         [PunRPC]
         private void SpawnPlayer()
         {
-            Instantiate(player, spanwPoints[playerSetting.playerNumber], Quaternion.identity);
+            Instantiate(player, spanwPoints[playerSetting.playerNumber].position, Quaternion.identity);
         }
     }
 }
