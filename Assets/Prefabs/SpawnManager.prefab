@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6526574748446821920
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2144840640482831779}
+  - component: {fileID: 1834154482491023560}
+  - component: {fileID: 387638776014077843}
+  - component: {fileID: 4326107006948513853}
+  m_Layer: 0
+  m_Name: SpawnManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2144840640482831779
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6526574748446821920}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.03789015, y: 1.9066497, z: 3.5533185}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1834154482491023560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6526574748446821920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2656c0bf479b67b4c99679f9b4da7ab5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spanwPoints: []
+--- !u!114 &387638776014077843
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6526574748446821920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 765410bd5307e3d4f9ba0b274d39e9aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerTypes:
+  - {fileID: 2846892226910154890, guid: d6888a7a969a36145bd88bfb25a3a96d, type: 3}
+  - {fileID: 8758867287669356269, guid: 354ce02f36162494f951a476c4f7f18f, type: 3}
+  - {fileID: 6634850573999185828, guid: 195a1f98ba3bd5c44aa8cc97805369e6, type: 3}
+  - {fileID: 344388191761069543, guid: fd590cc339cdf8f47a3637da7b17b17e, type: 3}
+  animationController: {fileID: 9100000, guid: 9ba32c3812a9ae244825ef1f1d76e847, type: 2}
+  GaugeStop_Effect: {fileID: 2019137154047570972, guid: 1870b3fa7e617f84eaf24935be1ec037, type: 3}
+  NoDie_Effect: {fileID: 50535282105249243, guid: 757708ed871e64146849e796818d2f90, type: 3}
+  UnlimitRun_Effect: {fileID: 3925733313417481075, guid: d5fcd1be7f34ca447a8ae89d51c43525, type: 3}
+--- !u!114 &4326107006948513853
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6526574748446821920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0

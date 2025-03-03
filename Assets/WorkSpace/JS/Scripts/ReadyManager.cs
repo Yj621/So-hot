@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
 using ExitGames.Client.Photon;
-using Donghyun.Network;
+using Donghyun.Builder;
 
 public class ReadyManager : MonoBehaviourPunCallbacks
 {
@@ -17,14 +17,6 @@ public class ReadyManager : MonoBehaviourPunCallbacks
     private PhotonView pv;
     
     private int mySlotIndex;
-
-    public enum CharacterName
-    {
-        WomanWooga,
-        ManWooga,
-        OrangeWooga,
-        MaskWooga
-    }
 
     private void Start()
     {
@@ -56,12 +48,14 @@ public class ReadyManager : MonoBehaviourPunCallbacks
 
     private void UpdateProperties()
     {
-        CharacterName selectedCharacter = (CharacterName)currentIndex;
+        CharacterType selectedCharacter = (CharacterType)currentIndex;
 
         PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable
     {
         { "Character", selectedCharacter.ToString() }  // Enum 값을 문자열로 저장
     });
+
+        SpawnManager.PlayerSetting.type = selectedCharacter;
 
         Debug.Log("Character updated: " + selectedCharacter);
     }
