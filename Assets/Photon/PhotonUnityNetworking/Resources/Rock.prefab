@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 858895421214720838}
   - component: {fileID: -7342911673257637441}
   - component: {fileID: 2209774093556046612}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Rock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -135,8 +135,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 2.3948312
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Radius: 1.9148514
+  m_Center: {x: -0.2803309, y: -0.08784318, z: -0.0000000024785}
 --- !u!114 &2209774093556046612
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6996961174489357714}
   - component: {fileID: 417036694417000401}
   - component: {fileID: 5563354803255413326}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Bamboo 3_LOD1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 187374846473251113}
   - component: {fileID: 2583837774578999402}
   - component: {fileID: 7553027116173880054}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Bamboo 3_LOD0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -183,7 +183,7 @@ GameObject:
   - component: {fileID: 2327681072873640550}
   - component: {fileID: 4570789970953844484}
   - component: {fileID: 4445771810042459034}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Bamboo 3_LOD3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -271,7 +271,7 @@ GameObject:
   - component: {fileID: 3654284874278239644}
   - component: {fileID: 991980043576154220}
   - component: {fileID: -8706706112587763856}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: BamBoo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -347,8 +347,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.13470948, y: 4.9871683, z: 0.13470969}
-  m_Center: {x: 0, y: 1.4633679, z: 0}
+  m_Size: {x: 0.13470948, y: 4.0366855, z: 0.13470969}
+  m_Center: {x: 6.245089e-16, y: 1.40662, z: 0}
 --- !u!54 &991980043576154220
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -409,7 +409,7 @@ GameObject:
   - component: {fileID: 6685042982357776384}
   - component: {fileID: 4229313581401205657}
   - component: {fileID: 3698744174655692136}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Bamboo 3_LOD2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
