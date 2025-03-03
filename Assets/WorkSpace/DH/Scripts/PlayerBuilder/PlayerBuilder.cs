@@ -1,15 +1,17 @@
+using KJ.Player;
 using System.Collections.Generic;
 using UnityEngine;
+using static ReadyManager;
 
 
 namespace Donghyun.Builder
 {
     public interface IPlayerBuider
     {
-        void Character_Part();
-        void Animator_Part(PlayerState state);
+        void Character_Part(CharacterType type);
+        void Animator_Part();
         void Skill_Part();
-        void State_Part(PlayerState state);
+        void Effect_Part();
         GameObject Result();
     }
     
@@ -18,39 +20,43 @@ namespace Donghyun.Builder
     {
         [SerializeField] private List<GameObject> playerTypes = new List<GameObject>(4);
 
-        [SerializeField] private Animator animator;
+        [SerializeField] private RuntimeAnimatorController animationController;
+        [SerializeField] private GameObject GaugeStop_Effect;
+        [SerializeField] private GameObject NoDie_Effect;
+        [SerializeField] private GameObject UnlimitRun_Effect;
 
-        private GameObject player = new GameObject();
-
-        //플레이어 생성 단계를 나눔
+        private GameObject player;
 
         //플레이어의 캐릭터를 선택
-        public void Character_Part()
+        public void Character_Part(CharacterType type)
         {
-            throw new System.NotImplementedException();
+            player = playerTypes[(int)type];
         }
 
         //플레이어 애니메이터 파츠
-        public void Animator_Part(PlayerState state)
+        public void Animator_Part()
         {
-            player.AddComponent<Animator>().runtimeAnimatorController = animator;
+            player.AddComponent<Animator>().runtimeAnimatorController = animationController;
         }
 
-        //플레이어 상태 파트
-        public void State_Part(PlayerState state)
+        //플레이어 이펙트 파트
+        public void Effect_Part()
         {
-            //
+            Instantiate(GaugeStop_Effect, player.transform);
+            Instantiate(NoDie_Effect, player.transform);
+            Instantiate(UnlimitRun_Effect, player.transform);
+        }
+
+        //플레이어 스킬 파트
+        public void Skill_Part()
+        {
+            return;
         }
 
         //다 붙여서 리턴
         public GameObject Result()
         {
             return player;
-        }
-
-        public void Skill_Part()
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

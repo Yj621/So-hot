@@ -7,6 +7,7 @@ using Photon.Realtime;
 using ExitGames.Client.Photon;
 using UnityEngine.SceneManagement;
 using System;
+using Donghyun.Builder;
 
 namespace Donghyun.Network
 {
@@ -80,8 +81,6 @@ namespace Donghyun.Network
             SetStartButton();
         }
 
-
-        #region 1.방 초기세팅
         private void RoomInitSetting()
         {
             //포톤 뷰
@@ -141,6 +140,7 @@ namespace Donghyun.Network
 
             //플레이어의 본인 슬롯을 할당
             playerNumber = emptyPlayer.slot.Min;
+            SpawnManager.PlayerSetting.playerNumber = playerNumber;
             emptyPlayer.slot.Remove(playerNumber);
             playerSetting.SetPlayerSlotRPC(playerNumber, RpcTarget.AllViaServer);
             PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable { { ActorNumberString, playerNumber } });
@@ -155,8 +155,6 @@ namespace Donghyun.Network
             playerSetting.SetNickNameRPC(PhotonNetwork.NickName, RpcTarget.AllViaServer);
 
         }
-        #endregion
-
 
         //본인이 방을 떠날 때
         public void LeaveRoom()

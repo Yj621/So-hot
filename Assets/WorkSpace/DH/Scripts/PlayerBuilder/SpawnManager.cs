@@ -7,29 +7,40 @@ namespace Donghyun.Builder
 {
     public class SpawnManager : MonoBehaviour
     {
-        [SerializeField] private List<Transform> spanwPoints = new List<Transform>(4);
+        private static SpawnManager instance;
+        private static PlayerSetting playerSetting = new PlayerSetting();
+
+        [SerializeField] private List<Vector3> spanwPoints = new List<Vector3>(4);
 
         private PhotonView pv;
         private GameObject player;
 
+        public static SpawnManager Instance => instance;
+
+        public static PlayerSetting PlayerSetting => playerSetting;
+
         private void Awake()
         {
+            instance = this;
             pv = GetComponent<PhotonView>();
         }
 
         private void Start()
         {
             IPlayerBuider builder = new PlayerBuilder();
-            builder.Animator_Part(PlayerState.Blue);
-            builder.State_Part(PlayerState.Blue);
+            builder.Character_Part(playerSetting.type);
+            builder.Animator_Part();
+            builder.Effect_Part();
+            builder.Skill_Part();
             player = builder.Result();
 
             pv.RPC("SpanwPlayer", RpcTarget.AllViaServer);
         }
 
+        [PunRPC]
         private void SpawnPlayer()
         {
-            //Instantiate(player, spawnPoints[]);
+            Instantiate(player, spanwPoints[playerSetting.playerNumber], Quaternion.identity);
         }
     }
 }
