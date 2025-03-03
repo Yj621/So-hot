@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
+using Unity.VisualScripting;
 
 public class MapController : MonoBehaviourPunCallbacks
 {
@@ -23,8 +24,10 @@ public class MapController : MonoBehaviourPunCallbacks
     public float BamBooDuration = 5f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    IEnumerator CheckMasterClient()
     {
+        yield return new WaitForSeconds(3f); // 1초 기다리기
+      
         if (PhotonNetwork.IsMasterClient)
         {
             StartCoroutine(SpwanRockRoutine());
@@ -33,12 +36,20 @@ public class MapController : MonoBehaviourPunCallbacks
         }
     }
 
-    
+    void Start()
+    {
+        StartCoroutine(CheckMasterClient());
+    }
+
+
+
+
     private IEnumerator SpwanRockRoutine()
     {
         while (true)
         {
             RockFall();
+            Debug.Log("1");
             yield return new WaitForSeconds(RockSpwanTime);
         }
     }
@@ -50,6 +61,7 @@ public class MapController : MonoBehaviourPunCallbacks
             for (int i = 0; i < 3; i++)
             {
                 SpwanCherry();
+                Debug.Log("2");
                 yield return new WaitForSeconds(DropInterval);
             }
         }
@@ -62,6 +74,7 @@ public class MapController : MonoBehaviourPunCallbacks
             for (int i = 0; i < 3; i++)
             {
                 SpwanBamBoo();
+                Debug.Log("3");
                 yield return new WaitForSeconds(ShootInterval);
             }
         }
