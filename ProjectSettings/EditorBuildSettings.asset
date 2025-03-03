@@ -17,6 +17,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/WorkSpace/DH/Scenes/PlayScene.unity
     guid: d6ccbd3465f5fb2429b5b651cce922fe
+  - enabled: 1
+    path: Assets/WorkSpace/JS/Scenes/MapScene.unity
+    guid: 287ea91f500dbe341af222e63c09296c
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
