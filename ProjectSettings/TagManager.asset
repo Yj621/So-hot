@@ -6,6 +6,10 @@ TagManager:
   tags:
   - Destroyable
   - Item
+  - MovingPlatform
+  - Trap
+  - Water
+  - Mud
   layers:
   - Default
   - TransparentFX

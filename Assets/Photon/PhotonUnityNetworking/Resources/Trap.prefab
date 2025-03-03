@@ -13,9 +13,10 @@ GameObject:
   - component: {fileID: 864621321322826795}
   - component: {fileID: 6287026366058774622}
   - component: {fileID: 1116017780422503890}
+  - component: {fileID: 8642085311194379960}
   m_Layer: 6
   m_Name: WoodenPole1 (16)
-  m_TagString: Untagged
+  m_TagString: Trap
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -136,6 +137,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 122
   m_CollisionDetection: 0
+--- !u!65 &8642085311194379960
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 14056730708060148}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.3253336, y: 2.848278, z: 0.44064635}
+  m_Center: {x: -0.00000047683716, y: 1.4241395, z: -0.000000029802322}
 --- !u!1 &812722578282560070
 GameObject:
   m_ObjectHideFlags: 0
@@ -149,9 +171,10 @@ GameObject:
   - component: {fileID: 5171254351785739702}
   - component: {fileID: 8720088995840111471}
   - component: {fileID: 5057265710235137368}
+  - component: {fileID: 4592358392850950613}
   m_Layer: 6
   m_Name: WoodenPole1 (7)
-  m_TagString: Untagged
+  m_TagString: Trap
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -272,6 +295,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 122
   m_CollisionDetection: 0
+--- !u!65 &4592358392850950613
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 812722578282560070}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.3253336, y: 2.848278, z: 0.44064635}
+  m_Center: {x: -0.00000047683716, y: 1.4241395, z: -0.000000029802322}
 --- !u!1 &1685753488216910485
 GameObject:
   m_ObjectHideFlags: 0
@@ -285,9 +329,10 @@ GameObject:
   - component: {fileID: 5465111235698959271}
   - component: {fileID: 3399439508407489256}
   - component: {fileID: 4242629263525940278}
+  - component: {fileID: 4022773044046716116}
   m_Layer: 6
   m_Name: WoodenPole1 (14)
-  m_TagString: Untagged
+  m_TagString: Trap
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -408,6 +453,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 122
   m_CollisionDetection: 0
+--- !u!65 &4022773044046716116
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1685753488216910485}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.3253336, y: 2.848278, z: 0.44064635}
+  m_Center: {x: -0.00000047683716, y: 1.4241395, z: -0.000000029802322}
 --- !u!1 &1706567864162204864
 GameObject:
   m_ObjectHideFlags: 0
@@ -421,9 +487,10 @@ GameObject:
   - component: {fileID: 353714670385650534}
   - component: {fileID: 702318799390920510}
   - component: {fileID: 6720458530524252360}
+  - component: {fileID: 2915927986461747721}
   m_Layer: 6
   m_Name: WoodenPole1 (9)
-  m_TagString: Untagged
+  m_TagString: Trap
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -544,6 +611,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 122
   m_CollisionDetection: 0
+--- !u!65 &2915927986461747721
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1706567864162204864}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.3253336, y: 2.848278, z: 0.44064635}
+  m_Center: {x: -0.00000047683716, y: 1.4241395, z: -0.000000029802322}
 --- !u!1 &3409574990884612022
 GameObject:
   m_ObjectHideFlags: 0
@@ -557,9 +645,10 @@ GameObject:
   - component: {fileID: 3588275670781475330}
   - component: {fileID: 3683417657558455987}
   - component: {fileID: 6907637189942124990}
+  - component: {fileID: 2459862360570865228}
   m_Layer: 6
   m_Name: WoodenPole1 (15)
-  m_TagString: Untagged
+  m_TagString: Trap
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -680,6 +769,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 122
   m_CollisionDetection: 0
+--- !u!65 &2459862360570865228
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3409574990884612022}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.3253336, y: 2.848278, z: 0.44064635}
+  m_Center: {x: -0.00000047683716, y: 1.4241395, z: -0.000000029802322}
 --- !u!1 &4607768413692167050
 GameObject:
   m_ObjectHideFlags: 0
@@ -693,9 +803,10 @@ GameObject:
   - component: {fileID: 860794609764293942}
   - component: {fileID: 8324060792801123436}
   - component: {fileID: 2955303682937309937}
+  - component: {fileID: 5695784657143844443}
   m_Layer: 6
   m_Name: WoodenPole1 (10)
-  m_TagString: Untagged
+  m_TagString: Trap
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -816,6 +927,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 122
   m_CollisionDetection: 0
+--- !u!65 &5695784657143844443
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4607768413692167050}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.3253336, y: 2.848278, z: 0.44064635}
+  m_Center: {x: -0.00000047683716, y: 1.4241395, z: -0.000000029802322}
 --- !u!1 &4633398345598622598
 GameObject:
   m_ObjectHideFlags: 0
@@ -829,9 +961,10 @@ GameObject:
   - component: {fileID: 2659930821936999869}
   - component: {fileID: 6996320581480561181}
   - component: {fileID: 6530785486270286624}
+  - component: {fileID: 3034394398874573154}
   m_Layer: 6
   m_Name: WoodenPole1 (13)
-  m_TagString: Untagged
+  m_TagString: Trap
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -952,6 +1085,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 122
   m_CollisionDetection: 0
+--- !u!65 &3034394398874573154
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4633398345598622598}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.3253336, y: 2.848278, z: 0.44064635}
+  m_Center: {x: -0.00000047683716, y: 1.4241395, z: -0.000000029802322}
 --- !u!1 &5160704815618824366
 GameObject:
   m_ObjectHideFlags: 0
@@ -965,9 +1119,10 @@ GameObject:
   - component: {fileID: 541804262955765310}
   - component: {fileID: 3986034327269995323}
   - component: {fileID: 3122206713710498204}
+  - component: {fileID: 812222601360079787}
   m_Layer: 6
   m_Name: WoodenPole1 (2)
-  m_TagString: Untagged
+  m_TagString: Trap
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1088,6 +1243,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 122
   m_CollisionDetection: 0
+--- !u!65 &812222601360079787
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5160704815618824366}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.3253336, y: 2.848278, z: 0.44064635}
+  m_Center: {x: -0.00000047683716, y: 1.4241395, z: -0.000000029802322}
 --- !u!1 &5592864348502001328
 GameObject:
   m_ObjectHideFlags: 0
@@ -1101,9 +1277,10 @@ GameObject:
   - component: {fileID: 4693525800962887109}
   - component: {fileID: 651832023556147586}
   - component: {fileID: 5637088890689692253}
+  - component: {fileID: 8028226840085747160}
   m_Layer: 6
   m_Name: WoodenPole1 (6)
-  m_TagString: Untagged
+  m_TagString: Trap
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1224,6 +1401,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 122
   m_CollisionDetection: 0
+--- !u!65 &8028226840085747160
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5592864348502001328}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.3253336, y: 2.848278, z: 0.44064635}
+  m_Center: {x: -0.00000047683716, y: 1.4241395, z: -0.000000029802322}
 --- !u!1 &5737853838492523911
 GameObject:
   m_ObjectHideFlags: 0
@@ -1365,9 +1563,10 @@ GameObject:
   - component: {fileID: 6909073916324497929}
   - component: {fileID: 4730833005658851164}
   - component: {fileID: 7636987295503169615}
+  - component: {fileID: 9085171583999283284}
   m_Layer: 6
   m_Name: WoodenPole1
-  m_TagString: Untagged
+  m_TagString: Trap
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1488,6 +1687,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 122
   m_CollisionDetection: 0
+--- !u!65 &9085171583999283284
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6487973728663736741}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.3253336, y: 2.848278, z: 0.44064635}
+  m_Center: {x: -0.00000047683716, y: 1.4241395, z: -0.000000029802322}
 --- !u!1 &6545038701988480357
 GameObject:
   m_ObjectHideFlags: 0
@@ -1501,9 +1721,10 @@ GameObject:
   - component: {fileID: 6395211500509435444}
   - component: {fileID: 8965052391147202584}
   - component: {fileID: 4996179260068870712}
+  - component: {fileID: 6873539877695453880}
   m_Layer: 6
   m_Name: WoodenPole1 (12)
-  m_TagString: Untagged
+  m_TagString: Trap
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1624,6 +1845,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 122
   m_CollisionDetection: 0
+--- !u!65 &6873539877695453880
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6545038701988480357}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.3253336, y: 2.848278, z: 0.44064635}
+  m_Center: {x: -0.00000047683716, y: 1.4241395, z: -0.000000029802322}
 --- !u!1 &7112353346907732314
 GameObject:
   m_ObjectHideFlags: 0
@@ -1637,9 +1879,10 @@ GameObject:
   - component: {fileID: 1049969949456322193}
   - component: {fileID: 2010346017924939584}
   - component: {fileID: 5617380702118344597}
+  - component: {fileID: 7784105941171843410}
   m_Layer: 6
   m_Name: WoodenPole1 (5)
-  m_TagString: Untagged
+  m_TagString: Trap
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1760,6 +2003,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 122
   m_CollisionDetection: 0
+--- !u!65 &7784105941171843410
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7112353346907732314}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.3253336, y: 2.848278, z: 0.44064635}
+  m_Center: {x: -0.00000047683716, y: 1.4241395, z: -0.000000029802322}
 --- !u!1 &7725592406251944426
 GameObject:
   m_ObjectHideFlags: 0
@@ -1773,9 +2037,10 @@ GameObject:
   - component: {fileID: 3141325439350910368}
   - component: {fileID: 8809239560389278208}
   - component: {fileID: 1762851524638036764}
+  - component: {fileID: 4999301863906181193}
   m_Layer: 6
   m_Name: WoodenPole1 (11)
-  m_TagString: Untagged
+  m_TagString: Trap
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1896,6 +2161,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 122
   m_CollisionDetection: 0
+--- !u!65 &4999301863906181193
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7725592406251944426}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.3253336, y: 2.848278, z: 0.44064635}
+  m_Center: {x: -0.00000047683716, y: 1.4241397, z: -0.000000029802322}
 --- !u!1 &7864395686965907306
 GameObject:
   m_ObjectHideFlags: 0
@@ -1909,9 +2195,10 @@ GameObject:
   - component: {fileID: 3682662676002388957}
   - component: {fileID: 5104090198856031820}
   - component: {fileID: 3224478431564535957}
+  - component: {fileID: 3551174297292490404}
   m_Layer: 6
   m_Name: WoodenPole1 (1)
-  m_TagString: Untagged
+  m_TagString: Trap
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2032,6 +2319,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 122
   m_CollisionDetection: 0
+--- !u!65 &3551174297292490404
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7864395686965907306}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.3253336, y: 2.848278, z: 0.44064635}
+  m_Center: {x: -0.00000047683716, y: 1.4241395, z: -0.000000029802322}
 --- !u!1 &8083462386021658377
 GameObject:
   m_ObjectHideFlags: 0
@@ -2045,9 +2353,10 @@ GameObject:
   - component: {fileID: 1148761366149902095}
   - component: {fileID: 9020809915012844423}
   - component: {fileID: 5484707641564803281}
+  - component: {fileID: 8870012004963874523}
   m_Layer: 6
   m_Name: WoodenPole1 (8)
-  m_TagString: Untagged
+  m_TagString: Trap
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2168,6 +2477,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 122
   m_CollisionDetection: 0
+--- !u!65 &8870012004963874523
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8083462386021658377}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.3253336, y: 2.848278, z: 0.44064635}
+  m_Center: {x: -0.00000047683716, y: 1.4241395, z: -0.000000029802322}
 --- !u!1 &8251853471546353469
 GameObject:
   m_ObjectHideFlags: 0
@@ -2181,9 +2511,10 @@ GameObject:
   - component: {fileID: 905596665091635831}
   - component: {fileID: 3809971257846283758}
   - component: {fileID: 4786655288072066215}
+  - component: {fileID: 5940174958167532740}
   m_Layer: 6
   m_Name: WoodenPole1 (4)
-  m_TagString: Untagged
+  m_TagString: Trap
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2304,6 +2635,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 122
   m_CollisionDetection: 0
+--- !u!65 &5940174958167532740
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8251853471546353469}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.3253336, y: 2.848278, z: 0.44064635}
+  m_Center: {x: -0.00000047683716, y: 1.4241395, z: -0.000000029802322}
 --- !u!1 &8649899391889395899
 GameObject:
   m_ObjectHideFlags: 0
@@ -2317,9 +2669,10 @@ GameObject:
   - component: {fileID: 489467766285516245}
   - component: {fileID: 8318798850329602215}
   - component: {fileID: 7983755425018899035}
+  - component: {fileID: 7194120436765811795}
   m_Layer: 6
   m_Name: WoodenPole1 (3)
-  m_TagString: Untagged
+  m_TagString: Trap
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2440,3 +2793,24 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 122
   m_CollisionDetection: 0
+--- !u!65 &7194120436765811795
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8649899391889395899}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.3253336, y: 2.848278, z: 0.44064635}
+  m_Center: {x: -0.00000047683716, y: 1.4241395, z: -0.000000029802322}

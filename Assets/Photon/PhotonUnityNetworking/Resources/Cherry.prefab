@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4655223306050566464}
   - component: {fileID: 441047806118719105}
   - component: {fileID: -926897260975875756}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cherry
   m_TagString: Destroyable
   m_Icon: {fileID: 0}
@@ -164,7 +164,7 @@ GameObject:
   - component: {fileID: 1838866693278747490}
   - component: {fileID: 6219023439578869117}
   - component: {fileID: 7740545007362097400}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cherry_LOD3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -250,7 +250,7 @@ GameObject:
   - component: {fileID: 8490289389508919220}
   - component: {fileID: 377361069579587837}
   - component: {fileID: 5866278161195007662}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cherry_LOD0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -336,7 +336,7 @@ GameObject:
   - component: {fileID: 7971393583063857185}
   - component: {fileID: 6962909804673717734}
   - component: {fileID: 7549863447053628804}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cherry_LOD2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -422,7 +422,7 @@ GameObject:
   - component: {fileID: 948759477558929714}
   - component: {fileID: 8145261397960033664}
   - component: {fileID: 6679790044128732666}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cherry_LOD1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
