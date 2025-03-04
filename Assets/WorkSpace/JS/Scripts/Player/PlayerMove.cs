@@ -3,6 +3,8 @@ using UnityEngine;
 public class PlayerMove : MonoBehaviour
 {
     public CharacterController controller;
+    public Animator animator;
+    private Camera mainCamera;
 
     public float walkSpeed = 5f;
     public float runSpeed = 8f;
@@ -15,6 +17,7 @@ public class PlayerMove : MonoBehaviour
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        animator = GetComponent<Animator>();
     }
 
     void Update()
@@ -26,25 +29,35 @@ public class PlayerMove : MonoBehaviour
             velocity.y = -2f;
         }
 
-        // 입력 받기
+        // 이동 입력 받기
         float moveX = Input.GetAxis("Horizontal");
         float moveZ = Input.GetAxis("Vertical");
-
-        // 이동 방향 설정
         Vector3 move = transform.right * moveX + transform.forward * moveZ;
 
-        // 걷기 / 달리기 속도 설정
-        float speed = Input.GetKey(KeyCode.LeftShift) ? runSpeed : walkSpeed;
+        // 이동 속도 설정
+        bool isRunning = Input.GetKey(KeyCode.LeftShift);
+        bool isMoving = move.magnitude > 0;
+        float speed = isRunning ? runSpeed : walkSpeed;
         controller.Move(move * speed * Time.deltaTime);
 
-        // 점프
+        // 애니메이션 설정
+        animator.SetBool("isMoving", isMoving);
+        animator.SetBool("isRunning", isRunning);
+        animator.SetBool("isGrounded", isGrounded);
+
+        // 마우스로 회전
+
+        // 점프 처리
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+            animator.SetTrigger("Jump");
         }
 
         // 중력 적용
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
     }
+
+   
 }
