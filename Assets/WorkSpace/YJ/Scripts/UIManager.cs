@@ -171,11 +171,18 @@ namespace YJ.UIManager
         /// </summary>
         public void RecoverStamina()
         {
-            currentStamina += staminaDrainRate * Time.deltaTime;
-            if (currentStamina > maxStamina)
+            if(currentStamina < maxStamina)
             {
-                currentStamina = maxStamina;
+                ActiveStamina();
+                currentStamina += staminaDrainRate * Time.deltaTime;
+                currentStamina = Mathf.Clamp(currentStamina, 0 , maxStamina);
+                Debug.Log("회복중,,");
             }
+            else
+            {
+                DeactiveStamina();
+            }
+
             UpdateStaminaUI(); // UI 업데이트
         }
         /// <summary>
