@@ -3,6 +3,7 @@ using Photon.Pun;
 using UnityEngine;
 using System.Collections.Generic;
 using YJ.UIManager;
+using System.Collections;
 
 namespace KJ.Player
 {
@@ -29,8 +30,20 @@ namespace KJ.Player
 
         void Start()
         {
-            inventory = FindAnyObjectByType<Inventory>();
+            StartCoroutine(FindInventoryWithDelay());
         }
+
+        IEnumerator FindInventoryWithDelay()
+        {
+            yield return new WaitForSeconds(5f); // 0.5초 정도 기다리기 (네트워크 동기화 시간 확보)
+            inventory = FindAnyObjectByType<Inventory>();
+
+            if (inventory == null)
+            {
+                Debug.LogError("Inventory 객체를 찾지 못함!");
+            }
+        }
+
 
         void Update()
         {

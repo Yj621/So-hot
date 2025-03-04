@@ -1,4 +1,5 @@
 using KJ.Player;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,8 +14,20 @@ public class Inventory : MonoBehaviour
 
     private void Start()
     {
-        itemUser = GetComponent<PlayerController>();
+        StartCoroutine(FindPlayerControllerWithDelay());
     }
+
+    IEnumerator FindPlayerControllerWithDelay()
+    {
+        yield return new WaitForSeconds(5f); // 네트워크 동기화가 완료될 시간을 확보
+        itemUser = GetComponent<PlayerController>();
+
+        if (itemUser == null)
+        {
+            Debug.LogError("PlayerController를 찾을 수 없음!");
+        }
+    }
+
     public void GetItem(ItemData item)
     {
         if (inventory.Count == 0)

@@ -26,7 +26,7 @@ public class MapController : MonoBehaviourPunCallbacks
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     IEnumerator CheckMasterClient()
     {
-        yield return new WaitForSeconds(3f); // 1초 기다리기
+        yield return new WaitForSeconds(5f); // 1초 기다리기
       
         if (PhotonNetwork.IsMasterClient)
         {
@@ -49,7 +49,7 @@ public class MapController : MonoBehaviourPunCallbacks
         while (true)
         {
             RockFall();
-            Debug.Log("1");
+            
             yield return new WaitForSeconds(RockSpwanTime);
         }
     }
@@ -61,7 +61,7 @@ public class MapController : MonoBehaviourPunCallbacks
             for (int i = 0; i < 3; i++)
             {
                 SpwanCherry();
-                Debug.Log("2");
+                
                 yield return new WaitForSeconds(DropInterval);
             }
         }
@@ -74,7 +74,7 @@ public class MapController : MonoBehaviourPunCallbacks
             for (int i = 0; i < 3; i++)
             {
                 SpwanBamBoo();
-                Debug.Log("3");
+                
                 yield return new WaitForSeconds(ShootInterval);
             }
         }
