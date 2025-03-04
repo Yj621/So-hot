@@ -14,9 +14,15 @@ namespace Donghyun.Builder
     }
 
     [Serializable]
-    public class PlayerSetting : MonoBehaviour
+    public class PlayerSetting
     {
         public int playerNumber;
         public CharacterType type;
+
+        public PlayerSetting(int _num, CharacterType _type)
+        {
+            playerNumber = _num;
+            type = _type;
+        }
     }
 }

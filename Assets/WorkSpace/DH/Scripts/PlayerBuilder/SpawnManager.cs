@@ -2,52 +2,50 @@ using KJ.CameraSystem;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 namespace Donghyun.Builder
 {
     public class SpawnManager : MonoBehaviour
     {
-        private static SpawnManager instance;
-        private static PlayerSetting playerSetting = new PlayerSetting();
+        private PlayerSetting playerSetting;
 
-        [SerializeField] private List<GameObject> playerTypes;
         [SerializeField] private List<Transform> spawnPoints = new List<Transform>(4);
 
         private PhotonView pv;
         private GameObject player;
-        private IPlayerBuider builder;
-
-
-        public static SpawnManager Instance => instance;
-
-        public static PlayerSetting PlayerSetting => playerSetting;
 
         private void Awake()
         {
-            instance = this;
+            player = new GameObject();
+            playerSetting = new PlayerSetting((int)PhotonNetwork.LocalPlayer.CustomProperties["Number"], (CharacterType)PhotonNetwork.LocalPlayer.CustomProperties["Character"]);
             pv = GetComponent<PhotonView>();
         }
 
         private void Start()
         {
-            builder = new PlayerBuilder();
-            builder.Character_Part(ref player, playerTypes[(int)playerSetting.type]);
+            player = PhotonNetwork.Instantiate(playerSetting.type.ToString(), spawnPoints[playerSetting.playerNumber].position, Quaternion.identity);
 
-            pv.RPC("SpawnPlayer", RpcTarget.AllViaServer);
+            pv.RPC("AddParts", RpcTarget.AllViaServer, player.GetComponent<PhotonView>().ViewID, playerSetting.type);
         }
 
         [PunRPC]
-        private void SpawnPlayer()
+        private void AddParts(int viewID, CharacterType type)
         {
-            player = Instantiate(player, spawnPoints[playerSetting.playerNumber].position, Quaternion.identity);
-            //builder.Animator_Part(ref player);
-            //builder.Effect_Part(ref player);
-            builder.Skill_Part(ref player);
+            PhotonView targetView = PhotonView.Find(viewID);
 
-            if(pv.IsMine)
+            GameObject go = targetView.gameObject;
+            IPlayerBuider builder = GetComponent<IPlayerBuider>();
+            //builder.Character_Part(playerSetting.type);
+            builder.Effect_Part();
+            builder.Skill_Part();
+            List<GameObject> parts = builder.Return_Parts();
+
+            foreach(GameObject part in parts)
             {
-                Camera.main.GetComponent<CameraController>().PlayerBody = player.transform;
+                Debug.Log(part);
+                Instantiate(part, go.transform);
             }
         }
     }

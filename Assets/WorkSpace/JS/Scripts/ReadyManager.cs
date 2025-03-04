@@ -52,10 +52,8 @@ public class ReadyManager : MonoBehaviourPunCallbacks
 
         PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable
     {
-        { "Character", selectedCharacter.ToString() }  // Enum 값을 문자열로 저장
+        { "Character", selectedCharacter }  // Enum 값을 저장
     });
-
-        SpawnManager.PlayerSetting.type = selectedCharacter;
 
         Debug.Log("Character updated: " + selectedCharacter);
     }
