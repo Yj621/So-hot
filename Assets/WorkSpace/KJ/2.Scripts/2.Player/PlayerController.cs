@@ -24,7 +24,7 @@ namespace KJ.Player
             state = GetComponent<PlayerState>();
             animationController = GetComponent<PlayerAnimationController>();
             photonView = GetComponent<PhotonView>();
-            GameManager.Instance.RegisterPlayer(this);
+            //GameManager.Instance.RegisterPlayer(this);
         }
 
         void Start()

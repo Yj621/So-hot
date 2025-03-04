@@ -125,7 +125,7 @@ namespace Donghyun.Network
                 playerSetting.SetMasterTextRPC();
                 startButtonObj.SetActive(true);
                 readyButtonObj.SetActive(false);
-                startButton.interactable = false;
+                startButton.interactable = true;
                 emptyPlayer.slot = new SortedSet<int> { 0, 1, 2, 3 };
             }
             else
@@ -140,7 +140,7 @@ namespace Donghyun.Network
 
             //플레이어의 본인 슬롯을 할당
             playerNumber = emptyPlayer.slot.Min;
-            SpawnManager.PlayerSetting.playerNumber = playerNumber;
+            PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable { {"Number", playerNumber } });
             emptyPlayer.slot.Remove(playerNumber);
             playerSetting.SetPlayerSlotRPC(playerNumber, RpcTarget.AllViaServer);
             PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable { { ActorNumberString, playerNumber } });
@@ -284,7 +284,7 @@ namespace Donghyun.Network
                 }
             }
             
-            if (count == 2)
+            if (count >= 2)
             {
                 startButton.interactable = true;
             }
