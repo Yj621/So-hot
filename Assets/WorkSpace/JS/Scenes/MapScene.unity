@@ -90160,6 +90160,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 387638776014077843, guid: 21037d7d15a731e47a92ad3a180595d6, type: 3}
+      propertyPath: effects.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 387638776014077843, guid: 21037d7d15a731e47a92ad3a180595d6, type: 3}
+      propertyPath: 'effects.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2019137154047570972, guid: 1870b3fa7e617f84eaf24935be1ec037, type: 3}
+    - target: {fileID: 387638776014077843, guid: 21037d7d15a731e47a92ad3a180595d6, type: 3}
+      propertyPath: 'effects.Array.data[1]'
+      value: 
+      objectReference: {fileID: 50535282105249243, guid: 757708ed871e64146849e796818d2f90, type: 3}
+    - target: {fileID: 387638776014077843, guid: 21037d7d15a731e47a92ad3a180595d6, type: 3}
+      propertyPath: 'effects.Array.data[2]'
+      value: 
+      objectReference: {fileID: 3925733313417481075, guid: d5fcd1be7f34ca447a8ae89d51c43525, type: 3}
     - target: {fileID: 1834154482491023560, guid: 21037d7d15a731e47a92ad3a180595d6, type: 3}
       propertyPath: playerTypes.Array.size
       value: 4
