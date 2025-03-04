@@ -39,7 +39,7 @@ public class GameManager : MonoBehaviourPun
             Destroy(gameObject); 
         }
 
-        fireSavePoint = Fire.Instance.firstFirePos;
+        //fireSavePoint = Fire.Instance.firstFirePos;
 
         //photonView.RPC("InitPlayerPos",RpcTarget.All);
  

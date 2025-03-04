@@ -71,6 +71,9 @@ MonoBehaviour:
   - StartDisappear
   - SyncPlatformState
   - SpawnPlayer
+  - Setowner
+  - SetOwner
+  - AddParts
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
