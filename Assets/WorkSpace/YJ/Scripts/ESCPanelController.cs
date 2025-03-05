@@ -31,6 +31,7 @@ namespace YJ.UI
         {
             if (Input.GetKeyDown(KeyCode.Escape))
             {
+                Cursor.visible = true;
                 if (escUI != null)
                 {
                     escUI.SetActive(!escUI.activeSelf); // 현재 상태의 반대로 설정
