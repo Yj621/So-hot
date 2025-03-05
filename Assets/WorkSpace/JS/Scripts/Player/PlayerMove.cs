@@ -4,7 +4,6 @@ public class PlayerMove : MonoBehaviour
 {
     public CharacterController controller;
     public Animator animator;
-    private Camera mainCamera;
 
     public float walkSpeed = 5f;
     public float runSpeed = 8f;
@@ -13,6 +12,7 @@ public class PlayerMove : MonoBehaviour
 
     private Vector3 velocity;
     private bool isGrounded;
+    private bool isThrowingReady;
 
     void Start()
     {
@@ -36,7 +36,7 @@ public class PlayerMove : MonoBehaviour
 
         // 이동 속도 설정
         bool isRunning = Input.GetKey(KeyCode.LeftShift);
-        bool isMoving = move.magnitude > 0;
+        bool isMoving = moveX != 0 || moveZ != 0;
         float speed = isRunning ? runSpeed : walkSpeed;
         controller.Move(move * speed * Time.deltaTime);
 
@@ -45,8 +45,6 @@ public class PlayerMove : MonoBehaviour
         animator.SetBool("isRunning", isRunning);
         animator.SetBool("isGrounded", isGrounded);
 
-        // 마우스로 회전
-
         // 점프 처리
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
@@ -54,10 +52,33 @@ public class PlayerMove : MonoBehaviour
             animator.SetTrigger("Jump");
         }
 
+        // 공중 상태 감지
+        bool isFalling = !isGrounded && velocity.y < 0;
+        animator.SetBool("isFalling", isFalling);
+
         // 중력 적용
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
-    }
+        if (Input.GetMouseButtonDown(1))
+        {
+            animator.SetTrigger("ThrowReady");
+            isThrowingReady = true;
+        }
 
-   
+        if (Input.GetMouseButtonUp(1) && isThrowingReady)
+        {
+            animator.ResetTrigger("ThrowReady");
+            animator.SetTrigger("Any");// Trigger 초기화
+            isThrowingReady = false;
+        }
+
+
+        // Throw 애니메이션 실행 (ThrowReady 상태일 때만 가능)
+        if (Input.GetMouseButtonDown(0) && isThrowingReady)
+        {
+            animator.SetTrigger("Throw");
+            isThrowingReady = false;
+        }
+    }
 }
+
