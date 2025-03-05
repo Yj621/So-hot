@@ -2,19 +2,23 @@ using Photon.Pun;
 using UnityEngine;
 using TMPro;
 using Photon.Realtime;
+using System.Collections.Generic;
 
 namespace Donghyun.Network
 {
     public class LobbyPlayer : MonoBehaviour
     {
+        [SerializeField] private List<GameObject> Character = new List<GameObject> (4);
         [SerializeField] private GameObject readyText;
         [SerializeField] private GameObject masterText;
         [SerializeField] private TextMeshProUGUI nameText;
 
+        private GameObject curCharacter;
         private PhotonView pv;
 
         private void Awake()
         {
+            curCharacter = Character[0];
             pv = GetComponent<PhotonView>();
         }
 
@@ -23,48 +27,27 @@ namespace Donghyun.Network
         {
             nameText.color = color;
         }
+        public void SetReadytRPC(bool isReady) => pv.RPC("SetReady", RpcTarget.AllBufferedViaServer, isReady);
+        public void SetClientTextRPC() => pv.RPC("SetClientText", RpcTarget.AllBufferedViaServer);
+        public void SetClientTextRPC(Player player) =>  pv.RPC("SetClientText", player);
+        public void SetMasterTextRPC() => pv.RPC("SetMasterText", RpcTarget.AllBufferedViaServer);
+        public void SetMasterTextRPC(Player player) => pv.RPC("SetMasterText", player);
+        public void SetNickNameRPC(string name, RpcTarget target) => pv.RPC("SetNickName", target, name);
+        public void SetNickNameRPC(string name, Player player) => pv.RPC("SetNickName", player, name);
+        public void SetPlayerSlotRPC(int playerNumber, RpcTarget target) => pv.RPC("SetPlayerSlot", target, playerNumber);
+        public void SetPlayerSlotRPC(int playerNumber, Player player) => pv.RPC("SetPlayerSlot", player, playerNumber);
+        public void SetCharacterRPC(int index) => pv.RPC("SetCharacter", RpcTarget.AllBufferedViaServer, index);
 
-        public void SetReadytRPC(bool isReady)
+        /// <summary>
+        /// 캐릭터를 변경
+        /// </summary>
+        /// <param name="index"></param>
+        [PunRPC]
+        private void SetCharacter(int index)
         {
-            pv.RPC("SetReady", RpcTarget.All, isReady);
-        }
-
-        public void SetClientTextRPC()
-        {
-            pv.RPC("SetClientText", RpcTarget.All);
-        }
-        public void SetClientTextRPC(Player player)
-        {
-            pv.RPC("SetClientText", player);
-        }
-
-        public void SetMasterTextRPC()
-        {
-            pv.RPC("SetMasterText", RpcTarget.All);
-        }
-
-        public void SetMasterTextRPC(Player player)
-        {
-            pv.RPC("SetMasterText", player);
-        }
-
-        public void SetNickNameRPC(string name, RpcTarget target)
-        {
-            pv.RPC("SetNickName", target, name);
-        }
-        public void SetNickNameRPC(string name, Player player)
-        {
-            pv.RPC("SetNickName", player, name);
-        }
-
-        public void SetPlayerSlotRPC(int playerNumber, RpcTarget target)
-        {
-            pv.RPC("SetPlayerSlot", target, playerNumber);
-        }
-
-        public void SetPlayerSlotRPC(int playerNumber, Player player)
-        {
-            pv.RPC("SetPlayerSlot", player, playerNumber);
+            curCharacter.SetActive(false);
+            curCharacter = Character[index];
+            curCharacter.SetActive(true);
         }
 
         /// <summary>

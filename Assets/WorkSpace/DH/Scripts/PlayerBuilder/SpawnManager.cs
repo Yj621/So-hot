@@ -1,9 +1,8 @@
-using KJ.CameraSystem;
 using Photon.Pun;
-using Photon.Realtime;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
+using static TotalMultiManager;
 
 namespace Donghyun.Builder
 {
@@ -18,16 +17,37 @@ namespace Donghyun.Builder
 
         private void Awake()
         {
-            player = new GameObject();
-            playerSetting = new PlayerSetting((int)PhotonNetwork.LocalPlayer.CustomProperties["Number"], (CharacterType)PhotonNetwork.LocalPlayer.CustomProperties["Character"]);
-            pv = GetComponent<PhotonView>();
+            StartCoroutine(StartGame());
         }
 
-        private void Start()
+        private IEnumerator Loading()
         {
+            SetTag("loadScene", true);
+            while (!AllhasTag("loadScene")) yield return null;
+
+            player = new GameObject();
+            int playerNumber = (int)GetTag(PhotonNetwork.LocalPlayer, "Number");
+            CharacterType characterType = (CharacterType)GetTag(PhotonNetwork.LocalPlayer, "Character");
+
+            playerSetting = new PlayerSetting(playerNumber, characterType);
+            pv = GetComponent<PhotonView>();
+
+            // 모두 씬에 있어야 생성할 수 있음, 에디터와 클라는 에디터가 마스터
             player = PhotonNetwork.Instantiate(playerSetting.type.ToString(), spawnPoints[playerSetting.playerNumber].position, Quaternion.identity);
 
             pv.RPC("AddParts", RpcTarget.AllViaServer, player.GetComponent<PhotonView>().ViewID, playerSetting.type);
+
+            while (AllhasTag("loadPlayer")) yield return null;
+        }
+
+        private IEnumerator StartGame()
+        {
+            yield return Loading();
+
+            if (master())
+            {
+                
+            }
         }
 
         [PunRPC]

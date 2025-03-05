@@ -74,6 +74,8 @@ MonoBehaviour:
   - Setowner
   - SetOwner
   - AddParts
+  - SetCharacter
+  - SetPlayerInfo
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
