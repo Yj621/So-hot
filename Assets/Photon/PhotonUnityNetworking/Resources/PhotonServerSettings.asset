@@ -61,6 +61,8 @@ MonoBehaviour:
   - StartDisappear
   - SyncCharacterSelection
   - SyncPlatformState
+  - SetCharacter
+  - SetPlayerInfo
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
