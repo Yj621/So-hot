@@ -16,7 +16,7 @@ MonoBehaviour:
     AppIdRealtime: c2778d7c-4253-43ff-a165-b2e508703fac
     AppIdFusion: 
     AppIdChat: 
-    AppIdVoice: 
+    AppIdVoice: 13dca95a-d490-4594-aded-4156be9be1a6
     AppVersion: 
     UseNameServer: 1
     FixedRegion: 
@@ -28,53 +28,39 @@ MonoBehaviour:
     AuthMode: 0
     EnableLobbyStatistics: 0
     NetworkLogging: 1
-  DevRegion: kr
+  DevRegion: rue
   PunLogging: 0
   EnableSupportLogger: 0
   RunInBackground: 1
   StartInOfflineMode: 0
   RpcList:
+  - CantHearYou
+  - ChangeColour
   - ClickRpc
   - DestroyRpc
+  - HeresWhy
+  - AddParts
+  - AllPlayerRespawn
+  - DestroyObject
   - DestroySpaceship
   - Fire
-  - RespawnSpaceship
-  - RPCConfirmSelections
-  - RPCUpdateCharacterSelection
-  - ShowItemEffect
-  - SetStartButton
-  - SetNickname
-  - SetClient
-  - SetMaster
-  - SetReady
-  - SetPlayerUI
-  - SetPlayerParent
-  - AddPlayerList
-  - UpdatePlayerList
-  - SetAllReadyState
-  - DestroyObject
+  - GameClear
+  - InitPlayerPos
   - ItemEffectOff
   - ItemEffectOn
-  - SetAllReadyUI
-  - SetReadyUI
-  - SetNickName
-  - SetPlayerSlot
-  - SetClientText
-  - SetMasterText
-  - AllPlayerRespawn
-  - GameClear
   - PlayerDie
   - PlayerResurrection
-  - InitPlayerPos
-  - SyncCharacterSelection
-  - RequestCharacterSelection
-  - StartDisappear
-  - SyncPlatformState
-  - SpawnPlayer
-  - Setowner
-  - SetOwner
-  - AddParts
+  - RespawnSpaceship
   - RpcAddChat
+  - SetClientText
+  - SetMasterText
+  - SetNickName
+  - SetPlayerSlot
+  - SetReady
+  - SetStartButton
+  - StartDisappear
+  - SyncCharacterSelection
+  - SyncPlatformState
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
