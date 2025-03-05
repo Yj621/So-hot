@@ -8,6 +8,14 @@ using static UnityEngine.Rendering.DebugUI;
 
 namespace YJ.Ability
 {
+    public enum SkillType
+    {
+        Fireball,
+        Shield,
+        HotChill,
+        Detect
+    }
+
 
     public class SpecialAbility : MonoBehaviour
     {

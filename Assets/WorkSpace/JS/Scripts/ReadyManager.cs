@@ -1,103 +1,107 @@
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
-using Photon.Realtime;
-using ExitGames.Client.Photon;
 using Donghyun.Builder;
+using static TotalMultiManager;
+using Donghyun.Network;
+using YJ.Ability;
 
 public class ReadyManager : MonoBehaviourPunCallbacks
 {
-    public GameObject[] characters;
+    public static ReadyManager Instance { get; private set; }
+
+    [Header("----- 이미지들 -----")]
     public Sprite[] characterImages;
+    public Sprite[] skillImages;
+
+    [Header("----- 바뀔 이미지 UI -----")]
     public Image characterImage;
-    
+    public Image skillImage;
 
-    private static int currentIndex = 0;
-    private GameObject currentCharacter;
+    private int curCharacterIndex = 0;
+    private int curSkillIndex = 0;
+
+    private int characterLength;
+    private int skillLength;
+
+    private LobbyPlayer playerSetting;
     private PhotonView pv;
-    
-    private int mySlotIndex;
 
-    private void Start()
+    public void SetPlayer(GameObject player)
     {
+        playerSetting = player.GetComponent<LobbyPlayer>();
+    }
+
+    private void Awake()
+    {
+        Instance = this;
+
         pv = GetComponent<PhotonView>();
 
-        if (pv.IsMine)
-        {
-            ResetSelection();
-        }
+        characterLength = characterImages.Length;
+        skillLength = skillImages.Length;
     }
 
-    public void OnLeftArrow()
+    public void OnCharacterLeftArrow()
     {
-        if (!pv.IsMine) return;
-
-        currentIndex = (currentIndex - 1 + characters.Length) % characters.Length;
-        pv.RPC("SyncCharacterSelection", RpcTarget.All, currentIndex);
-        UpdateProperties();
+        curCharacterIndex = (curCharacterIndex - 1 + characterLength) % characterLength;
+        UpdateCharacterDisplay(curCharacterIndex);
+    }
+    public void OnSkillLeftArrow()
+    {
+        curSkillIndex = (curSkillIndex - 1 + skillLength) % skillLength;
+        UpdateSkillDisplay(curSkillIndex);
     }
 
-    public void OnRightArrow()
+    public void OnCharacterRightArrow()
     {
-        if (!pv.IsMine) return;
-        currentIndex = (currentIndex + 1) % characters.Length;
-        pv.RPC("SyncCharacterSelection", RpcTarget.All, currentIndex);
-        UpdateProperties();
+        curCharacterIndex = (curCharacterIndex + 1) % characterLength;
+        UpdateCharacterDisplay(curCharacterIndex);
+    }
+
+    public void OnSkillRightArrow()
+    {
+        curSkillIndex = (curSkillIndex + 1) % skillLength;
+        UpdateSkillDisplay(curSkillIndex);
+    }
+
+    private void UpdateCharacterDisplay(int index)
+    {
+        playerSetting.SetCharacterRPC(index);
+        characterImage.sprite = characterImages[index];
+    }
+
+    private void UpdateSkillDisplay(int index)
+    {
+        skillImage.sprite = skillImages[index];
     }
 
 
-    private void UpdateProperties()
+    public void SetPlayerInfoRPC()
     {
-        CharacterType selectedCharacter = (CharacterType)currentIndex;
-
-        PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable
-    {
-        { "Character", selectedCharacter }  // Enum 값을 저장
-    });
-
-        Debug.Log("Character updated: " + selectedCharacter);
+        pv.RPC("SetPlayerInfo", RpcTarget.AllViaServer);
     }
 
 
     [PunRPC]
-    private void SyncCharacterSelection(int index)
+    private void SetPlayerInfo()
     {
-        currentIndex = index;
-        UpdateCharacterDisplay();
+        SkillType seledtedSkill = (SkillType)curCharacterIndex;
+        CharacterType selectedCharacter = (CharacterType)curCharacterIndex;
+
+        SetTag("Skill", seledtedSkill, PhotonNetwork.LocalPlayer);
+        SetTag("Character", selectedCharacter, PhotonNetwork.LocalPlayer);
+
+        SetTag("HasInfo", true);
+        gameObject.SetActive(false);
+        Debug.Log("Character updated: " + selectedCharacter);
     }
 
-
-
-    private void UpdateCharacterDisplay()
+    public void ResetSelection()
     {
-
-        if (currentCharacter != null)
-        {
-            currentCharacter.SetActive(false);
-        }
-
-        if (currentIndex >= 0)
-        {
-            currentCharacter = characters[currentIndex];
-            currentCharacter.SetActive(true);
-            characterImage.sprite = characterImages[currentIndex];
-        }
-    }
-
-    
-    private void ResetSelection()
-    {
-        if (currentCharacter != null)
-        {
-            currentCharacter.SetActive(false);
-        }
-
-        characters[0].SetActive(true);
-        currentIndex = 0;
-    }
-
-    public override void OnPlayerEnteredRoom(Player newPlayer)
-    {
-        pv.RPC("SyncCharacterSelection", RpcTarget.All, currentIndex);
+        curCharacterIndex = 0;
+        curSkillIndex = 0;
+        UpdateCharacterDisplay(curCharacterIndex);
+        UpdateSkillDisplay(curSkillIndex);
     }
 }

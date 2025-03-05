@@ -1,9 +1,8 @@
-using NUnit.Framework;
 using Photon.Pun;
 using UnityEngine;
 using System.Collections.Generic;
-using YJ.UIManager;
 using System.Collections;
+using static TotalMultiManager;
 
 namespace KJ.Player
 {
@@ -21,6 +20,7 @@ namespace KJ.Player
 
         private void Awake()
         {
+            SetTag("loadScene", true);
             movement = GetComponent<PlayerMovement>();
             state = GetComponent<PlayerState>();
             animationController = GetComponent<PlayerAnimationController>();
