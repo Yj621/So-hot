@@ -10,6 +10,7 @@ TagManager:
   - Trap
   - Water
   - Mud
+  - Fire
   layers:
   - Default
   - TransparentFX

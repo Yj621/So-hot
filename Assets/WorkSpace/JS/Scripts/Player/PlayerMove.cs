@@ -1,10 +1,13 @@
 using UnityEngine;
+using YJ.UIManager;
 
 public class PlayerMove : MonoBehaviour
 {
     public CharacterController controller;
     public Animator animator;
+    public PlayerLook playerLook;
 
+    [Header("이동 설정")]
     public float walkSpeed = 5f;
     public float runSpeed = 8f;
     public float jumpHeight = 2f;
@@ -12,45 +15,54 @@ public class PlayerMove : MonoBehaviour
 
     private Vector3 velocity;
     private bool isGrounded;
-    private bool isThrowingReady;
+    private bool isRunning = false;
 
-    void Start()
+    [Header("던지기 설정")]
+    public Transform holdPoint;
+    private GameObject heldObject;
+    public bool isThrowingReady;
+    public float throwChargeTime;
+    private float throwCooldownTimer = 0f;
+    private bool isThrowing = false;
+
+    public float maxChargeTime = 3f;
+    public float minThrowForce = 3f;
+    public float maxThrowForce = 20f;
+    public float throwCooldown = 1f;
+
+    private Vector2 moveInput = Vector2.zero; // 입력값 저장
+
+    private void Start()
     {
         controller = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
+        UIManager.Instance.UpdateStaminaUI();
     }
 
-    void Update()
+    private void Update()
     {
-        // 땅에 닿았는지 확인
+        playerLook.Rotate();
+        
+        // 중력 적용
         isGrounded = controller.isGrounded;
         if (isGrounded && velocity.y < 0)
         {
             velocity.y = -2f;
         }
 
-        // 이동 입력 받기
-        float moveX = Input.GetAxis("Horizontal");
-        float moveZ = Input.GetAxis("Vertical");
-        Vector3 move = transform.right * moveX + transform.forward * moveZ;
+        // 이동 벡터 생성
+        Vector3 move = transform.right * moveInput.x + transform.forward * moveInput.y;
 
-        // 이동 속도 설정
-        bool isRunning = Input.GetKey(KeyCode.LeftShift);
-        bool isMoving = moveX != 0 || moveZ != 0;
+      
+        // 이동 속도 적용
         float speed = isRunning ? runSpeed : walkSpeed;
         controller.Move(move * speed * Time.deltaTime);
 
         // 애니메이션 설정
+        bool isMoving = moveInput != Vector2.zero;
         animator.SetBool("isMoving", isMoving);
         animator.SetBool("isRunning", isRunning);
         animator.SetBool("isGrounded", isGrounded);
-
-        // 점프 처리
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
-        {
-            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-            animator.SetTrigger("Jump");
-        }
 
         // 공중 상태 감지
         bool isFalling = !isGrounded && velocity.y < 0;
@@ -59,26 +71,119 @@ public class PlayerMove : MonoBehaviour
         // 중력 적용
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
-        if (Input.GetMouseButtonDown(1))
+
+        // 던지기 쿨타임 처리
+        if (isThrowing)
+        {
+            throwCooldownTimer += Time.deltaTime;
+            if (throwCooldownTimer >= throwCooldown)
+            {
+                isThrowing = false;
+                throwCooldownTimer = 0f;
+            }
+        }
+    }
+
+    // 이동 입력 (PlayerInput에서 호출)
+    public void Move(Vector2 input)
+    {
+        moveInput = input;
+    }
+
+    // 점프 처리 (PlayerInput에서 호출)
+    public void Jump()
+    {
+        if (isGrounded)
+        {
+            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+            animator.SetTrigger("Jump");
+        }
+    }
+
+    // 달리기 토글 (PlayerInput에서 호출)
+    public void SetRunning(bool running)
+    {
+        if (isGrounded)
+        {
+            UIManager.Instance.ActiveStamina();
+            isRunning = running; // Shift를 누르면 true, 떼면 false
+        }
+        if(isRunning != running)
+        {
+            UIManager.Instance.DeactiveStamina();
+        }
+    }
+
+    // 던지기 시작 (PlayerInput에서 호출)
+    public void StartThrow()
+    {
+        if (heldObject != null)
         {
             animator.SetTrigger("ThrowReady");
             isThrowingReady = true;
+            throwChargeTime = 0f;
         }
+    }
 
-        if (Input.GetMouseButtonUp(1) && isThrowingReady)
+    // 던지기 충전 (PlayerInput에서 호출)
+    public void ChargeThrow()
+    {
+        if (isThrowingReady)
         {
-            animator.ResetTrigger("ThrowReady");
-            animator.SetTrigger("Any");// Trigger 초기화
-            isThrowingReady = false;
+            throwChargeTime += Time.deltaTime;
+            throwChargeTime = Mathf.Clamp(throwChargeTime, 0f, maxChargeTime);
         }
+    }
 
-
-        // Throw 애니메이션 실행 (ThrowReady 상태일 때만 가능)
-        if (Input.GetMouseButtonDown(0) && isThrowingReady)
+    // 던지기 실행 (PlayerInput에서 호출)
+    public void ReleaseThrow()
+    {
+        if (isThrowingReady && heldObject != null)
         {
+            ThrowObject();
             animator.SetTrigger("Throw");
             isThrowingReady = false;
+            isThrowing = true;
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (isThrowing) return;
+
+        if (other.CompareTag("Fire"))
+        {
+            animator.SetTrigger("Catch");
+            CatchObject(other.gameObject);
+        }
+    }
+
+    private void CatchObject(GameObject obj)
+    {
+        heldObject = obj;
+        obj.GetComponent<Rigidbody>().isKinematic = true;
+        obj.transform.position = holdPoint.position;
+        obj.transform.parent = holdPoint;
+    }
+
+    private void ThrowObject()
+    {
+        if (heldObject != null)
+        {
+            Rigidbody rb = heldObject.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.isKinematic = false;
+
+                // 던질 방향을 카메라 시야 기준으로 변경
+                Vector3 throwDirection = Camera.main.transform.forward;  // 카메라의 앞 방향 사용
+
+                float throwForce = Mathf.Lerp(minThrowForce, maxThrowForce, throwChargeTime / maxChargeTime);
+                rb.AddForce(throwDirection * throwForce, ForceMode.Impulse); // 카메라 방향으로 던지기
+            }
+
+            heldObject.transform.parent = null;
+            heldObject = null;
         }
     }
 }
-
