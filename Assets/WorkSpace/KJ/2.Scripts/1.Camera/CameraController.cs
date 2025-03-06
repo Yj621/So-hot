@@ -32,8 +32,8 @@ namespace KJ.CameraSystem
 
         private void Start()
         {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+           // Cursor.lockState = CursorLockMode.Locked;
+            //Cursor.visible = false;
 
             foreach (GameObject player in GameObject.FindGameObjectsWithTag("Player"))
             {
