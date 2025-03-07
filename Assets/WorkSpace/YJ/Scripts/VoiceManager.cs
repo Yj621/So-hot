@@ -1,11 +1,13 @@
 using Photon.Pun;
+using Photon.Realtime;
 using Photon.Voice.Unity;
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class VoiceManager : MonoBehaviour
+public class VoiceManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] private GameObject[] players;  // 각 플레이어 GameObject
     [SerializeField] private TextMeshProUGUI[] playerTexts;  // 각 플레이어의 TextMeshProUGUI 배열
@@ -29,28 +31,31 @@ public class VoiceManager : MonoBehaviour
 
         // 플레이어들이 생성된 후에 Speaker 컴포넌트를 찾아 speakers 배열을 초기화
         speakers = new Speaker[0];  // 초기화 상태로 시작
+        InitializeSpeakers();
     }
 
     void LateUpdate()
     {
-        // Speaker 배열이 비어있으면 찾고 초기화
-        if (speakers == null || speakers.Length == 0)
-        {
-            var tempSpeakers = new List<Speaker>();
+        /*        // Speaker 배열이 비어있으면 찾고 초기화
+                if (speakers == null || speakers.Length == 0)
+                {
+                    var tempSpeakers = new List<Speaker>();
 
-            // PlayerGroup 내의 자식 객체와 그 자식들까지 모두 순회
-            foreach (Transform child in playerGroup)
-            {
-                Debug.Log($"Checking child: {child.name}");
+                    // PlayerGroup 내의 자식 객체와 그 자식들까지 모두 순회
+                    foreach (Transform child in playerGroup)
+                    {
+                        Debug.Log($"Checking child: {child.name}");
 
-                // 자식 오브젝트와 그 자식들을 순회하면서 Speaker 찾기
-                FindSpeakersRecursively(child, tempSpeakers);
-            }
+                        // 자식 오브젝트와 그 자식들을 순회하면서 Speaker 찾기
+                        FindSpeakersRecursively(child, tempSpeakers);
+                    }
 
-            // List에서 배열로 변환하여 speakers 배열에 저장
-            speakers = tempSpeakers.ToArray();
-        }
+                    // List에서 배열로 변환하여 speakers 배열에 저장
+                    speakers = tempSpeakers.ToArray();
+                }
+        */
 
+        InitializeSpeakers();
         // 각 플레이어가 Speaker를 가지고 있는지 여부를 체크
         for (int i = 0; i < speakers.Length; i++)
         {
@@ -60,31 +65,49 @@ public class VoiceManager : MonoBehaviour
                 Debug.LogWarning("Speaker가 없거나 PhotonView가 없음");
                 continue;
             }
-
             // 말을 하고 있는지 여부를 isSpeakingStatus 배열에 저장
             isSpeakingStatus[i] = speaker.IsPlaying;
 
             // 해당 플레이어의 존재 여부를 playerExistence 배열에 설정
             var photonView = speaker.GetComponent<PhotonView>();
-            int actorNumber = photonView.OwnerActorNr - 1;
+            int actorNumber = photonView.OwnerActorNr - 1; // Actor 번호에 맞는 플레이어 존재 여부 설정
+            playerExistence[actorNumber] = true;
 
-            if (actorNumber >= 0 && actorNumber < playerExistence.Length)
-            {
-                playerExistence[actorNumber] = true;  // Actor 번호에 맞는 플레이어 존재 여부 설정
 
-                // 해당 플레이어의 닉네임을 UI에 업데이트
-                string playerNickName = photonView.Owner.NickName;
+            // 해당 플레이어의 닉네임을 UI에 업데이트
+            string playerNickName = photonView.Owner.NickName;
 
-                // 말하고 있는지 여부에 따라 UI 업데이트
-                UpdatePlayerUI(actorNumber + 1, playerExistence[actorNumber], isSpeakingStatus[i], playerNickName);
-            }
+            // 말하고 있는지 여부에 따라 UI 업데이트
+            UpdatePlayerUI(actorNumber + 1, playerExistence[actorNumber], isSpeakingStatus[i], playerNickName);
         }
+
         // UI 업데이트 (각 플레이어 1~4에 대해)
         for (int i = 0; i < 4; i++)
         {
+            // 각 플레이어의 존재 여부 및 말하는지 여부에 따라 UI 업데이트
             UpdatePlayerUI(i + 1, playerExistence[i], isSpeakingStatus[i], null);
         }
+    }
+    private void InitializeSpeakers()
+    {
+        var tempSpeakers = new List<Speaker>();
 
+        foreach (Transform child in playerGroup)
+        {
+            FindSpeakersRecursively(child, tempSpeakers);
+        }
+
+        speakers = tempSpeakers.ToArray();
+    }
+
+    public override void  OnPlayerEnteredRoom(Player newPlayer)
+    {
+        InitializeSpeakers();
+    }
+
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        InitializeSpeakers();
     }
 
     private void UpdatePlayerUI(int actorNumber, bool isActive, bool isSpeaking, string nickName)
@@ -111,6 +134,13 @@ public class VoiceManager : MonoBehaviour
         if (speaker != null)
         {
             speakersList.Add(speaker);
+        }
+
+
+        // 리스트 내부 요소를 순회하며 출력
+        for (int i = 0; i < speakersList.Count; i++)
+        {
+            speaker = speakersList[i];
         }
 
         // 자식 오브젝트들이 있다면 그 자식들을 재귀적으로 탐색
