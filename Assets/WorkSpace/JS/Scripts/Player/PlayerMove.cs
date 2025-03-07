@@ -1,3 +1,4 @@
+using ExitGames.Client.Photon;
 using UnityEngine;
 using YJ.UIManager;
 
@@ -31,6 +32,10 @@ public class PlayerMove : MonoBehaviour
     public float throwCooldown = 1f;
 
     private Vector2 moveInput = Vector2.zero; // 입력값 저장
+
+    private bool CatchingFire = false;
+    public float HotIncrease = 2f;
+    public float HotDecrease = 1f;
 
     private void Start()
     {
@@ -82,6 +87,32 @@ public class PlayerMove : MonoBehaviour
                 throwCooldownTimer = 0f;
             }
         }
+
+        if(isRunning == true)
+        {
+            UIManager.Instance.ActiveStamina();
+            if (!UIManager.Instance.runLimit)
+            {
+
+            }
+            else
+            {
+                UIManager.Instance.DrainStamina();
+            }
+        }
+        if(isRunning == false)
+        {
+            UIManager.Instance.RecoverStamina();
+        }
+
+        if(CatchingFire == true)
+        {
+           UIManager.Instance.IncreaseHeat(HotIncrease);
+        }
+        if(CatchingFire == false)
+        {
+            UIManager.Instance.DecreaseHeat(HotDecrease);
+        }
     }
 
     // 이동 입력 (PlayerInput에서 호출)
@@ -101,17 +132,17 @@ public class PlayerMove : MonoBehaviour
     }
 
     // 달리기 토글 (PlayerInput에서 호출)
-    public void SetRunning(bool running)
+    public void SetRunning()
     {
         if (isGrounded)
         {
-            UIManager.Instance.ActiveStamina();
-            isRunning = running; // Shift를 누르면 true, 떼면 false
+           isRunning = true;
         }
-        if(isRunning != running)
-        {
-            UIManager.Instance.DeactiveStamina();
-        }
+    }
+
+    public void StopRunning()
+    {
+        isRunning = false;
     }
 
     // 던지기 시작 (PlayerInput에서 호출)
@@ -155,6 +186,7 @@ public class PlayerMove : MonoBehaviour
         {
             animator.SetTrigger("Catch");
             CatchObject(other.gameObject);
+            CatchingFire = true;
         }
     }
 
@@ -184,6 +216,7 @@ public class PlayerMove : MonoBehaviour
 
             heldObject.transform.parent = null;
             heldObject = null;
+            CatchingFire = false;
         }
     }
 }

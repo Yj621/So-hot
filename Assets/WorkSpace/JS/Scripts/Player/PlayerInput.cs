@@ -32,8 +32,14 @@ public class PlayerInput : MonoBehaviour
 
     public void OnRun(InputValue value)
     {
-        bool isPressed = value.isPressed; // Shift를 누르면 true, 떼면 false
-        movement.SetRunning(isPressed);
+        if (value.isPressed)
+        {
+            movement.SetRunning();
+        }
+        else 
+        {
+            movement.StopRunning();
+        }
     }
 
 

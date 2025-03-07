@@ -18,12 +18,18 @@ namespace YJ.UIManager
         [Header("Slider 설정")]
         [SerializeField] private Slider hotSlider;
         [SerializeField] private Slider staminaSlider;
+        [SerializeField] private Slider ThrowSlider;
 
         [Header("스태미나 관련")]
         public bool runLimit; // 스태미나 제한 여부 설정
         public float maxStamina = 100f; // 최대 스태미나 값
         public float currentStamina; // 현재 스태미나 값
         public float staminaDrainRate = 10f; // 스태미나 소모율
+
+
+        public float currentThrow= 0f;
+        public float maxThrow = 100f;
+        public float ThrowIncreaseGauge = 10f;
 
         private PlayerState playerState;
 
@@ -65,15 +71,14 @@ namespace YJ.UIManager
             staminaSlider.value = currentStamina / maxStamina;
         }
 
+        public void UpdateThrowGauge(float currentThrow, float maxThrow)
+        {
+            ThrowSlider.value = currentThrow / maxThrow;
+        }
+
 
         void Update()
         {
-            if (gaugePause) return; // 게이지 일시 정지 상태라면 업데이트 중단
-
-            if (Input.GetKeyDown(KeyCode.F)) // F 키를 눌러 불을 켜거나 끌 수 있음
-            {
-                ToggleFire();
-            }
 
         }
         /// <summary>
@@ -90,7 +95,7 @@ namespace YJ.UIManager
         /// </summary>
         public void IncreaseHeat(float amount)
         {
-            if (!playerState.hasFire) return; // 불을 들고 있지 않으면 증가하지 않음
+            //if (!playerState.hasFire) return; // 불을 들고 있지 않으면 증가하지 않음
 
             heatGauge += amount;
             heatGauge = Mathf.Clamp(heatGauge, 0, maxHeat); // 최대치를 넘지 않도록 제한
@@ -200,7 +205,21 @@ namespace YJ.UIManager
             UpdateStaminaUI(); // UI 업데이트
         }
 
-    }
+        public void ActiveThrow()
+        {
+            ThrowSlider.gameObject.SetActive(true);
+        }
+        //스태미나 활성화
+        public void DeactiveThrow()
+        {
+            ThrowSlider.gameObject.SetActive(false);
+        }
 
+
+        public void UpdateThrowUI()
+        {
+            UpdateThrowGauge(currentThrow, maxThrow);
+        }
+    }
 }
 
