@@ -29,7 +29,7 @@ namespace YJ.UIManager
 
         public float currentThrow= 0f;
         public float maxThrow = 100f;
-        public float ThrowIncreaseGauge = 10f;
+        public float ThrowIncreaseGauge;
 
         private PlayerState playerState;
 
@@ -220,6 +220,26 @@ namespace YJ.UIManager
         {
             UpdateThrowGauge(currentThrow, maxThrow);
         }
+
+        public void IncreaseCharge()
+        {
+            if (currentThrow < maxThrow)
+            {
+                ActiveThrow();
+                currentThrow += ThrowIncreaseGauge * Time.deltaTime;
+                currentThrow = Mathf.Lerp(currentThrow, 0, maxThrow);
+                Debug.Log("던짐 게이지 차는중");
+            }
+            UpdateThrowUI(); // UI 업데이트
+        }
+
+        public void ResetThrow()
+        {
+            currentThrow = 0;
+            UpdateThrowUI(); // UI 업데이트
+            DeactiveThrow();
+        }
+
     }
 }
 

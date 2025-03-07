@@ -587,8 +587,6 @@ MonoBehaviour:
   gravity: -9.81
   holdPoint: {fileID: 1615443292}
   isThrowingReady: 0
-  throwChargeTime: 0
-  maxChargeTime: 3
   minThrowForce: 20
   maxThrowForce: 70
   throwCooldown: 1
@@ -4149,10 +4147,14 @@ MonoBehaviour:
   heatDecreaseRate: 5
   hotSlider: {fileID: 848243135}
   staminaSlider: {fileID: 327312659}
+  ThrowSlider: {fileID: 946289975}
   runLimit: 1
   maxStamina: 100
   currentStamina: 100
   staminaDrainRate: 10
+  currentThrow: 0
+  maxThrow: 20
+  ThrowIncreaseGauge: 10
 --- !u!4 &1904786720
 Transform:
   m_ObjectHideFlags: 0

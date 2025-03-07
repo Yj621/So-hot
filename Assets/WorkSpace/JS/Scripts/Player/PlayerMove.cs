@@ -22,11 +22,9 @@ public class PlayerMove : MonoBehaviour
     public Transform holdPoint;
     private GameObject heldObject;
     public bool isThrowingReady;
-    public float throwChargeTime;
     private float throwCooldownTimer = 0f;
     private bool isThrowing = false;
 
-    public float maxChargeTime = 3f;
     public float minThrowForce = 3f;
     public float maxThrowForce = 20f;
     public float throwCooldown = 1f;
@@ -113,6 +111,16 @@ public class PlayerMove : MonoBehaviour
         {
             UIManager.Instance.DecreaseHeat(HotDecrease);
         }
+
+        if(isThrowingReady == true)
+        {
+            UIManager.Instance.IncreaseCharge();
+        }
+
+        if (isThrowingReady == false)
+        {
+            UIManager.Instance.ResetThrow();
+        }
     }
 
     // 이동 입력 (PlayerInput에서 호출)
@@ -152,19 +160,11 @@ public class PlayerMove : MonoBehaviour
         {
             animator.SetTrigger("ThrowReady");
             isThrowingReady = true;
-            throwChargeTime = 0f;
         }
     }
 
     // 던지기 충전 (PlayerInput에서 호출)
-    public void ChargeThrow()
-    {
-        if (isThrowingReady)
-        {
-            throwChargeTime += Time.deltaTime;
-            throwChargeTime = Mathf.Clamp(throwChargeTime, 0f, maxChargeTime);
-        }
-    }
+   
 
     // 던지기 실행 (PlayerInput에서 호출)
     public void ReleaseThrow()
@@ -210,7 +210,7 @@ public class PlayerMove : MonoBehaviour
                 // 던질 방향을 카메라 시야 기준으로 변경
                 Vector3 throwDirection = Camera.main.transform.forward;  // 카메라의 앞 방향 사용
 
-                float throwForce = Mathf.Lerp(minThrowForce, maxThrowForce, throwChargeTime / maxChargeTime);
+                float throwForce = Mathf.Lerp(minThrowForce, maxThrowForce, UIManager.Instance.currentThrow / UIManager.Instance.maxThrow);
                 rb.AddForce(throwDirection * throwForce, ForceMode.Impulse); // 카메라 방향으로 던지기
             }
 
