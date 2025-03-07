@@ -227,7 +227,7 @@ namespace YJ.UIManager
             {
                 ActiveThrow();
                 currentThrow += ThrowIncreaseGauge * Time.deltaTime;
-                currentThrow = Mathf.Lerp(currentThrow, 0, maxThrow);
+                currentThrow = Mathf.Clamp(currentThrow, 0, maxThrow);
                 Debug.Log("던짐 게이지 차는중");
             }
             UpdateThrowUI(); // UI 업데이트

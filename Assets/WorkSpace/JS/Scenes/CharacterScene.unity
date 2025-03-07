@@ -4153,7 +4153,7 @@ MonoBehaviour:
   currentStamina: 100
   staminaDrainRate: 10
   currentThrow: 0
-  maxThrow: 20
+  maxThrow: 10
   ThrowIncreaseGauge: 10
 --- !u!4 &1904786720
 Transform:

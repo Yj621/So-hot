@@ -1,4 +1,5 @@
 using ExitGames.Client.Photon;
+using System.Collections;
 using UnityEngine;
 using YJ.UIManager;
 
@@ -35,6 +36,9 @@ public class PlayerMove : MonoBehaviour
     public float HotIncrease = 2f;
     public float HotDecrease = 1f;
 
+    public bool isDie = false;
+    public bool isGhost = false;
+
     private void Start()
     {
         controller = GetComponent<CharacterController>();
@@ -66,6 +70,7 @@ public class PlayerMove : MonoBehaviour
         animator.SetBool("isMoving", isMoving);
         animator.SetBool("isRunning", isRunning);
         animator.SetBool("isGrounded", isGrounded);
+        animator.SetBool("isGhost", isGhost);
 
         // 공중 상태 감지
         bool isFalling = !isGrounded && velocity.y < 0;
@@ -98,6 +103,12 @@ public class PlayerMove : MonoBehaviour
                 UIManager.Instance.DrainStamina();
             }
         }
+
+        if(UIManager.Instance.currentStamina == 0)
+        {
+            isRunning = false;
+        }
+
         if(isRunning == false)
         {
             UIManager.Instance.RecoverStamina();
@@ -120,6 +131,24 @@ public class PlayerMove : MonoBehaviour
         if (isThrowingReady == false)
         {
             UIManager.Instance.ResetThrow();
+        }
+
+        if(isDie == true)
+        {
+            StartCoroutine(DieAndBeGhost());
+        }
+    }
+
+    IEnumerator DieAndBeGhost()
+    {
+        animator.SetTrigger("Die");
+        yield return new WaitForSeconds(2f);
+
+        isGhost = true;
+
+        if (isGhost)
+        {
+
         }
     }
 
