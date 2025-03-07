@@ -14,6 +14,7 @@ public class VoiceManager : MonoBehaviourPunCallbacks
 
     [SerializeField] private Sprite speakImage;  // 말하는 이미지
     [SerializeField] private Sprite defaultImage;  // 기본 이미지
+    [SerializeField] private Sprite muteImage;  // 기본 이미지
 
     [SerializeField] private Transform playerGroup; // PlayerGroup의 Transform
 
@@ -23,39 +24,22 @@ public class VoiceManager : MonoBehaviourPunCallbacks
 
     private bool[] isSpeakingStatus = new bool[4];  // 각 플레이어의 말하는지 여부 상태 저장 배열
     private bool[] playerExistence = new bool[4];  // 각 플레이어의 존재 여부 상태 저장 배열
+    private bool[] isMuted = new bool[4];  // 각 플레이어의 음소거 상태
+
+
 
     void Start()
     {
-        // PlayerGroup 내의 자식들이 잘 초기화되었는지 확인
-        Debug.Log($"PlayerGroup: {playerGroup.name}");
-
         // 플레이어들이 생성된 후에 Speaker 컴포넌트를 찾아 speakers 배열을 초기화
         speakers = new Speaker[0];  // 초기화 상태로 시작
+        
         InitializeSpeakers();
     }
 
     void LateUpdate()
     {
-        /*        // Speaker 배열이 비어있으면 찾고 초기화
-                if (speakers == null || speakers.Length == 0)
-                {
-                    var tempSpeakers = new List<Speaker>();
-
-                    // PlayerGroup 내의 자식 객체와 그 자식들까지 모두 순회
-                    foreach (Transform child in playerGroup)
-                    {
-                        Debug.Log($"Checking child: {child.name}");
-
-                        // 자식 오브젝트와 그 자식들을 순회하면서 Speaker 찾기
-                        FindSpeakersRecursively(child, tempSpeakers);
-                    }
-
-                    // List에서 배열로 변환하여 speakers 배열에 저장
-                    speakers = tempSpeakers.ToArray();
-                }
-        */
-
         InitializeSpeakers();
+
         // 각 플레이어가 Speaker를 가지고 있는지 여부를 체크
         for (int i = 0; i < speakers.Length; i++)
         {
@@ -65,29 +49,43 @@ public class VoiceManager : MonoBehaviourPunCallbacks
                 Debug.LogWarning("Speaker가 없거나 PhotonView가 없음");
                 continue;
             }
+
             // 말을 하고 있는지 여부를 isSpeakingStatus 배열에 저장
             isSpeakingStatus[i] = speaker.IsPlaying;
 
             // 해당 플레이어의 존재 여부를 playerExistence 배열에 설정
             var photonView = speaker.GetComponent<PhotonView>();
-            int actorNumber = photonView.OwnerActorNr - 1; // Actor 번호에 맞는 플레이어 존재 여부 설정
-            playerExistence[actorNumber] = true;
+            int actorNumber = photonView.OwnerActorNr - 1;  // Actor 번호에 맞는 플레이어 존재 여부 설정
+            playerExistence[i] = true; // 플레이어 존재 여부 설정
 
+            // UI 업데이트
+            string playerNickName = photonView.Owner.NickName; // 각 플레이어의 닉네임을 가져옴
 
-            // 해당 플레이어의 닉네임을 UI에 업데이트
-            string playerNickName = photonView.Owner.NickName;
-
-            // 말하고 있는지 여부에 따라 UI 업데이트
-            UpdatePlayerUI(actorNumber + 1, playerExistence[actorNumber], isSpeakingStatus[i], playerNickName);
+            // actorNumber에 맞게 UI 업데이트
+            UpdatePlayerUI(actorNumber + 1, playerExistence[i], isSpeakingStatus[i], playerNickName);
         }
 
-        // UI 업데이트 (각 플레이어 1~4에 대해)
-        for (int i = 0; i < 4; i++)
-        {
-            // 각 플레이어의 존재 여부 및 말하는지 여부에 따라 UI 업데이트
-            UpdatePlayerUI(i + 1, playerExistence[i], isSpeakingStatus[i], null);
-        }
+        // 자기 자신에 대해서도 UI 업데이트
+        UpdatePlayerUI(PhotonNetwork.LocalPlayer.ActorNumber, playerExistence[PhotonNetwork.LocalPlayer.ActorNumber - 1], isSpeakingStatus[PhotonNetwork.LocalPlayer.ActorNumber - 1], PhotonNetwork.LocalPlayer.NickName);
     }
+
+    public override void OnPlayerEnteredRoom(Player newPlayer)
+    {
+        InitializeSpeakers();
+        // 새로운 플레이어가 입장했을 때 UI를 업데이트하려면 새로운 플레이어의 PhotonView를 찾아 UI를 업데이트
+        string newPlayerNickName = newPlayer.NickName;
+        int newPlayerActorNumber = newPlayer.ActorNumber;
+        UpdatePlayerUI(newPlayerActorNumber, true, false, newPlayerNickName); // isSpeaking은 false로 설정
+    }
+
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        InitializeSpeakers();
+        // 플레이어가 나갔을 때 해당 플레이어의 UI를 비활성화
+        int leftPlayerActorNumber = otherPlayer.ActorNumber;
+        UpdatePlayerUI(leftPlayerActorNumber, false, false, "");
+    }
+
     private void InitializeSpeakers()
     {
         var tempSpeakers = new List<Speaker>();
@@ -98,17 +96,18 @@ public class VoiceManager : MonoBehaviourPunCallbacks
         }
 
         speakers = tempSpeakers.ToArray();
+
+        // 존재하지 않는 플레이어의 UI 비활성화
+        for (int i = 0; i < 4; i++)
+        {
+            Debug.Log($"playerExistence[i] : {playerExistence[i]}");
+            if (!playerExistence[i])
+            {
+                players[i].SetActive(false);  // 플레이어 활성화 여부
+            }
+        }
     }
 
-    public override void  OnPlayerEnteredRoom(Player newPlayer)
-    {
-        InitializeSpeakers();
-    }
-
-    public override void OnPlayerLeftRoom(Player otherPlayer)
-    {
-        InitializeSpeakers();
-    }
 
     private void UpdatePlayerUI(int actorNumber, bool isActive, bool isSpeaking, string nickName)
     {
@@ -116,8 +115,18 @@ public class VoiceManager : MonoBehaviourPunCallbacks
 
         if (index < 0 || index >= playerTexts.Length) return;  // 인덱스 범위 체크
 
-        // 말하는지 여부에 따라 이미지 설정
-        playerTexts[index].GetComponentInChildren<Image>().sprite = isSpeaking ? speakImage : defaultImage;
+        // 음소거 상태인지 확인
+        if (isMuted[index])
+        {
+            // 음소거 상태일 경우 muteImage로 설정
+            playerTexts[index].GetComponentInChildren<Image>().sprite = muteImage;
+        }
+        else
+        {
+            // 음소거가 아닐 경우 말하는지 여부에 따라 이미지 설정
+            playerTexts[index].GetComponentInChildren<Image>().sprite = isSpeaking ? speakImage : defaultImage;
+        }
+
         players[index].SetActive(isActive);  // 플레이어 활성화 여부
 
         if (!string.IsNullOrEmpty(nickName))
@@ -137,12 +146,6 @@ public class VoiceManager : MonoBehaviourPunCallbacks
         }
 
 
-        // 리스트 내부 요소를 순회하며 출력
-        for (int i = 0; i < speakersList.Count; i++)
-        {
-            speaker = speakersList[i];
-        }
-
         // 자식 오브젝트들이 있다면 그 자식들을 재귀적으로 탐색
         foreach (Transform child in parent)
         {
@@ -152,5 +155,28 @@ public class VoiceManager : MonoBehaviourPunCallbacks
     public void OnClickSpeakerPanel()
     {
         speakerPanel.SetActive(!speakerPanel.activeSelf);
+    }
+
+    //음소거
+    public void ToggleSpeaker(int actorNumber)
+    {
+        foreach (var speaker in speakers)
+        {
+            var photonView = speaker.GetComponent<PhotonView>();
+            if (photonView != null && photonView.OwnerActorNr == actorNumber)
+            {
+                int index = actorNumber - 1;  // 배열 인덱스 계산
+
+                // Speaker 활성화/비활성화 및 음소거 상태 업데이트
+                speaker.enabled = !speaker.enabled;
+                isMuted[index] = !speaker.enabled;  // speaker.enabled가 false면 음소거 상태로 설정
+               
+                // UI 업데이트 즉시 호출
+                UpdatePlayerUI(actorNumber, playerExistence[index], isSpeakingStatus[index], photonView.Owner.NickName);
+
+                Debug.Log($"Speaker for Actor {actorNumber} is now {(speaker.enabled ? "enabled" : "disabled")}");
+                return;
+            }
+        }
     }
 }

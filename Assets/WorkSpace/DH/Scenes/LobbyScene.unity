@@ -438,7 +438,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 132925862}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1993886181}
+        m_TargetAssemblyTypeName: VoiceManager, Assembly-CSharp
+        m_MethodName: ToggleSpeaker
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 3
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &132925862
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2294,7 +2306,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 540629031}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1993886181}
+        m_TargetAssemblyTypeName: VoiceManager, Assembly-CSharp
+        m_MethodName: ToggleSpeaker
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 1
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &540629031
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2414,7 +2438,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 544377275}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1993886181}
+        m_TargetAssemblyTypeName: VoiceManager, Assembly-CSharp
+        m_MethodName: ToggleSpeaker
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 2
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &544377275
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8051,7 +8087,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1978416647}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1993886181}
+        m_TargetAssemblyTypeName: VoiceManager, Assembly-CSharp
+        m_MethodName: ToggleSpeaker
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 4
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1978416647
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8217,6 +8265,7 @@ MonoBehaviour:
   - {fileID: 1431701386}
   speakImage: {fileID: 21300000, guid: 0520e109f15fc984b95dfb91bf9ca60c, type: 3}
   defaultImage: {fileID: 21300000, guid: cc6dc1423c30772499a2043b38ec7026, type: 3}
+  muteImage: {fileID: 21300000, guid: d66aa13d1f041344db4e51027787e8b4, type: 3}
   playerGroup: {fileID: 545829306}
   speakerPanel: {fileID: 1553423370}
 --- !u!4 &1993886182
