@@ -15,6 +15,8 @@ public class VoiceManager : MonoBehaviour
 
     [SerializeField] private Transform playerGroup; // PlayerGroup의 Transform
 
+    [SerializeField] private GameObject speakerPanel;
+
     private Speaker[] speakers;  // Speaker 컴포넌트를 담을 배열
 
     private bool[] isSpeakingStatus = new bool[4];  // 각 플레이어의 말하는지 여부 상태 저장 배열
@@ -64,20 +66,25 @@ public class VoiceManager : MonoBehaviour
 
             // 해당 플레이어의 존재 여부를 playerExistence 배열에 설정
             var photonView = speaker.GetComponent<PhotonView>();
-            playerExistence[photonView.OwnerActorNr - 1] = true;  // Actor 번호에 맞는 플레이어 존재 여부 설정
+            int actorNumber = photonView.OwnerActorNr - 1;
 
-            // 해당 플레이어의 닉네임을 UI에 업데이트
-            string playerNickName = photonView.Owner.NickName;
+            if (actorNumber >= 0 && actorNumber < playerExistence.Length)
+            {
+                playerExistence[actorNumber] = true;  // Actor 번호에 맞는 플레이어 존재 여부 설정
 
-            // 말하고 있는지 여부에 따라 UI 업데이트
-            UpdatePlayerUI(photonView.OwnerActorNr, playerExistence[photonView.OwnerActorNr - 1], isSpeakingStatus[i], playerNickName);
+                // 해당 플레이어의 닉네임을 UI에 업데이트
+                string playerNickName = photonView.Owner.NickName;
+
+                // 말하고 있는지 여부에 따라 UI 업데이트
+                UpdatePlayerUI(actorNumber + 1, playerExistence[actorNumber], isSpeakingStatus[i], playerNickName);
+            }
         }
-
         // UI 업데이트 (각 플레이어 1~4에 대해)
         for (int i = 0; i < 4; i++)
         {
             UpdatePlayerUI(i + 1, playerExistence[i], isSpeakingStatus[i], null);
         }
+
     }
 
     private void UpdatePlayerUI(int actorNumber, bool isActive, bool isSpeaking, string nickName)
@@ -111,5 +118,9 @@ public class VoiceManager : MonoBehaviour
         {
             FindSpeakersRecursively(child, speakersList);
         }
+    }
+    public void OnClickSpeakerPanel()
+    {
+        speakerPanel.SetActive(!speakerPanel.activeSelf);
     }
 }
