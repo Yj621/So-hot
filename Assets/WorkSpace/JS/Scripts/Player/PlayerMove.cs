@@ -1,7 +1,10 @@
 using ExitGames.Client.Photon;
 using Photon.Pun;
+using Photon.Voice;
 using System.Collections;
+using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.UIElements;
 using YJ.UIManager;
 
 public class PlayerMove : MonoBehaviourPunCallbacks
@@ -45,6 +48,8 @@ public class PlayerMove : MonoBehaviourPunCallbacks
 
     private bool wasOverHeat = false;
 
+    private CinemachineCamera camera;
+
     private void Start()
     {
         controller = GetComponent<CharacterController>();
@@ -52,141 +57,158 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         photonView = GetComponent<PhotonView>();
         UIManager.Instance.UpdateStaminaUI();
         originalMaterial = CharacterRenderer.material;
+
+        // 내 캐릭터만 카메라 설정
+        if (photonView.IsMine)
+        {
+            CinemachineCamera camera = FindFirstObjectByType<CinemachineCamera>();
+
+            if (camera != null)
+            {
+                camera.Follow = transform;
+                camera.LookAt = transform;
+            }
+        }
     }
 
     private void Update()
     {
-        if (!photonView.IsMine) return;
+        if (! photonView.IsMine) return;
 
         if (isDie)
-        {
-            // 이동 및 속도 정지
-            moveInput = Vector2.zero;
-            velocity = Vector3.zero;
-
-            animator.SetBool("isMoving", false);
-            animator.SetBool("isRunning", false);
-         
-            StartCoroutine(DieAndBeGhost());
-            return; // 모든 동작 차단
-        }
-
-        playerLook.Rotate();
-        
-        // 중력 적용
-        isGrounded = controller.isGrounded;
-        if (isGrounded && velocity.y < 0)
-        {
-            velocity.y = -2f;
-        }
-
-        // 이동 벡터 생성
-        Vector3 move = transform.right * moveInput.x + transform.forward * moveInput.y;
-
-      
-        // 이동 속도 적용
-        float speed = isRunning ? runSpeed : walkSpeed;
-        controller.Move(move * speed * Time.deltaTime);
-
-        // 애니메이션 설정
-        bool isMoving = moveInput != Vector2.zero;
-        animator.SetBool("isMoving", isMoving);
-        animator.SetBool("isRunning", isRunning);
-        animator.SetBool("isGrounded", isGrounded);
-        animator.SetBool("isGhost", isGhost);
-
-        // 공중 상태 감지
-        bool isFalling = !isGrounded && velocity.y < 0;
-        animator.SetBool("isFalling", isFalling);
-
-        // 중력 적용
-        velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
-
-        // 던지기 쿨타임 처리
-        if (isThrowing)
-        {
-            throwCooldownTimer += Time.deltaTime;
-            if (throwCooldownTimer >= throwCooldown)
             {
-                isThrowing = false;
-                throwCooldownTimer = 0f;
+                moveInput = Vector2.zero;
+                velocity = Vector3.zero;
+
+                animator.SetBool("isMoving", false);
+                animator.SetBool("isRunning", false);
+
+                StartCoroutine(DieAndBeGhost());
+                return;
             }
-        }
 
-        if(isRunning == true)
-        {
-            UIManager.Instance.ActiveStamina();
-            if (!UIManager.Instance.runLimit)
+            playerLook.Rotate();
+            float rotationY = transform.rotation.eulerAngles.y;
+
+            // 중력 적용
+            isGrounded = controller.isGrounded;
+            if (isGrounded && velocity.y < 0)
             {
+                velocity.y = -2f;
+            }
+            velocity.y += gravity * Time.deltaTime;
 
+            // 이동 벡터 생성
+            Vector3 move = transform.right * moveInput.x + transform.forward * moveInput.y;
+            float speed = isRunning ? runSpeed : walkSpeed;
+            controller.Move((move * speed + velocity) * Time.deltaTime);
+
+            // 애니메이션 설정
+            animator.SetBool("isMoving", moveInput != Vector2.zero);
+            animator.SetBool("isRunning", isRunning);
+            animator.SetBool("isGrounded", isGrounded);
+            animator.SetBool("isGhost", isGhost);
+            animator.SetBool("isFalling", !isGrounded && velocity.y < 0);
+
+            // 던지기 쿨타임 처리
+            if (isThrowing)
+            {
+                throwCooldownTimer += Time.deltaTime;
+                if (throwCooldownTimer >= throwCooldown)
+                {
+                    isThrowing = false;
+                    throwCooldownTimer = 0f;
+                }
+            }
+
+            // 스테미너 시스템 처리
+            if (isRunning)
+            {
+                UIManager.Instance.ActiveStamina();
+                if (!UIManager.Instance.runLimit)
+                {
+                    UIManager.Instance.DrainStamina();
+                }
+            }
+            if (UIManager.Instance.currentStamina == 0)
+            {
+                isRunning = false;
+            }
+            if (!isRunning)
+            {
+                UIManager.Instance.RecoverStamina();
+            }
+
+            // 과열 시스템 처리
+            if (CatchingFire)
+            {
+                UIManager.Instance.IncreaseHeat(HotIncrease);
             }
             else
             {
-                UIManager.Instance.DrainStamina();
+                UIManager.Instance.DecreaseHeat(HotDecrease);
             }
-        }
 
-        if(UIManager.Instance.currentStamina == 0)
-        {
-            isRunning = false;
-        }
-
-        if(isRunning == false)
-        {
-            UIManager.Instance.RecoverStamina();
-        }
-
-        if(CatchingFire == true)
-        {
-           UIManager.Instance.IncreaseHeat(HotIncrease);
-        }
-        if(CatchingFire == false)
-        {
-            UIManager.Instance.DecreaseHeat(HotDecrease);
-        }
-
-        if(isThrowingReady == true)
-        {
-            UIManager.Instance.IncreaseCharge();
-        }
-
-        if (isThrowingReady == false)
-        {
-            UIManager.Instance.ResetThrow();
-        }
-
-        if (UIManager.Instance.IsOverheated() && !wasOverHeat)
-        {
             if (isThrowingReady)
             {
-                ReleaseThrow();
+                UIManager.Instance.IncreaseCharge();
             }
             else
             {
-                ThrowObject();
-                isThrowing = true;
-                animator.SetTrigger("Any");
+                UIManager.Instance.ResetThrow();
             }
-            wasOverHeat = true;
-        }
 
-        if ((UIManager.Instance.heatGauge == 0) && wasOverHeat)
-        {
-            wasOverHeat = false;
-        }
+            if (UIManager.Instance.IsOverheated() && !wasOverHeat)
+            {
+                if (isThrowingReady)
+                {
+                    ReleaseThrow();
+                }
+                else
+                {
+                    ThrowObject();
+                    isThrowing = true;
+                    animator.SetTrigger("Any");
+                }
+                wasOverHeat = true;
+            }
+
+            if (UIManager.Instance.heatGauge == 0 && wasOverHeat)
+            {
+                wasOverHeat = false;
+            }
+
+
+            // 네트워크 동기화 (velocity.y 제외)
+            photonView.RPC("SyncState", RpcTarget.Others, moveInput, isRunning, isThrowingReady, isDie, isGhost, rotationY, transform.position.x, transform.position.y, transform.position.z);
         
-        photonView.RPC("SyncState", RpcTarget.Others, moveInput, isRunning, isThrowingReady, isDie, isGhost);
     }
 
     [PunRPC]
-    void SyncState(Vector2 input, bool running, bool throwingReady, bool die, bool ghost)
+    void SyncState(Vector2 input, bool running, bool throwingReady, bool die, bool ghost, float rotationY, float posX, float posY, float posZ)
     {
+        if (photonView.IsMine) return;
+
         moveInput = input;
         isRunning = running;
         isThrowingReady = throwingReady;
         isDie = die;
         isGhost = ghost;
+        
+
+        animator.SetBool("isMoving", moveInput != Vector2.zero);
+        animator.SetBool("isRunning", isRunning);
+        animator.SetBool("isGrounded", isGrounded);
+        animator.SetBool("isGhost", isGhost);
+
+        if (!photonView.IsMine)
+        {
+            float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, rotationY, ref playerLook.rotationVelocity, playerLook.rotationSmoothTime);
+            // 구해진 rotation을 Quaternion.Euler에 y축 각도로 넣어주고 transform.rotation에 적용
+            transform.rotation = Quaternion.Euler(0, rotation, 0);
+
+            transform.position = new Vector3(posX, posY, posZ);
+        }
     }
 
     IEnumerator DieAndBeGhost()
@@ -201,39 +223,27 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         isGhost = false;
     }
 
-    // 이동 입력 (PlayerInput에서 호출)
     public void Move(Vector2 input)
     {
         if (isDie) return;
         moveInput = input;
     }
 
-    // 점프 처리 (PlayerInput에서 호출)
     public void Jump()
     {
         if (isDie) return;
         if (isGrounded)
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-            if(!isGhost)
-            animator.SetTrigger("Jump");
+            if (!isGhost)
+                animator.SetTrigger("Jump");
         }
     }
 
-    [PunRPC]
-    void JumpRPC()
-    {
-        animator.SetTrigger("Jump");
-    }
-
-    // 달리기 토글 (PlayerInput에서 호출)
     public void SetRunning()
     {
-        if (isGhost) return;
-        if (isGrounded)
-        {
-           isRunning = true;
-        }
+        if (!isGrounded || isGhost) return;
+        isRunning = true;
     }
 
     public void StopRunning()
@@ -241,7 +251,6 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         isRunning = false;
     }
 
-    // 던지기 시작 (PlayerInput에서 호출)
     public void StartThrow()
     {
         if (heldObject != null)
@@ -251,14 +260,6 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         }
     }
 
-    // 던지기 충전 (PlayerInput에서 호출)
-    [PunRPC]
-    void ThrowReadyRPC()
-    {
-        animator.SetTrigger("ThrowReady");
-    }
-
-    // 던지기 실행 (PlayerInput에서 호출)
     public void ReleaseThrow()
     {
         if (isThrowingReady && heldObject != null)
@@ -270,61 +271,27 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         }
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (isThrowing) return;
-
-        if (other.CompareTag("Fire") && !isDie && !isGhost)
-        {
-            if (!UIManager.Instance.IsOverheated()) // 과열 시 잡을 수 없음
-            {
-                animator.SetTrigger("Catch");
-                CatchingFire = true;
-                CatchObject(other.gameObject);
-            }
-        }
-
-        if (other.CompareTag("Trap") && !isDie && !isGhost)
-        {
-            isDie = true;
-        }
-    }
-
     private void CatchObject(GameObject obj)
     {
-        if (CatchingFire && !wasOverHeat)
-        {
-            heldObject = obj;
-            obj.GetComponent<Rigidbody>().isKinematic = true;
-            obj.transform.position = holdPoint.position;
-            obj.transform.parent = holdPoint;
-        }
+        heldObject = obj;
+        obj.GetComponent<Rigidbody>().isKinematic = true;
+        obj.transform.position = holdPoint.position;
+        obj.transform.parent = holdPoint;
     }
 
     private void ThrowObject()
     {
-        if (heldObject != null)
+        if (heldObject == null) return;
+
+        Rigidbody rb = heldObject.GetComponent<Rigidbody>();
+        if (rb != null)
         {
-            Rigidbody rb = heldObject.GetComponent<Rigidbody>();
-            if (rb != null)
-            {
-                rb.isKinematic = false;
-
-                Vector3 throwDirection = Camera.main.transform.forward;
-
-                float throwForce = Mathf.Lerp(minThrowForce, maxThrowForce, UIManager.Instance.currentThrow / UIManager.Instance.maxThrow);
-                rb.AddForce(throwDirection * throwForce, ForceMode.Impulse); // 카메라 방향으로 던지기
-            }
-
-            heldObject.transform.parent = null;
-            heldObject = null;
-            CatchingFire = false;
+            rb.isKinematic = false;
+            rb.AddForce(Camera.main.transform.forward * maxThrowForce, ForceMode.Impulse);
         }
-    }
 
-    [PunRPC]
-    void ThrowRPC()
-    {
-        animator.SetTrigger("Throw");
+        heldObject.transform.parent = null;
+        heldObject = null;
+        CatchingFire = false;
     }
 }
