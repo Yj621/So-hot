@@ -71,19 +71,14 @@ public class VoiceManager : MonoBehaviourPunCallbacks
             // 플레이어 UI의 자식 Image 컴포넌트를 가져옴 (말하는 상태 또는 음소거 상태에 따른 이미지 변경을 위해)
             Image img = playerTexts[index].GetComponentInChildren<Image>();
 
-            // 음소거 상태인 경우, 음소거 이미지를 설정
-            if (isMuted[index])
-            {
-                img.sprite = muteImage;
-            }
-            else
-            {
-                img.sprite = speaker.IsPlaying ? speakImage : defaultImage;
-            }
             if (pv.OwnerActorNr == PhotonNetwork.LocalPlayer.ActorNumber)
             {
-                // 로컬 플레이어의 경우 selfMuted 상태를 반영합니다.
-                img.sprite = selfMuted ? muteImage : defaultImage;
+                // 로컬 플레이어의 경우, Debug Echo가 꺼져도 마이크 입력 레벨을 사용하여 말하는 상태를 판단
+                float threshold = 0.1f; // 임계치를 필요에 따라 조절
+                bool isSpeaking = (recorder != null && recorder.LevelMeter != null)
+                                  ? recorder.LevelMeter.CurrentPeakAmp > threshold
+                                  : false;
+                img.sprite = selfMuted ? muteImage : (isSpeaking ? speakImage : defaultImage);
             }
             else
             {
@@ -91,7 +86,7 @@ public class VoiceManager : MonoBehaviourPunCallbacks
                 img.sprite = isMuted[index] ? muteImage : (speaker.IsPlaying ? speakImage : defaultImage);
             }
 
-            //닉네임 업데이트
+            // 닉네임 업데이트
             playerTexts[index].text = pv.Owner.NickName;
         }
 
