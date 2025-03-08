@@ -1,3 +1,4 @@
+using ExitGames.Client.Photon.StructWrapping;
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice.Unity;
@@ -21,162 +22,171 @@ public class VoiceManager : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject speakerPanel;
 
     private Speaker[] speakers;  // Speaker 컴포넌트를 담을 배열
-
-    private bool[] isSpeakingStatus = new bool[4];  // 각 플레이어의 말하는지 여부 상태 저장 배열
-    private bool[] playerExistence = new bool[4];  // 각 플레이어의 존재 여부 상태 저장 배열
     private bool[] isMuted = new bool[4];  // 각 플레이어의 음소거 상태
 
-
+    private Recorder recorder;
+    // 로컬 플레이어의 자체 음소거 상태 변수
+    private bool selfMuted = false;
 
     void Start()
     {
-        // 플레이어들이 생성된 후에 Speaker 컴포넌트를 찾아 speakers 배열을 초기화
-        speakers = new Speaker[0];  // 초기화 상태로 시작
-        
-        InitializeSpeakers();
+        UpdateSpeakersList();
     }
 
     void LateUpdate()
     {
-        InitializeSpeakers();
+        // Speaker 목록 갱신
+        UpdateSpeakersList();
 
-        // 각 플레이어가 Speaker를 가지고 있는지 여부를 체크
-        for (int i = 0; i < speakers.Length; i++)
+        // 우선 모든 플레이어 UI를 비활성화
+        for (int i = 0; i < players.Length; i++)
         {
-            var speaker = speakers[i];
-            if (speaker == null || speaker.GetComponent<PhotonView>() == null)
+            players[i].SetActive(false);
+        }
+
+        //각 Speaker 정보로 UI 업데이트
+        foreach (var speaker in speakers)
+        {
+            // speaker에게서 PhotonView 찾기
+            PhotonView pv = speaker.GetComponent<PhotonView>();
+
+            if (pv == null)
             {
-                Debug.LogWarning("Speaker가 없거나 PhotonView가 없음");
                 continue;
             }
 
-            // 말을 하고 있는지 여부를 isSpeakingStatus 배열에 저장
-            isSpeakingStatus[i] = speaker.IsPlaying;
+            // PhotonView의 소유자(플레이어)의 ActorNumber를 인덱스로 사용 (배열은 0부터 시작하므로 -1)
+            int index = pv.OwnerActorNr - 1;
+            
+            // 인덱스가 올바르지 않으면 다음 Speaker로 넘어감
+            if (index < 0 || index >= players.Length)
+            {
+                continue;
+            }
 
-            // 해당 플레이어의 존재 여부를 playerExistence 배열에 설정
-            var photonView = speaker.GetComponent<PhotonView>();
-            int actorNumber = photonView.OwnerActorNr - 1;  // Actor 번호에 맞는 플레이어 존재 여부 설정
-            playerExistence[i] = true; // 플레이어 존재 여부 설정
+            //플레이어 UI 활성화
+            players[index].SetActive(true);
 
-            // UI 업데이트
-            string playerNickName = photonView.Owner.NickName; // 각 플레이어의 닉네임을 가져옴
+            // 플레이어 UI의 자식 Image 컴포넌트를 가져옴 (말하는 상태 또는 음소거 상태에 따른 이미지 변경을 위해)
+            Image img = playerTexts[index].GetComponentInChildren<Image>();
+         
+            // 음소거 상태인 경우, 음소거 이미지를 설정
+            if (isMuted[index])
+            {
+                img.sprite = muteImage;
+            }
+            else
+            {
+                img.sprite = speaker.IsPlaying ? speakImage : defaultImage;
+            }
 
-            // actorNumber에 맞게 UI 업데이트
-            UpdatePlayerUI(actorNumber + 1, playerExistence[i], isSpeakingStatus[i], playerNickName);
+            //닉네임 업데이트
+            playerTexts[index].text = pv.Owner.NickName;
         }
 
-        // 자기 자신에 대해서도 UI 업데이트
-        UpdatePlayerUI(PhotonNetwork.LocalPlayer.ActorNumber, playerExistence[PhotonNetwork.LocalPlayer.ActorNumber - 1], isSpeakingStatus[PhotonNetwork.LocalPlayer.ActorNumber - 1], PhotonNetwork.LocalPlayer.NickName);
     }
 
+    // 방에 들어왔을때
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
-        InitializeSpeakers();
-        // 새로운 플레이어가 입장했을 때 UI를 업데이트하려면 새로운 플레이어의 PhotonView를 찾아 UI를 업데이트
-        string newPlayerNickName = newPlayer.NickName;
-        int newPlayerActorNumber = newPlayer.ActorNumber;
-        UpdatePlayerUI(newPlayerActorNumber, true, false, newPlayerNickName); // isSpeaking은 false로 설정
+       // 최신 Speaker 목록 갱신
+        UpdateSpeakersList();
+
+        // 입장한 플레이어의 ActorNumber를 인덱스로 사용
+        int index = newPlayer.ActorNumber - 1;
+
+        // 인덱스가 유효하면 UI를 활성화하고 닉네임을 업데이트
+        if (index >= 0 && index < players.Length)
+        {
+            players[index].SetActive(true);
+            playerTexts[index].text = newPlayer.NickName;
+        }
     }
 
+    //방에서 떠났을때
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
-        InitializeSpeakers();
-        // 플레이어가 나갔을 때 해당 플레이어의 UI를 비활성화
-        int leftPlayerActorNumber = otherPlayer.ActorNumber;
-        UpdatePlayerUI(leftPlayerActorNumber, false, false, "");
+        // 나간 플레이어의 ActorNumber를 인덱스로 사용
+        int index = otherPlayer.ActorNumber - 1;
+
+        // 인덱스가 유효하면 UI를 비활성화(또는 닉네임을 지움)하여 표시하지 않음
+        if (index >= 0 && index < players.Length)
+        {
+            players[index].SetActive(true);
+            playerTexts[index].text = "";
+        }        
+        // 최신 Speaker 목록 갱신
+        UpdateSpeakersList();
     }
 
-    private void InitializeSpeakers()
+    // playerGroup 내의 모든 Speaker 컴포넌트를 가져와 speakers 배열 업데이트
+    void UpdateSpeakersList()
     {
-        var tempSpeakers = new List<Speaker>();
-
-        foreach (Transform child in playerGroup)
-        {
-            FindSpeakersRecursively(child, tempSpeakers);
-        }
-
-        speakers = tempSpeakers.ToArray();
-
-        // 존재하지 않는 플레이어의 UI 비활성화
-        for (int i = 0; i < 4; i++)
-        {
-            Debug.Log($"playerExistence[i] : {playerExistence[i]}");
-            if (!playerExistence[i])
-            {
-                players[i].SetActive(false);  // 플레이어 활성화 여부
-            }
-        }
+        speakers = playerGroup.GetComponentsInChildren<Speaker>(true);
     }
 
-
-    private void UpdatePlayerUI(int actorNumber, bool isActive, bool isSpeaking, string nickName)
-    {
-        int index = actorNumber - 1;  // actorNumber에 맞는 인덱스 계산
-
-        if (index < 0 || index >= playerTexts.Length) return;  // 인덱스 범위 체크
-
-        // 음소거 상태인지 확인
-        if (isMuted[index])
-        {
-            // 음소거 상태일 경우 muteImage로 설정
-            playerTexts[index].GetComponentInChildren<Image>().sprite = muteImage;
-        }
-        else
-        {
-            // 음소거가 아닐 경우 말하는지 여부에 따라 이미지 설정
-            playerTexts[index].GetComponentInChildren<Image>().sprite = isSpeaking ? speakImage : defaultImage;
-        }
-
-        players[index].SetActive(isActive);  // 플레이어 활성화 여부
-
-        if (!string.IsNullOrEmpty(nickName))
-        {
-            playerTexts[index].text = nickName;  // 닉네임 업데이트
-        }
-    }
-
-    // Speaker 컴포넌트를 재귀적으로 찾는 함수
-    void FindSpeakersRecursively(Transform parent, List<Speaker> speakersList)
-    {
-        // 현재 부모 오브젝트에서 Speaker 찾기
-        var speaker = parent.GetComponent<Speaker>();
-        if (speaker != null)
-        {
-            speakersList.Add(speaker);
-        }
-
-
-        // 자식 오브젝트들이 있다면 그 자식들을 재귀적으로 탐색
-        foreach (Transform child in parent)
-        {
-            FindSpeakersRecursively(child, speakersList);
-        }
-    }
     public void OnClickSpeakerPanel()
     {
         speakerPanel.SetActive(!speakerPanel.activeSelf);
     }
+    
 
-    //음소거
+    /// <summary>
+    /// 특정 ActorNumber에 해당하는 플레이어의 음소거 상태를 토글,
+    /// 본인(로컬 플레이어)인 경우에는 Recorder를 토글하여 자신의 목소리가 다른 사람에게 전달 X,
+    /// 원격 플레이어인 경우에는 해당 Speaker를 비활성화하여 내 클라이언트에서만 들리지 않게 함
+    /// </summary>
+    /// <param name="actorNumber">음소거할 플레이어의 ActorNumber</param>
     public void ToggleSpeaker(int actorNumber)
     {
+        if(actorNumber == PhotonNetwork.LocalPlayer.ActorNumber)
+        {
+            ToggleSelfMute();
+            return;
+        }
+
+        // ActorNumber를 인덱스로 변환 (배열은 0부터 시작)
+        int index = actorNumber - 1;
         foreach (var speaker in speakers)
         {
-            var photonView = speaker.GetComponent<PhotonView>();
-            if (photonView != null && photonView.OwnerActorNr == actorNumber)
+            PhotonView pv = speaker.GetComponent<PhotonView>();
+            // 해당 Speaker의 소유자와 전달된 ActorNumber가 일치하면 음소거 상태를 토글
+            if (pv != null && pv.OwnerActorNr == actorNumber)
             {
-                int index = actorNumber - 1;  // 배열 인덱스 계산
-
-                // Speaker 활성화/비활성화 및 음소거 상태 업데이트
+                // Speaker 컴포넌트의 활성화 여부를 반전시킴 (비활성화되면 음소거)
                 speaker.enabled = !speaker.enabled;
-                isMuted[index] = !speaker.enabled;  // speaker.enabled가 false면 음소거 상태로 설정
-               
-                // UI 업데이트 즉시 호출
-                UpdatePlayerUI(actorNumber, playerExistence[index], isSpeakingStatus[index], photonView.Owner.NickName);
+                // isMuted 배열에도 반영 (speaker가 비활성화이면 음소거 상태)
+                isMuted[index] = !speaker.enabled;
 
-                Debug.Log($"Speaker for Actor {actorNumber} is now {(speaker.enabled ? "enabled" : "disabled")}");
+                // UI의 이미지도 즉시 업데이트하여 음소거 상태를 표시
+                Image img = playerTexts[index].GetComponentInChildren<Image>(); 
+                img.sprite = isMuted[index] ? muteImage : (speaker.IsPlaying ? speakImage : defaultImage);
                 return;
             }
         }
+    }
+      /// <summary>
+    /// 로컬 플레이어의 음소거를 토글
+    /// </summary>
+    private void ToggleSelfMute()
+    {
+        if (recorder == null)
+        {
+            Debug.LogWarning("Recorder is not assigned!");
+            return;
+        }
+
+        // selfMuted 상태 반전
+        selfMuted = !selfMuted;
+        // 음소거 상태이면 전송하지 않음, 아니면 전송
+        // TransmitEnabled : 시작하자마자 말하기가 가능함(눌러서 말하기 제어 가능)
+        recorder.TransmitEnabled = !selfMuted;
+
+        // UI 업데이트: 로컬 플레이어 인덱스에 해당하는 이미지 변경
+        int index = PhotonNetwork.LocalPlayer.ActorNumber - 1;
+        Image img = playerTexts[index].GetComponentInChildren<Image>();
+        img.sprite = selfMuted ? muteImage : defaultImage;
+
+        Debug.Log("Self mute toggled: " + (selfMuted ? "Muted" : "Unmuted"));
     }
 }
