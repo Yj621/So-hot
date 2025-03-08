@@ -31,6 +31,7 @@ public class VoiceManager : MonoBehaviourPunCallbacks
     void Start()
     {
         UpdateSpeakersList();
+        recorder = GetComponent<Recorder>();
     }
 
     void LateUpdate()
@@ -57,7 +58,7 @@ public class VoiceManager : MonoBehaviourPunCallbacks
 
             // PhotonView의 소유자(플레이어)의 ActorNumber를 인덱스로 사용 (배열은 0부터 시작하므로 -1)
             int index = pv.OwnerActorNr - 1;
-            
+
             // 인덱스가 올바르지 않으면 다음 Speaker로 넘어감
             if (index < 0 || index >= players.Length)
             {
@@ -69,7 +70,7 @@ public class VoiceManager : MonoBehaviourPunCallbacks
 
             // 플레이어 UI의 자식 Image 컴포넌트를 가져옴 (말하는 상태 또는 음소거 상태에 따른 이미지 변경을 위해)
             Image img = playerTexts[index].GetComponentInChildren<Image>();
-         
+
             // 음소거 상태인 경우, 음소거 이미지를 설정
             if (isMuted[index])
             {
@@ -78,6 +79,16 @@ public class VoiceManager : MonoBehaviourPunCallbacks
             else
             {
                 img.sprite = speaker.IsPlaying ? speakImage : defaultImage;
+            }
+            if (pv.OwnerActorNr == PhotonNetwork.LocalPlayer.ActorNumber)
+            {
+                // 로컬 플레이어의 경우 selfMuted 상태를 반영합니다.
+                img.sprite = selfMuted ? muteImage : defaultImage;
+            }
+            else
+            {
+                // 원격 플레이어의 경우 기존 로직 적용
+                img.sprite = isMuted[index] ? muteImage : (speaker.IsPlaying ? speakImage : defaultImage);
             }
 
             //닉네임 업데이트
@@ -89,7 +100,7 @@ public class VoiceManager : MonoBehaviourPunCallbacks
     // 방에 들어왔을때
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
-       // 최신 Speaker 목록 갱신
+        // 최신 Speaker 목록 갱신
         UpdateSpeakersList();
 
         // 입장한 플레이어의 ActorNumber를 인덱스로 사용
@@ -114,7 +125,7 @@ public class VoiceManager : MonoBehaviourPunCallbacks
         {
             players[index].SetActive(true);
             playerTexts[index].text = "";
-        }        
+        }
         // 최신 Speaker 목록 갱신
         UpdateSpeakersList();
     }
@@ -129,7 +140,7 @@ public class VoiceManager : MonoBehaviourPunCallbacks
     {
         speakerPanel.SetActive(!speakerPanel.activeSelf);
     }
-    
+
 
     /// <summary>
     /// 특정 ActorNumber에 해당하는 플레이어의 음소거 상태를 토글,
@@ -139,7 +150,7 @@ public class VoiceManager : MonoBehaviourPunCallbacks
     /// <param name="actorNumber">음소거할 플레이어의 ActorNumber</param>
     public void ToggleSpeaker(int actorNumber)
     {
-        if(actorNumber == PhotonNetwork.LocalPlayer.ActorNumber)
+        if (actorNumber == PhotonNetwork.LocalPlayer.ActorNumber)
         {
             ToggleSelfMute();
             return;
@@ -159,13 +170,13 @@ public class VoiceManager : MonoBehaviourPunCallbacks
                 isMuted[index] = !speaker.enabled;
 
                 // UI의 이미지도 즉시 업데이트하여 음소거 상태를 표시
-                Image img = playerTexts[index].GetComponentInChildren<Image>(); 
+                Image img = playerTexts[index].GetComponentInChildren<Image>();
                 img.sprite = isMuted[index] ? muteImage : (speaker.IsPlaying ? speakImage : defaultImage);
                 return;
             }
         }
     }
-      /// <summary>
+    /// <summary>
     /// 로컬 플레이어의 음소거를 토글
     /// </summary>
     private void ToggleSelfMute()
@@ -185,8 +196,9 @@ public class VoiceManager : MonoBehaviourPunCallbacks
         // UI 업데이트: 로컬 플레이어 인덱스에 해당하는 이미지 변경
         int index = PhotonNetwork.LocalPlayer.ActorNumber - 1;
         Image img = playerTexts[index].GetComponentInChildren<Image>();
-        img.sprite = selfMuted ? muteImage : defaultImage;
 
+        img.sprite = selfMuted ? muteImage : defaultImage;
+        Debug.Log(img);
         Debug.Log("Self mute toggled: " + (selfMuted ? "Muted" : "Unmuted"));
     }
 }
