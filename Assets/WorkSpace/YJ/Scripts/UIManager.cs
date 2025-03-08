@@ -1,4 +1,3 @@
-using KJ.Player;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.InputSystem.XR;
@@ -31,7 +30,7 @@ namespace YJ.UIManager
         public float maxThrow = 100f;
         public float ThrowIncreaseGauge;
 
-        private PlayerState playerState;
+       
 
         public static UIManager Instance { get; private set; }
 
@@ -76,11 +75,6 @@ namespace YJ.UIManager
         /// <summary>
         /// 불을 들고 있는 상태를 토글 (켜기/끄기)
         /// </summary>
-        private void ToggleFire()
-        {
-            playerState.hasFire = !playerState.hasFire; // 현재 불 상태 반전
-            Debug.Log($"불 상태 변경: {(playerState.hasFire ? "불을 들고 있음" : "불 없음")}");
-        }
 
         /// <summary>
         /// 뜨거움 게이지 증가 (최대값을 초과하지 않도록 제한)
