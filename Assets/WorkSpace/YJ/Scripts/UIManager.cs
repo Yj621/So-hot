@@ -46,7 +46,6 @@ namespace YJ.UIManager
             ResetHeatOnDeath(); // 게임 시작 시 게이지 초기화
 
             currentStamina = maxStamina;
-
         }
 
 

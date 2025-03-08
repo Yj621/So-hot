@@ -1,6 +1,7 @@
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using System.Collections;
+using Unity.Cinemachine;
 using UnityEngine;
 using YJ.UIManager;
 
@@ -45,13 +46,19 @@ public class PlayerMove : MonoBehaviourPunCallbacks
 
     private bool wasOverHeat = false;
 
+    private CinemachineCamera camera;
+
     private void Start()
     {
+        camera = FindFirstObjectByType<CinemachineCamera>();
+
         controller = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
         photonView = GetComponent<PhotonView>();
         UIManager.Instance.UpdateStaminaUI();
         originalMaterial = CharacterRenderer.material;
+        camera.Follow = gameObject.transform;
+        camera.LookAt = gameObject.transform;
     }
 
     private void Update()
@@ -146,7 +153,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
             UIManager.Instance.DecreaseHeat(HotDecrease);
         }
 
-        if(isThrowingReady == true)
+        if (isThrowingReady == true)
         {
             UIManager.Instance.IncreaseCharge();
         }
@@ -276,7 +283,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
 
         if (other.CompareTag("Fire") && !isDie && !isGhost)
         {
-            if (!UIManager.Instance.IsOverheated()) // 과열 시 잡을 수 없음
+            if (!wasOverHeat) // 과열 시 잡을 수 없음
             {
                 animator.SetTrigger("Catch");
                 CatchingFire = true;
