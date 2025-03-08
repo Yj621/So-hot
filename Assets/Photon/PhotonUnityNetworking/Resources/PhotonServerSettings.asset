@@ -67,6 +67,9 @@ MonoBehaviour:
   - SyncState
   - ThrowReadyRPC
   - ThrowRPC
+  - PlayCatchAnimation
+  - PlayThrowAnimation
+  - PlayThrowReadyAnimation
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

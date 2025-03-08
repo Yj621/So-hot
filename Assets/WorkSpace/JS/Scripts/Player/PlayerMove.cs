@@ -121,19 +121,25 @@ public class PlayerMove : MonoBehaviourPunCallbacks
                 }
             }
 
-            // 스테미너 시스템 처리
-            if (isRunning)
+        // 스테미너 시스템 처리
+        if (isRunning)
+        {
+            UIManager.Instance.ActiveStamina();
+            if (!UIManager.Instance.runLimit)
             {
-                UIManager.Instance.ActiveStamina();
-                if (!UIManager.Instance.runLimit)
-                {
-                    UIManager.Instance.DrainStamina();
-                }
+
             }
+            else
+            {
+                UIManager.Instance.DrainStamina();
+            }
+
             if (UIManager.Instance.currentStamina == 0)
             {
                 isRunning = false;
             }
+        }
+
             if (!isRunning)
             {
                 UIManager.Instance.RecoverStamina();
@@ -210,6 +216,25 @@ public class PlayerMove : MonoBehaviourPunCallbacks
             transform.position = new Vector3(posX, posY, posZ);
         }
     }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (isThrowing) return;
+
+        if (other.CompareTag("Fire") && !isDie && !isGhost)
+        {
+            if (!UIManager.Instance.IsOverheated()) // 과열 시 잡을 수 없음
+            {
+                photonView.RPC("PlayCatchAnimation", RpcTarget.All);
+                CatchingFire = true;
+                CatchObject(other.gameObject);
+            }
+        }
+
+        if (other.CompareTag("Trap") && !isDie && !isGhost)
+        {
+            isDie = true;
+        }
+    }
 
     IEnumerator DieAndBeGhost()
     {
@@ -255,7 +280,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
     {
         if (heldObject != null)
         {
-            animator.SetTrigger("ThrowReady");
+            photonView.RPC("PlayThrowReadyAnimation", RpcTarget.All);
             isThrowingReady = true;
         }
     }
@@ -265,10 +290,28 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         if (isThrowingReady && heldObject != null)
         {
             ThrowObject();
-            animator.SetTrigger("Throw");
+            photonView.RPC("PlayThrowAnimation", RpcTarget.All);
             isThrowingReady = false;
             isThrowing = true;
         }
+    }
+
+    [PunRPC]
+    void PlayThrowReadyAnimation()
+    {
+        animator.SetTrigger("ThrowReady");
+    }
+
+    [PunRPC]
+    void PlayThrowAnimation()
+    {
+        animator.SetTrigger("Throw");
+    }
+
+    [PunRPC]
+    void PlayCatchAnimation()
+    {
+        animator.SetTrigger("Catch");
     }
 
     private void CatchObject(GameObject obj)
