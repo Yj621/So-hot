@@ -44,14 +44,6 @@ namespace YJ.UIManager
         }
         void Start()
         {
-            if (playerState == null)
-            {
-                playerState = FindObjectOfType<PlayerState>();
-                if (playerState == null)
-                {
-                    Debug.LogError("PlayerState를 찾을 수 없습니다!");
-                }
-            }
             ResetHeatOnDeath(); // 게임 시작 시 게이지 초기화
 
             currentStamina = maxStamina;
@@ -131,7 +123,6 @@ namespace YJ.UIManager
         {
             heatGauge = 0; // 게이지 0으로 초기화
             gaugePause = false; // 게이지 일시 정지 해제
-            playerState.hasFire = false; // 불 제거
 
             Debug.Log("핫게이지 초기화됨, 불 제거됨.");
             UpdateHotUI(); // UI 갱신
