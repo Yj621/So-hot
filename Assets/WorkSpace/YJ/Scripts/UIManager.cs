@@ -18,18 +18,12 @@ namespace YJ.UIManager
         [Header("Slider 설정")]
         [SerializeField] private Slider hotSlider;
         [SerializeField] private Slider staminaSlider;
-        [SerializeField] private Slider ThrowSlider;
 
         [Header("스태미나 관련")]
         public bool runLimit; // 스태미나 제한 여부 설정
         public float maxStamina = 100f; // 최대 스태미나 값
         public float currentStamina; // 현재 스태미나 값
         public float staminaDrainRate = 10f; // 스태미나 소모율
-
-
-        public float currentThrow= 0f;
-        public float maxThrow = 100f;
-        public float ThrowIncreaseGauge;
 
         private PlayerState playerState;
 
@@ -44,6 +38,14 @@ namespace YJ.UIManager
         }
         void Start()
         {
+            if (playerState == null)
+            {
+                playerState = FindObjectOfType<PlayerState>();
+                if (playerState == null)
+                {
+                    Debug.LogError("PlayerState를 찾을 수 없습니다!");
+                }
+            }
             ResetHeatOnDeath(); // 게임 시작 시 게이지 초기화
 
             currentStamina = maxStamina;
@@ -63,14 +65,15 @@ namespace YJ.UIManager
             staminaSlider.value = currentStamina / maxStamina;
         }
 
-        public void UpdateThrowGauge(float currentThrow, float maxThrow)
-        {
-            ThrowSlider.value = currentThrow / maxThrow;
-        }
-
 
         void Update()
         {
+            if (gaugePause) return; // 게이지 일시 정지 상태라면 업데이트 중단
+
+            if (Input.GetKeyDown(KeyCode.F)) // F 키를 눌러 불을 켜거나 끌 수 있음
+            {
+                ToggleFire();
+            }
 
         }
         /// <summary>
@@ -87,7 +90,7 @@ namespace YJ.UIManager
         /// </summary>
         public void IncreaseHeat(float amount)
         {
-            //if (!playerState.hasFire) return; // 불을 들고 있지 않으면 증가하지 않음
+            if (!playerState.hasFire) return; // 불을 들고 있지 않으면 증가하지 않음
 
             heatGauge += amount;
             heatGauge = Mathf.Clamp(heatGauge, 0, maxHeat); // 최대치를 넘지 않도록 제한
@@ -123,6 +126,7 @@ namespace YJ.UIManager
         {
             heatGauge = 0; // 게이지 0으로 초기화
             gaugePause = false; // 게이지 일시 정지 해제
+            playerState.hasFire = false; // 불 제거
 
             Debug.Log("핫게이지 초기화됨, 불 제거됨.");
             UpdateHotUI(); // UI 갱신
@@ -196,41 +200,7 @@ namespace YJ.UIManager
             UpdateStaminaUI(); // UI 업데이트
         }
 
-        public void ActiveThrow()
-        {
-            ThrowSlider.gameObject.SetActive(true);
-        }
-        //스태미나 활성화
-        public void DeactiveThrow()
-        {
-            ThrowSlider.gameObject.SetActive(false);
-        }
-
-
-        public void UpdateThrowUI()
-        {
-            UpdateThrowGauge(currentThrow, maxThrow);
-        }
-
-        public void IncreaseCharge()
-        {
-            if (currentThrow < maxThrow)
-            {
-                ActiveThrow();
-                currentThrow += ThrowIncreaseGauge * Time.deltaTime;
-                currentThrow = Mathf.Clamp(currentThrow, 0, maxThrow);
-                Debug.Log("던짐 게이지 차는중");
-            }
-            UpdateThrowUI(); // UI 업데이트
-        }
-
-        public void ResetThrow()
-        {
-            currentThrow = 0;
-            UpdateThrowUI(); // UI 업데이트
-            DeactiveThrow();
-        }
-
     }
+
 }
 

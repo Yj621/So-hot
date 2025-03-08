@@ -63,10 +63,6 @@ MonoBehaviour:
   - SyncPlatformState
   - SetCharacter
   - SetPlayerInfo
-  - JumpRPC
-  - SyncState
-  - ThrowReadyRPC
-  - ThrowRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

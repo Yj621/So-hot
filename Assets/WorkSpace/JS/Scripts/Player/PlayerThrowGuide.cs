@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using YJ.UIManager;
 
 public class PlayerThrowGuide : MonoBehaviour
 {
@@ -39,7 +38,7 @@ public class PlayerThrowGuide : MonoBehaviour
         Vector3 throwDirection = mainCamera.transform.forward;
 
         // 현재 충전된 던지기 힘
-        float throwForce = Mathf.Lerp(playerMove.minThrowForce, playerMove.maxThrowForce, UIManager.Instance.currentThrow / UIManager.Instance.maxThrow);
+        float throwForce = Mathf.Lerp(playerMove.minThrowForce, playerMove.maxThrowForce, playerMove.throwChargeTime / playerMove.maxChargeTime);
 
         // 중력을 고려한 궤적 계산
         List<Vector3> points = new List<Vector3>();
