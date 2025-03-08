@@ -7,7 +7,7 @@ public class PlayerLook : MonoBehaviour
     public float rotationSmoothTime = 0.1f;
 
     private new Camera camera;
-    private float rotationVelocity = 0;
+    public float rotationVelocity = 0;
 
     public GameObject playerCameraRoot;
 

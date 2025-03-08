@@ -169,6 +169,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotationSmoothTime: 0
+  rotationVelocity: 0
   playerCameraRoot: {fileID: 80331836405658412}
 --- !u!65 &7327025210925662923
 BoxCollider:
@@ -717,7 +718,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &686129109239536469
 Transform:
   m_ObjectHideFlags: 0
