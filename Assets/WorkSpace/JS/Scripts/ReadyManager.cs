@@ -5,9 +5,27 @@ using Donghyun.Builder;
 using static TotalMultiManager;
 using Donghyun.Network;
 using YJ.Ability;
+using NUnit.Framework;
+using System.Collections.Generic;
+using DG.Tweening;
+using System;
+
+[Serializable]
+public class AnimationInfo
+{
+    [Header("---- 애니메이션 시작 지점 -----")]
+    public float start;
+    [Header("---- 애니메이션 끝 지점 -----")]
+    public float end;
+    [Header("---- 애니메이션 실행 시간 -----")]
+    public float duration;
+    [Header("---- 애니메이션 그래프 타입 -----")]
+    public Ease AnimationType;
+}
 
 public class ReadyManager : MonoBehaviourPunCallbacks
 {
+
     public static ReadyManager Instance { get; private set; }
 
     [Header("----- 이미지들 -----")]
@@ -18,11 +36,24 @@ public class ReadyManager : MonoBehaviourPunCallbacks
     public Image characterImage;
     public Image skillImage;
 
+    [Header("----- 스킬 선택 버튼 -----")]
+    public Button skillFrame;
+    public RectTransform skillPick;
+    public AnimationInfo skillPickInfo;
+    public List<Button> skillList;
+
+    [Header("----- 캐릭터 선택 버튼 -----")]
+    public Button characterFrame;
+    public RectTransform characterPick;
+    public AnimationInfo characterPickInfo;
+    public List<Button> characterList;
+
+
     private int curCharacterIndex = 0;
     private int curSkillIndex = 0;
 
-    private int characterLength;
-    private int skillLength;
+    private bool openCharacterPick = false;
+    private bool openSkillPick = false;
 
     private LobbyPlayer playerSetting;
     private PhotonView pv;
@@ -34,39 +65,72 @@ public class ReadyManager : MonoBehaviourPunCallbacks
 
     private void Awake()
     {
+        skillPick.position = new Vector2(skillPick.position.x, skillPickInfo.start);
+        characterPick.position = new Vector2(characterPick.position.x, characterPickInfo.start);
+
         Instance = this;
 
         pv = GetComponent<PhotonView>();
 
-        characterLength = characterImages.Length;
-        skillLength = skillImages.Length;
+        for (int i = 0; i < skillList.Count; i++)
+        {
+            int index = i;
+            skillList[index].onClick.AddListener(() => OnSkillPick(index));
+            skillList[index].onClick.AddListener(ToggleSkillPick);
+        }
+
+        for (int i = 0; i < characterList.Count; i++)
+        {
+            int index = i;
+            characterList[index].onClick.AddListener(() => OnCharacterPick(index));
+            characterList[index].onClick.AddListener(ToggleCharacterPick);
+        }
+
+        skillFrame.onClick.AddListener(ToggleSkillPick);
+        characterFrame.onClick.AddListener(ToggleCharacterPick);
     }
 
-    public void OnCharacterLeftArrow()
+    public void OnCharacterPick(int index)
     {
-        curCharacterIndex = (curCharacterIndex - 1 + characterLength) % characterLength;
+        curCharacterIndex = index;
         UpdateCharacterDisplay(curCharacterIndex);
     }
-    public void OnSkillLeftArrow()
+
+    public void OnSkillPick(int index)
     {
-        curSkillIndex = (curSkillIndex - 1 + skillLength) % skillLength;
+        curSkillIndex = index;
         UpdateSkillDisplay(curSkillIndex);
     }
 
-    public void OnCharacterRightArrow()
+    public void ToggleCharacterPick()
     {
-        curCharacterIndex = (curCharacterIndex + 1) % characterLength;
-        UpdateCharacterDisplay(curCharacterIndex);
+        if(!openCharacterPick) //열기
+        {
+            characterPick.DOAnchorPosY(characterPickInfo.end, characterPickInfo.duration).SetEase(characterPickInfo.AnimationType);
+        }
+        else //닫기
+        {
+            characterPick.DOAnchorPosY(characterPickInfo.start, characterPickInfo.duration).SetEase(characterPickInfo.AnimationType);
+        }
+        openCharacterPick = !openCharacterPick;
     }
 
-    public void OnSkillRightArrow()
+    public void ToggleSkillPick()
     {
-        curSkillIndex = (curSkillIndex + 1) % skillLength;
-        UpdateSkillDisplay(curSkillIndex);
+        if (!openSkillPick) //열기
+        {
+            skillPick.DOAnchorPosY(skillPickInfo.end, skillPickInfo.duration).SetEase(skillPickInfo.AnimationType);
+        }
+        else //닫기
+        {
+            skillPick.DOAnchorPosY(skillPickInfo.start, skillPickInfo.duration).SetEase(skillPickInfo.AnimationType);
+        }
+        openSkillPick = !openSkillPick;
     }
 
     private void UpdateCharacterDisplay(int index)
     {
+        Debug.Log(index);
         playerSetting.SetCharacterRPC(index);
         characterImage.sprite = characterImages[index];
     }
