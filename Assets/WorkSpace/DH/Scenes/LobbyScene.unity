@@ -8156,7 +8156,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1993886179
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10212,8 +10212,8 @@ MonoBehaviour:
   skillFrame: {fileID: 3119848864697419623}
   skillPick: {fileID: 556205372856068839}
   skillPickInfo:
-    start: -190
-    end: -500
+    start: -500
+    end: -190
     duration: 1
     AnimationType: 6
   skillList:
@@ -10224,8 +10224,8 @@ MonoBehaviour:
   characterFrame: {fileID: 1674501336617125842}
   characterPick: {fileID: 1449740609869732878}
   characterPickInfo:
-    start: -190
-    end: -500
+    start: -500
+    end: -190
     duration: 1
     AnimationType: 6
   characterList:
@@ -10233,6 +10233,7 @@ MonoBehaviour:
   - {fileID: 6153295465907197682}
   - {fileID: 973332115317015520}
   - {fileID: 125129508340261968}
+  resetButton: {fileID: 5648553402464861516}
 --- !u!222 &7279331401784300580
 CanvasRenderer:
   m_ObjectHideFlags: 0

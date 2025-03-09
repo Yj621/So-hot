@@ -10,13 +10,13 @@ namespace Donghyun.Builder
     {
         private PlayerSetting playerSetting;
 
-        [SerializeField] private List<Transform> spawnPoints = new List<Transform>(4);
-
         private PhotonView pv;
+        private GameManager gm;
         private GameObject player;
-
         private void Awake()
         {
+            pv = GetComponent<PhotonView>();
+            gm = GameManager.Instance;
             StartCoroutine(StartGame());
         }
 
@@ -25,17 +25,22 @@ namespace Donghyun.Builder
             SetTag("loadScene", true);
             while (!AllhasTag("loadScene")) yield return null;
 
-            player = new GameObject();
+            //플레이어 관련 정보를 커스텀 프로퍼티에서 가져옴
             int playerNumber = (int)GetTag(PhotonNetwork.LocalPlayer, "Number");
             CharacterType characterType = (CharacterType)GetTag(PhotonNetwork.LocalPlayer, "Character");
 
+            //해당 정보 저장
             playerSetting = new PlayerSetting(playerNumber, characterType);
-            pv = GetComponent<PhotonView>();
 
+            if (gm == null) Debug.Log("null이네");
             // 모두 씬에 있어야 생성할 수 있음, 에디터와 클라는 에디터가 마스터
-            player = PhotonNetwork.Instantiate(playerSetting.type.ToString(), spawnPoints[playerSetting.playerNumber].position, Quaternion.identity);
+            player = PhotonNetwork.Instantiate("Character/"+playerSetting.type.ToString(), gm.spawnPoints[playerSetting.playerNumber].position, Quaternion.identity);
 
-            pv.RPC("AddParts", RpcTarget.AllViaServer, player.GetComponent<PhotonView>().ViewID, playerSetting.type);
+            //게임 매니저에 해당 플레이어를 넘겨준다
+            gm.player = player;
+
+            //나머지 파츠들을 합침
+            //pv.RPC("AddParts", RpcTarget.AllViaServer, gm.player.GetComponent<PhotonView>().ViewID, playerSetting.type);
 
             while (AllhasTag("loadPlayer")) yield return null;
         }

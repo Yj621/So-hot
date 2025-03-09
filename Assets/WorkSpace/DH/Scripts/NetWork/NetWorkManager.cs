@@ -255,6 +255,7 @@ namespace Donghyun.Network
             StartCoroutine(GameStartRoutine());
         }
 
+        //게임 실행시 코루틴
         private IEnumerator GameStartRoutine()
         {
             ReadyManager.Instance.SetPlayerInfoRPC();
@@ -264,7 +265,7 @@ namespace Donghyun.Network
 
             yield return HasPlayerInfo();
 
-            PhotonNetwork.LoadLevel("MapScene");
+            PhotonNetwork.LoadLevel("LobbyScene");
         }
 
         private IEnumerator HasPlayerInfo()
@@ -288,6 +289,7 @@ namespace Donghyun.Network
             pv.RPC("SetStartButton", RpcTarget.MasterClient);
         }
 
+        //모두 레디 태그를 가지고 있는지 판별
         private IEnumerator HasReadyRoutine()
         {
             while (!AllhasTag("isReady")) { yield return null; }

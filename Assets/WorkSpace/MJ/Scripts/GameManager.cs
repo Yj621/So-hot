@@ -4,6 +4,7 @@ using KJ.Player;
 using UnityEngine.UIElements;
 using System.Collections;
 using Unity.VisualScripting;
+using System.Collections.Generic;
 public class GameManager : MonoBehaviourPun
 {
     public static GameManager Instance;
@@ -24,6 +25,10 @@ public class GameManager : MonoBehaviourPun
     Inventory player4Inventory;
 
     public GameObject startPos; //시작 지점
+
+    public List<Transform> spawnPoints; //스폰 포인트
+    public GameObject player;
+
     public Vector3 savePoint; //현재 저장된 플레이어 세이브 포인트의 위치 정보(세이브 포인트에 trigger되면 본 필드값이 수정되어야 함)
     public Vector3 fireSavePoint; //현재 저장된 fire 세이브 포인트의 위치 정보(세이브 포인트에 trigger되면 본 필드값이 수정되어야 함)
 

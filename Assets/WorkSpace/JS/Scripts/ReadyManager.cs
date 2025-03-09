@@ -48,6 +48,8 @@ public class ReadyManager : MonoBehaviourPunCallbacks
     public AnimationInfo characterPickInfo;
     public List<Button> characterList;
 
+    [Header("----- 리셋 버튼 -----")]
+    public Button resetButton;
 
     private int curCharacterIndex = 0;
     private int curSkillIndex = 0;
@@ -88,6 +90,7 @@ public class ReadyManager : MonoBehaviourPunCallbacks
 
         skillFrame.onClick.AddListener(ToggleSkillPick);
         characterFrame.onClick.AddListener(ToggleCharacterPick);
+        resetButton.onClick.AddListener(ResetSelection);
     }
 
     public void OnCharacterPick(int index)
@@ -130,7 +133,6 @@ public class ReadyManager : MonoBehaviourPunCallbacks
 
     private void UpdateCharacterDisplay(int index)
     {
-        Debug.Log(index);
         playerSetting.SetCharacterRPC(index);
         characterImage.sprite = characterImages[index];
     }
@@ -158,7 +160,6 @@ public class ReadyManager : MonoBehaviourPunCallbacks
 
         SetTag("HasInfo", true);
         gameObject.SetActive(false);
-        Debug.Log("Character updated: " + selectedCharacter);
     }
 
     public void ResetSelection()

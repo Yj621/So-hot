@@ -1,6 +1,4 @@
 using System;
-using UnityEngine;
-using static ReadyManager;
 
 
 namespace Donghyun.Builder
