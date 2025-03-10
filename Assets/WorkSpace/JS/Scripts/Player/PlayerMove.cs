@@ -172,8 +172,8 @@ public class PlayerMove : MonoBehaviourPunCallbacks
                 }
                 else
                 {
-                    ThrowObject();
-                    isThrowing = true;
+                photonView.RPC("ThrowObjectRPC", RpcTarget.All);
+                isThrowing = true;
                     animator.SetTrigger("Any");
                 }
                 wasOverHeat = true;
@@ -289,13 +289,30 @@ public class PlayerMove : MonoBehaviourPunCallbacks
     {
         if (isThrowingReady && heldObject != null)
         {
-            ThrowObject();
-            photonView.RPC("PlayThrowAnimation", RpcTarget.All);
+            photonView.RPC("ThrowObjectRPC", RpcTarget.All);
             isThrowingReady = false;
             isThrowing = true;
         }
     }
 
+    [PunRPC]
+    void ThrowObjectRPC()
+    {
+        if (heldObject == null) return;
+
+        Rigidbody rb = heldObject.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.isKinematic = false;
+            rb.AddForce(Camera.main.transform.forward * maxThrowForce, ForceMode.Impulse);
+        }
+
+        heldObject.transform.parent = null;
+        heldObject = null;
+        CatchingFire = false;
+
+        animator.SetTrigger("Throw");
+    }
     [PunRPC]
     void PlayThrowReadyAnimation()
     {
@@ -320,21 +337,5 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         obj.GetComponent<Rigidbody>().isKinematic = true;
         obj.transform.position = holdPoint.position;
         obj.transform.parent = holdPoint;
-    }
-
-    private void ThrowObject()
-    {
-        if (heldObject == null) return;
-
-        Rigidbody rb = heldObject.GetComponent<Rigidbody>();
-        if (rb != null)
-        {
-            rb.isKinematic = false;
-            rb.AddForce(Camera.main.transform.forward * maxThrowForce, ForceMode.Impulse);
-        }
-
-        heldObject.transform.parent = null;
-        heldObject = null;
-        CatchingFire = false;
     }
 }
