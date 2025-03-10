@@ -71,6 +71,11 @@ MonoBehaviour:
   - PlayThrowAnimation
   - PlayThrowReadyAnimation
   - ThrowObjectRPC
+  - RequestThrowObject
+  - SyncThrownObject
+  - RequestThrow
+  - SyncThrow
+  - ResetCatchAnimation
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

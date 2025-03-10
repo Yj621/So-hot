@@ -164,22 +164,36 @@ public class PlayerMove : MonoBehaviourPunCallbacks
                 UIManager.Instance.ResetThrow();
             }
 
-            if (UIManager.Instance.IsOverheated() && !wasOverHeat)
+        if (UIManager.Instance.IsOverheated() && !wasOverHeat)
+        {
+            if (heldObject != null)  // 손에 불이 있을 때만 처리
             {
-                if (isThrowingReady)
-                {
-                    ReleaseThrow();
-                }
-                else
-                {
-                photonView.RPC("ThrowObjectRPC", RpcTarget.All);
-                isThrowing = true;
-                    animator.SetTrigger("Any");
-                }
-                wasOverHeat = true;
-            }
+                Vector3 throwPosition = heldObject.transform.position;
+                Vector3 throwDirection;
+                float throwForce;
 
-            if (UIManager.Instance.heatGauge == 0 && wasOverHeat)
+                isThrowing = true;
+
+                if (isThrowingReady) // 차징 중이었으면 던지기
+                {
+                    throwDirection = Camera.main.transform.forward;
+                    throwForce = Mathf.Lerp(minThrowForce, maxThrowForce, UIManager.Instance.currentThrow / UIManager.Instance.maxThrow);
+                }
+                else // 차징 안 했으면 바닥에 떨어뜨리기
+                {
+                    throwDirection = Vector3.down;
+                    throwForce = minThrowForce;
+                }
+                photonView.RPC("PlayThrowReadyAnimation", RpcTarget.AllViaServer);
+                photonView.RPC("ThrowObjectRPC", RpcTarget.AllViaServer, throwPosition, throwDirection, throwForce);
+            }
+           
+            wasOverHeat = true;
+        }
+
+
+
+        if (UIManager.Instance.heatGauge == 0 && wasOverHeat)
             {
                 wasOverHeat = false;
             }
@@ -222,9 +236,9 @@ public class PlayerMove : MonoBehaviourPunCallbacks
 
         if (other.CompareTag("Fire") && !isDie && !isGhost)
         {
-            if (!UIManager.Instance.IsOverheated()) // 과열 시 잡을 수 없음
+            if (!wasOverHeat) // 과열 시 잡을 수 없음
             {
-                photonView.RPC("PlayCatchAnimation", RpcTarget.All);
+                photonView.RPC("PlayCatchAnimation",  RpcTarget.AllViaServer);
                 CatchingFire = true;
                 CatchObject(other.gameObject);
             }
@@ -280,7 +294,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
     {
         if (heldObject != null)
         {
-            photonView.RPC("PlayThrowReadyAnimation", RpcTarget.All);
+            photonView.RPC("PlayThrowReadyAnimation", RpcTarget.AllViaServer);
             isThrowingReady = true;
         }
     }
@@ -289,30 +303,38 @@ public class PlayerMove : MonoBehaviourPunCallbacks
     {
         if (isThrowingReady && heldObject != null)
         {
-            photonView.RPC("ThrowObjectRPC", RpcTarget.All);
+            Vector3 throwPosition = heldObject.transform.position; // 던지기 시작 위치
+            Vector3 throwDirection = Camera.main.transform.forward; // 던지는 방향 (플레이어 시점)
+            float throwForce = Mathf.Lerp(minThrowForce, maxThrowForce, UIManager.Instance.currentThrow / UIManager.Instance.maxThrow);
+
+            photonView.RPC("ThrowObjectRPC", RpcTarget.AllViaServer, throwPosition, throwDirection, throwForce);
+
             isThrowingReady = false;
             isThrowing = true;
         }
     }
 
     [PunRPC]
-    void ThrowObjectRPC()
+    void ThrowObjectRPC(Vector3 throwPosition, Vector3 throwDirection, float throwForce)
     {
         if (heldObject == null) return;
 
         Rigidbody rb = heldObject.GetComponent<Rigidbody>();
         if (rb != null)
         {
+            heldObject.transform.position = throwPosition; // 던질 위치를 클라이언트가 보낸 위치로 설정
             rb.isKinematic = false;
-            rb.AddForce(Camera.main.transform.forward * maxThrowForce, ForceMode.Impulse);
+            rb.AddForce(throwDirection * throwForce, ForceMode.Impulse); // 클라이언트가 보낸 방향과 힘 적용
         }
 
         heldObject.transform.parent = null;
         heldObject = null;
         CatchingFire = false;
 
-        animator.SetTrigger("Throw");
+        photonView.RPC("PlayThrowAnimation", RpcTarget.AllViaServer);
+        photonView.RPC("ResetCatchAnimation", RpcTarget.AllViaServer);
     }
+
     [PunRPC]
     void PlayThrowReadyAnimation()
     {
@@ -329,6 +351,12 @@ public class PlayerMove : MonoBehaviourPunCallbacks
     void PlayCatchAnimation()
     {
         animator.SetTrigger("Catch");
+    }
+
+    [PunRPC]
+    void ResetCatchAnimation()
+    {
+        animator.ResetTrigger("Catch");
     }
 
     private void CatchObject(GameObject obj)
