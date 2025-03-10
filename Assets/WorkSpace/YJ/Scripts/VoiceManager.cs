@@ -84,14 +84,19 @@ public abstract class VoiceManager : MonoBehaviourPunCallbacks
             players[index].SetActive(true);
 
             Image img = playerTexts[index].GetComponentInChildren<Image>();
-
             // 로컬 플레이어 처리
             if (pv.IsMine)
             {
-                img.sprite = selfMuted
-                    ? muteImage
-                    : (speaker.IsPlaying ? speakImage : defaultImage);
+                // 로컬 플레이어의 AudioSource 가져오기
+                AudioSource audioSource = speaker.GetComponent<AudioSource>();
+                if (audioSource != null)
+                {
+                    // 본인이 말할 때는 볼륨을 0, 그렇지 않을 때는 1로 설정
+                    audioSource.volume = speaker.IsPlaying ? 0f : 1f;
+                }
+                img.sprite = selfMuted ? muteImage : (speaker.IsPlaying ? speakImage : defaultImage);
             }
+
             else
             {
                 // 원격 플레이어 처리
