@@ -11,6 +11,7 @@ TagManager:
   - Water
   - Mud
   - Fire
+  - Ground
   layers:
   - Default
   - TransparentFX
