@@ -292,7 +292,7 @@ Transform:
   m_GameObject: {fileID: 704577631564087842}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -4.888999, y: -0.687, z: -1.627}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -355,7 +355,10 @@ MonoBehaviour:
   HotDecrease: 0.2
   isDie: 0
   isGhost: 0
-  CharacterRenderer: {fileID: 6362355673728479932}
+  characterRenderers:
+  - {fileID: 6362355673728479932}
+  - {fileID: 7120829876170937010}
+  - {fileID: 5392411842101552688}
   OverrideMaterial: {fileID: 2100000, guid: e616240333621b546b97ea78a1231a15, type: 2}
 --- !u!143 &6906755614360394304
 CharacterController:

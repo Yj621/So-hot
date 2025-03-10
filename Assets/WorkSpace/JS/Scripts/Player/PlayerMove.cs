@@ -2,6 +2,7 @@ using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Voice;
 using System.Collections;
+using System.Collections.Generic;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -42,7 +43,8 @@ public class PlayerMove : MonoBehaviourPunCallbacks
 
     public bool isDie = false;
     public bool isGhost = false;
-    public Renderer CharacterRenderer;
+    private Dictionary<Renderer, int> originalLayers = new Dictionary<Renderer, int>(); // 원래 레이어 저장
+    public List<Renderer> characterRenderers;
     public Material OverrideMaterial;
     private Material originalMaterial;
 
@@ -56,8 +58,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         animator = GetComponent<Animator>();
         photonView = GetComponent<PhotonView>();
         UIManager.Instance.UpdateStaminaUI();
-        originalMaterial = CharacterRenderer.material;
-
+        
         // 내 캐릭터만 카메라 설정
         if (photonView.IsMine)
         {
@@ -260,10 +261,25 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(2f);
         isDie = false;
         isGhost = true;
-        CharacterRenderer.material = OverrideMaterial;
+        foreach (Renderer renderer in characterRenderers)
+        {
+            if (renderer != null)
+            {
+                originalLayers[renderer] = renderer.gameObject.layer; // 기존 레이어 저장
+                renderer.gameObject.layer = LayerMask.NameToLayer("Ghost");
+                renderer.material = OverrideMaterial; // 고스트 머티리얼 적용
+            }
+        }
         yield return new WaitForSeconds(15f);
-        CharacterRenderer.material = originalMaterial;
         isGhost = false;
+        foreach (Renderer renderer in characterRenderers)
+        {
+            if (renderer != null && originalLayers.ContainsKey(renderer))
+            {
+                renderer.gameObject.layer = originalLayers[renderer]; // 원래 레이어 복구
+                renderer.material = originalMaterial; // 원래 머티리얼 복구
+            }
+        }
     }
 
     public void Move(Vector2 input)
