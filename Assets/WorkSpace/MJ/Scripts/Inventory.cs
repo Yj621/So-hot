@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Photon.Pun;
 
 public class Inventory : MonoBehaviour
 {
@@ -45,7 +46,8 @@ public class Inventory : MonoBehaviour
         }
 
     }
-
+    
+    [PunRPC]
     public void InitInventory()
     {
         inventory.Clear();
