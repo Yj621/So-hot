@@ -265,7 +265,7 @@ namespace Donghyun.Network
 
             yield return HasPlayerInfo();
 
-            PhotonNetwork.LoadLevel("LobbyScene");
+            PhotonNetwork.LoadLevel("MapScene");
         }
 
         private IEnumerator HasPlayerInfo()
