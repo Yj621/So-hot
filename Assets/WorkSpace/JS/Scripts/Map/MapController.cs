@@ -2,7 +2,6 @@ using System.Collections;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
-using Unity.VisualScripting;
 
 public class MapController : MonoBehaviourPunCallbacks
 {
@@ -23,11 +22,11 @@ public class MapController : MonoBehaviourPunCallbacks
     public float BamBooSpeed = 5f;
     public float BamBooDuration = 5f;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    // 마스터 클라이언트만 오브젝트 생성
     IEnumerator CheckMasterClient()
     {
-        yield return new WaitForSeconds(5f); // 1초 기다리기
-      
+        yield return new WaitForSeconds(5f);
+
         if (PhotonNetwork.IsMasterClient)
         {
             StartCoroutine(SpwanRockRoutine());
@@ -41,15 +40,11 @@ public class MapController : MonoBehaviourPunCallbacks
         StartCoroutine(CheckMasterClient());
     }
 
-
-
-
     private IEnumerator SpwanRockRoutine()
     {
         while (true)
         {
             RockFall();
-            
             yield return new WaitForSeconds(RockSpwanTime);
         }
     }
@@ -61,7 +56,6 @@ public class MapController : MonoBehaviourPunCallbacks
             for (int i = 0; i < 3; i++)
             {
                 SpwanCherry();
-                
                 yield return new WaitForSeconds(DropInterval);
             }
         }
@@ -74,13 +68,12 @@ public class MapController : MonoBehaviourPunCallbacks
             for (int i = 0; i < 3; i++)
             {
                 SpwanBamBoo();
-                
                 yield return new WaitForSeconds(ShootInterval);
             }
         }
     }
 
-
+    // 바위 생성
     void RockFall()
     {
         for (int i = 0; i < RockFallPoints.Length; i++)
@@ -90,51 +83,63 @@ public class MapController : MonoBehaviourPunCallbacks
 
             rb.linearVelocity = Vector3.down * RockSpeed;
 
-            Destroy(rock, RockDuration);
+            StartCoroutine(DestroyAfterTime(rock, RockDuration));
         }
     }
 
-    
-
+    // 체리 생성 (삭제 로직 없음, Cherry.cs에서 자동 삭제)
     void SpwanCherry()
     {
         for (int i = 0; i < CherryCollider.Length; i++)
         {
             Vector3 spawnPosition = GetPoint(CherryCollider[i]);
             PhotonNetwork.Instantiate(CherryPrefab.name, spawnPosition, Quaternion.identity);
-            CurrentCherry++; // 생성된 아이템 개수 증가
+            CurrentCherry++;
         }
     }
 
+    // 대나무 생성
     void SpwanBamBoo()
     {
         for (int i = 0; i < BamBooCollider.Length; i++)
         {
-            Vector3 spawnPosition = GetRandomPointFromCollider(BamBooCollider[i]); // 해당 Collider에서 랜덤 위치 가져오기
+            Vector3 spawnPosition = GetRandomPointFromCollider(BamBooCollider[i]);
             Quaternion rotation = Quaternion.Euler(0, 0, 90);
             GameObject bamBoo = PhotonNetwork.Instantiate(BamBooPrefab.name, spawnPosition, rotation);
             Rigidbody rb = bamBoo.GetComponent<Rigidbody>();
 
-            // 왼쪽이면 Vector3.left, 오른쪽이면 Vector3.right
             Vector3 direction = (i == 0) ? Vector3.left : Vector3.right;
             rb.linearVelocity = direction * BamBooSpeed;
 
-            Destroy(bamBoo, BamBooDuration);
+            StartCoroutine(DestroyAfterTime(bamBoo, BamBooDuration));
         }
     }
 
-        Vector3 GetPoint(BoxCollider collider)
+    // 일정 시간이 지나면 네트워크 오브젝트 삭제
+    IEnumerator DestroyAfterTime(GameObject obj, float duration)
+    {
+        yield return new WaitForSeconds(duration);
+
+        if (obj != null && obj.GetComponent<PhotonView>().IsMine)
+        {
+            PhotonNetwork.Destroy(obj);
+        }
+    }
+
+    // 체리 스폰 위치 계산
+    Vector3 GetPoint(BoxCollider collider)
     {
         Vector3 areaSize = collider.bounds.size;
         Vector3 areaCenter = collider.bounds.center;
 
         float randomX = Random.Range(areaCenter.x - areaSize.x / 2, areaCenter.x + areaSize.x / 2);
-        float randomY = areaCenter.y; // dropHeight 대신 Collider 높이 기준
+        float randomY = areaCenter.y;
         float randomZ = Random.Range(areaCenter.z - areaSize.z / 2, areaCenter.z + areaSize.z / 2);
 
         return new Vector3(randomX, randomY, randomZ);
     }
 
+    // 대나무 스폰 위치 계산
     Vector3 GetRandomPointFromCollider(BoxCollider collider)
     {
         Vector3 areaSize = collider.bounds.size;

@@ -1,14 +1,16 @@
-using KJ.Player;
 using UnityEngine;
+using Photon.Pun;
 
-public class Cherry : MonoBehaviour
+public class Cherry : MonoBehaviourPun
 {
-   
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
-            Destroy(gameObject);
+            if (photonView.IsMine)
+            {
+                PhotonNetwork.Destroy(gameObject);
+            }
         }
     }
 }
