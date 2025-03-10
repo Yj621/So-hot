@@ -1,5 +1,6 @@
 using Photon.Pun;
 using Photon.Voice.Unity;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,42 +10,39 @@ public class MapVoice : VoiceManager
     protected override void LateUpdate()
     {
         base.LateUpdate(); // Speaker 목록 갱신
+        UpdateSpeakersList();
 
-        // "Player" 태그가 달린 모든 오브젝트를 찾습니다.
+        // UI 업데이트 로직 호출
+        CheckIsPlaying();
+
+        // 추가적으로 필요하다면, 각 플레이어의 PhotonView를 통해 추가 정보를 처리할 수 있음
         GameObject[] playerObjects = GameObject.FindGameObjectsWithTag("Player");
-
         foreach (GameObject playerObj in playerObjects)
         {
-            // Player 오브젝트에서 Speaker 컴포넌트를 자식에서 찾습니다.
-            Speaker speaker = playerObj.GetComponentInChildren<Speaker>();
-            if (speaker == null)
-                continue;
-
-            // PhotonView를 통해 플레이어의 ActorNumber를 가져옵니다.
             PhotonView pv = playerObj.GetComponent<PhotonView>();
             if (pv == null)
                 continue;
-
-            // UI 업데이트를 위한 Image 컴포넌트를 자식에서 찾습니다.
-            Image img = playerObj.GetComponentInChildren<Image>();
-            if (img == null)
-                continue;
-
-            // 배열 인덱스 (예: 최대 4명 플레이어 가정)
-            int index = pv.OwnerActorNr - 1;
-
-            // 로컬 플레이어와 원격 플레이어 구분
-            if (pv.OwnerActorNr == PhotonNetwork.LocalPlayer.ActorNumber)
-            {
-                // 로컬 플레이어: selfMuted 상태에 따라 이미지 변경
-                img.sprite = selfMuted ? muteImage : defaultImage;
-            }
-            else
-            {
-                // 원격 플레이어: isMuted 배열과 Speaker의 IsPlaying으로 상태 판단
-                img.sprite = isMuted[index] ? muteImage : (speaker.IsPlaying ? speakImage : defaultImage);
-            }
+            // 여기서 추가로 처리할 로직 작성 (예: 특정 조건에 따른 효과 적용 등)
         }
     }
+
+    protected override void UpdateSpeakersList()
+    {
+        // "Player" 태그를 가진 모든 오브젝트를 검색합니다.
+        GameObject[] playerObjects = GameObject.FindGameObjectsWithTag("Player");
+        List<Speaker> foundSpeakers = new List<Speaker>();
+
+        // 각 오브젝트에서 Speaker 컴포넌트를 자식에서 찾습니다.
+        foreach (GameObject playerObj in playerObjects)
+        {
+            Speaker sp = playerObj.GetComponentInChildren<Speaker>();
+            if (sp != null)
+            {
+                foundSpeakers.Add(sp);
+            }
+        }
+        speakers = foundSpeakers.ToArray();
+    }
+
 
 }
