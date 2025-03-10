@@ -5,92 +5,104 @@ using Photon.Voice.Unity;
 using System;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class VoiceManager : MonoBehaviourPunCallbacks
+public abstract class VoiceManager : MonoBehaviourPunCallbacks
 {
-    [SerializeField] private GameObject[] players;  // 각 플레이어 GameObject
-    [SerializeField] private TextMeshProUGUI[] playerTexts;  // 각 플레이어의 TextMeshProUGUI 배열
+    public GameObject[] players;  // 각 플레이어 GameObject
+    public TextMeshProUGUI[] playerTexts;  // 각 플레이어의 TextMeshProUGUI 배열
 
-    [SerializeField] private Sprite speakImage;  // 말하는 이미지
-    [SerializeField] private Sprite defaultImage;  // 기본 이미지
-    [SerializeField] private Sprite muteImage;  // 기본 이미지
-
-    [SerializeField] private Transform playerGroup; // PlayerGroup의 Transform
+    public Sprite speakImage;  // 말하는 이미지
+    public Sprite defaultImage;  // 기본 이미지
+    public Sprite muteImage;  // 기본 이미지
 
     [SerializeField] private GameObject speakerPanel;
 
-    private Speaker[] speakers;  // Speaker 컴포넌트를 담을 배열
-    private bool[] isMuted = new bool[4];  // 각 플레이어의 음소거 상태
+    protected Speaker[] speakers;  // Speaker 컴포넌트를 담을 배열
+    protected bool[] isMuted = new bool[4];  // 각 플레이어의 음소거 상태
 
-    private Recorder recorder;
+    protected Recorder recorder;
     // 로컬 플레이어의 자체 음소거 상태 변수
-    private bool selfMuted = false;
+    protected bool selfMuted = false;
 
-    void Start()
+    public static VoiceManager Instance;
+
+    // 중복 객체 제거
+    protected virtual void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
+    protected virtual void Start()
     {
         UpdateSpeakersList();
         recorder = GetComponent<Recorder>();
+        if (recorder != null)
+        {
+            recorder.DebugEchoMode = false; // DebugEchoMode 비활성화
+        }
     }
 
-    void LateUpdate()
+    protected virtual void LateUpdate()
     {
         // Speaker 목록 갱신
         UpdateSpeakersList();
 
-        // 우선 모든 플레이어 UI를 비활성화
+    }
+
+    // 모든 Speaker 컴포넌트를 가져와 speakers 배열 업데이트
+    protected abstract void UpdateSpeakersList();
+
+    public void OnClickSpeakerPanel()
+    {
+        speakerPanel.SetActive(!speakerPanel.activeSelf);
+    }
+
+    protected void CheckIsPlaying()
+    {
+        // 모든 플레이어 UI를 비활성화
         for (int i = 0; i < players.Length; i++)
         {
             players[i].SetActive(false);
         }
 
-        //각 Speaker 정보로 UI 업데이트
         foreach (var speaker in speakers)
         {
-            // speaker에게서 PhotonView 찾기
             PhotonView pv = speaker.GetComponent<PhotonView>();
+            if (pv == null) continue;
 
-            if (pv == null)
-            {
-                continue;
-            }
-
-            // PhotonView의 소유자(플레이어)의 ActorNumber를 인덱스로 사용 (배열은 0부터 시작하므로 -1)
             int index = pv.OwnerActorNr - 1;
+            if (index < 0 || index >= players.Length) continue;
 
-            // 인덱스가 올바르지 않으면 다음 Speaker로 넘어감
-            if (index < 0 || index >= players.Length)
-            {
-                continue;
-            }
-
-            //플레이어 UI 활성화
             players[index].SetActive(true);
 
-            // 플레이어 UI의 자식 Image 컴포넌트를 가져옴 (말하는 상태 또는 음소거 상태에 따른 이미지 변경을 위해)
             Image img = playerTexts[index].GetComponentInChildren<Image>();
 
-            if (pv.OwnerActorNr == PhotonNetwork.LocalPlayer.ActorNumber)
+            // 로컬 플레이어 처리
+            if (pv.IsMine)
             {
-                // 로컬 플레이어의 경우, Debug Echo가 꺼져도 마이크 입력 레벨을 사용하여 말하는 상태를 판단
-                float threshold = 0.1f; // 임계치를 필요에 따라 조절
-                bool isSpeaking = (recorder != null && recorder.LevelMeter != null)
-                                  ? recorder.LevelMeter.CurrentPeakAmp > threshold
-                                  : false;
-                img.sprite = selfMuted ? muteImage : (isSpeaking ? speakImage : defaultImage);
+                img.sprite = selfMuted
+                    ? muteImage
+                    : (speaker.IsPlaying ? speakImage : defaultImage);
             }
             else
             {
-                // 원격 플레이어의 경우 기존 로직 적용
-                img.sprite = isMuted[index] ? muteImage : (speaker.IsPlaying ? speakImage : defaultImage);
+                // 원격 플레이어 처리
+                img.sprite = isMuted[index]
+                    ? muteImage
+                    : (speaker.IsPlaying ? speakImage : defaultImage);
             }
-
-            // 닉네임 업데이트
             playerTexts[index].text = pv.Owner.NickName;
         }
-
     }
+
 
     // 방에 들어왔을때
     public override void OnPlayerEnteredRoom(Player newPlayer)
@@ -123,17 +135,6 @@ public class VoiceManager : MonoBehaviourPunCallbacks
         }
         // 최신 Speaker 목록 갱신
         UpdateSpeakersList();
-    }
-
-    // playerGroup 내의 모든 Speaker 컴포넌트를 가져와 speakers 배열 업데이트
-    void UpdateSpeakersList()
-    {
-        speakers = playerGroup.GetComponentsInChildren<Speaker>(true);
-    }
-
-    public void OnClickSpeakerPanel()
-    {
-        speakerPanel.SetActive(!speakerPanel.activeSelf);
     }
 
 

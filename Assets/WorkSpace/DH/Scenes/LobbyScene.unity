@@ -439,7 +439,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1993886181}
+      - m_Target: {fileID: 1993886183}
         m_TargetAssemblyTypeName: VoiceManager, Assembly-CSharp
         m_MethodName: ToggleSpeaker
         m_Mode: 3
@@ -2307,7 +2307,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1993886181}
+      - m_Target: {fileID: 1993886183}
         m_TargetAssemblyTypeName: VoiceManager, Assembly-CSharp
         m_MethodName: ToggleSpeaker
         m_Mode: 3
@@ -2439,7 +2439,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1993886181}
+      - m_Target: {fileID: 1993886183}
         m_TargetAssemblyTypeName: VoiceManager, Assembly-CSharp
         m_MethodName: ToggleSpeaker
         m_Mode: 3
@@ -6523,7 +6523,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1993886181}
+      - m_Target: {fileID: 1993886183}
         m_TargetAssemblyTypeName: VoiceManager, Assembly-CSharp
         m_MethodName: OnClickSpeakerPanel
         m_Mode: 1
@@ -6706,7 +6706,7 @@ GameObject:
   - component: {fileID: 1553423373}
   - component: {fileID: 1553423372}
   m_Layer: 5
-  m_Name: NickName_Panel
+  m_Name: Speaker_Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8088,7 +8088,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1993886181}
+      - m_Target: {fileID: 1993886183}
         m_TargetAssemblyTypeName: VoiceManager, Assembly-CSharp
         m_MethodName: ToggleSpeaker
         m_Mode: 3
@@ -8147,7 +8147,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1993886182}
-  - component: {fileID: 1993886181}
+  - component: {fileID: 1993886183}
   - component: {fileID: 1993886180}
   - component: {fileID: 1993886179}
   m_Layer: 0
@@ -8156,7 +8156,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1993886179
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8241,33 +8241,6 @@ MonoBehaviour:
   useOnAudioFilterRead: 0
   useMicrophoneTypeFallback: 1
   recordWhenJoined: 1
---- !u!114 &1993886181
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1993886178}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3afe613e5d18d4e4d9ee091b5c2cc8d2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  players:
-  - {fileID: 1078635131}
-  - {fileID: 1165865081}
-  - {fileID: 888835389}
-  - {fileID: 1431701384}
-  playerTexts:
-  - {fileID: 1078635133}
-  - {fileID: 1165865083}
-  - {fileID: 888835391}
-  - {fileID: 1431701386}
-  speakImage: {fileID: 21300000, guid: 0520e109f15fc984b95dfb91bf9ca60c, type: 3}
-  defaultImage: {fileID: 21300000, guid: cc6dc1423c30772499a2043b38ec7026, type: 3}
-  muteImage: {fileID: 21300000, guid: d66aa13d1f041344db4e51027787e8b4, type: 3}
-  playerGroup: {fileID: 545829306}
-  speakerPanel: {fileID: 1553423370}
 --- !u!4 &1993886182
 Transform:
   m_ObjectHideFlags: 0
@@ -8283,6 +8256,33 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1993886183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1993886178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91d0c5db06a66594798a966098a2bd70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  players:
+  - {fileID: 1078635131}
+  - {fileID: 1165865081}
+  - {fileID: 888835389}
+  - {fileID: 1431701384}
+  playerTexts:
+  - {fileID: 1078635133}
+  - {fileID: 1165865083}
+  - {fileID: 888835391}
+  - {fileID: 1431701386}
+  speakImage: {fileID: 21300000, guid: 0520e109f15fc984b95dfb91bf9ca60c, type: 3}
+  defaultImage: {fileID: 21300000, guid: cc6dc1423c30772499a2043b38ec7026, type: 3}
+  muteImage: {fileID: 21300000, guid: d66aa13d1f041344db4e51027787e8b4, type: 3}
+  speakerPanel: {fileID: 1553423370}
+  playerGroup: {fileID: 545829306}
 --- !u!1 &2032912494
 GameObject:
   m_ObjectHideFlags: 0
