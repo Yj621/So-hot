@@ -1,7 +1,7 @@
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
-using KJ.Player;
+using JS.PlayerMove;
 using System.Collections;
 using JetBrains.Annotations;
 using YJ.UIManager;
@@ -22,7 +22,7 @@ public class ItemManager : MonoBehaviourPun
         Instance = this;
     }
 
-    public void GaugeStop(PlayerController player)
+    public void GaugeStop(PlayerMove player)
     {
         //코루틴 중복 실행 방지
         if (player.gaugeStopCoroutine != null)
@@ -42,7 +42,7 @@ public class ItemManager : MonoBehaviourPun
 
     }
 
-    public void NoDie(PlayerController player)
+    public void NoDie(PlayerMove player)
     {
         player.state.saveLife = true;
 
@@ -55,7 +55,7 @@ public class ItemManager : MonoBehaviourPun
         //플레이어에서 RPC ItemEffectOff를 호출해주어야 함 (effectIdx는 1이다)
     }
 
-    public void UnlimitRun(PlayerController player)
+    public void UnlimitRun(PlayerMove player)
     {
         //코루틴 중복 실행 방지
         if (player.unlimitRunCoroutine != null)
@@ -105,14 +105,13 @@ public class ItemManager : MonoBehaviourPun
     }
 
     //아이템 효과가 끝난 field가 false로 초기화 되어야 하는 경우에 사용하는 코루틴 
-    IEnumerator CorGaugeStop(float time, PlayerController player)
+    IEnumerator CorGaugeStop(float time, PlayerMove player)
     {
         int effectIdx = player.gameObject.GetComponent<Inventory>().effectNumber;
         yield return new WaitForSeconds(time);
         player.photonView.RPC("ItemEffectOff", RpcTarget.All, player.photonView.ViewID, effectIdx);
         UIManager.Instance.gaugePause = false;
         player.gaugeStopCoroutine = null;
-
     }
 
 }

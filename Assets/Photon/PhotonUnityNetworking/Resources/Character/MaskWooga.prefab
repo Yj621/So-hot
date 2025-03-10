@@ -355,10 +355,7 @@ MonoBehaviour:
   HotDecrease: 0.2
   isDie: 0
   isGhost: 0
-  characterRenderers:
-  - {fileID: 6362355673728479932}
-  - {fileID: 7120829876170937010}
-  - {fileID: 5392411842101552688}
+  CharacterRenderer: {fileID: 6362355673728479932}
   OverrideMaterial: {fileID: 2100000, guid: e616240333621b546b97ea78a1231a15, type: 2}
 --- !u!143 &6906755614360394304
 CharacterController:

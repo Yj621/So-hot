@@ -1,3 +1,4 @@
+using JS.PlayerMove;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -52,6 +53,14 @@ public class PlayerInput : MonoBehaviour
         else
         {
             movement.ReleaseThrow();
+        }
+    }
+
+    public void OnUseItem(InputValue value)
+    {
+        if (value.isPressed)
+        {
+            movement.UseItem();
         }
     }
 }

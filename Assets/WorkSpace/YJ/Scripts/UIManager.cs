@@ -80,12 +80,13 @@ namespace YJ.UIManager
         /// </summary>
         public void IncreaseHeat(float amount)
         {
+            if (gaugePause) return;
             //if (!playerState.hasFire) return; // 불을 들고 있지 않으면 증가하지 않음
 
             heatGauge += amount;
             heatGauge = Mathf.Clamp(heatGauge, 0, maxHeat); // 최대치를 넘지 않도록 제한
 
-            Debug.Log($"현재 뜨거움 게이지: {heatGauge}");
+            //Debug.Log($"현재 뜨거움 게이지: {heatGauge}");
             UpdateHotUI(); // UI 갱신
         }
 
@@ -97,7 +98,7 @@ namespace YJ.UIManager
             heatGauge -= amount;
             heatGauge = Mathf.Clamp(heatGauge, 0, maxHeat); // 최소 0 이하로 내려가지 않도록 제한
 
-            Debug.Log($"현재 뜨거움 게이지: {heatGauge}");
+            //Debug.Log($"현재 뜨거움 게이지: {heatGauge}");
             UpdateHotUI(); // UI 갱신
         }
 
