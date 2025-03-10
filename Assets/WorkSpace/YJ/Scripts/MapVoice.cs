@@ -1,11 +1,39 @@
 using Photon.Pun;
+using Photon.Realtime;
 using Photon.Voice.Unity;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MapVoice : VoiceManager
 {
+    protected override void Awake()
+    {
+
+    }
+
+    // 방을 나간 플레이어가 있을 때 호출되는 콜백
+    public override void OnLeftRoom()
+    {
+        Debug.Log("Leave");
+        StartCoroutine(DelayDestroy());
+    }
+
+    IEnumerator DelayDestroy()
+    {
+        yield return new WaitForSeconds(1f);
+
+        string currentScene = SceneManager.GetActiveScene().name;
+
+        if (currentScene != "MapScene")
+        {
+            Destroy(gameObject);
+            Debug.Log("Destroy");
+        }
+    }
+
     // 맵씬에서는 매 프레임마다 "Player" 태그를 가진 오브젝트를 찾아 UI를 갱신합니다.
     protected override void LateUpdate()
     {

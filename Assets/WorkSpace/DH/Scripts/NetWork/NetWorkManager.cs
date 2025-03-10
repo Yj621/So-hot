@@ -258,6 +258,12 @@ namespace Donghyun.Network
         //게임 실행시 코루틴
         private IEnumerator GameStartRoutine()
         {
+            // LobbyVoice의 OnLeftRoom을 수동으로 호출하여 DelayDestroy를 실행
+            if (LobbyVoice.Instance != null)
+            {
+                LobbyVoice.Instance.DestroyVoiceManager(); // OnLeftRoom 호출하여 DelayDestroy 실행
+            }
+
             ReadyManager.Instance.SetPlayerInfoRPC();
             PhotonNetwork.CurrentRoom.IsOpen = false;  // 방을 닫아 새로운 플레이어가 못 들어오게 함
             PhotonNetwork.CurrentRoom.IsVisible = false; // 로비에서 방이 보이지 않도록 설정

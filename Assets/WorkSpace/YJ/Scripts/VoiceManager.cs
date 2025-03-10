@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public abstract class VoiceManager : MonoBehaviourPunCallbacks
@@ -27,27 +28,13 @@ public abstract class VoiceManager : MonoBehaviourPunCallbacks
     // 로컬 플레이어의 자체 음소거 상태 변수
     protected bool selfMuted = false;
 
-    public static VoiceManager Instance;
-
-    // 중복 객체 제거
     protected virtual void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
     }
+
     protected virtual void Start()
     {
         UpdateSpeakersList();
-        recorder = GetComponent<Recorder>();
-        if (recorder != null)
-        {
-            recorder.DebugEchoMode = false; // DebugEchoMode 비활성화
-        }
     }
 
     protected virtual void LateUpdate()
