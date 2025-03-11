@@ -25,7 +25,6 @@ public class AnimationInfo
 
 public class ReadyManager : MonoBehaviourPunCallbacks
 {
-
     public static ReadyManager Instance { get; private set; }
 
     [Header("----- 이미지들 -----")]
