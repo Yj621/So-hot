@@ -183,7 +183,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   observableSearch: 2
   ObservedComponents: []
-  sceneViewId: 38
+  sceneViewId: 39
   InstantiationId: 0
   isRuntimeInstantiated: 0
 --- !u!4 &1792398 stripped
@@ -66468,7 +66468,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 1382104311}
   - {fileID: 1382104310}
-  sceneViewId: 38
+  sceneViewId: 40
   InstantiationId: 0
   isRuntimeInstantiated: 0
 --- !u!114 &1382104313

@@ -79,6 +79,9 @@ MonoBehaviour:
   - SetDieState
   - InitInventory
   - Init
+  - GaugeStop
+  - PlayAnyAnimation
+  - SetPlayerParentRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
