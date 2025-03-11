@@ -1,14 +1,15 @@
-using ExitGames.Client.Photon.StructWrapping;
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice.Unity;
 using System;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static TotalMultiManager;
+using System.Collections;
+using ExitGames.Client.Photon;
 
 public abstract class VoiceManager : MonoBehaviourPunCallbacks
 {
@@ -29,19 +30,21 @@ public abstract class VoiceManager : MonoBehaviourPunCallbacks
     protected bool selfMuted = false;
 
     protected virtual void Awake()
-    {
-    }
+    { }
 
     protected virtual void Start()
     {
         UpdateSpeakersList();
+        StartCoroutine(UpdatePlayerTextsBasedOnSpeaker());
     }
 
+    /// <summary>
+    /// 매 프레임의 후반부에 호출되는 함수
+    /// 스피커 목록을 최신 상태로 유지하기 위해 업데이트 호출
+    /// </summary>
     protected virtual void LateUpdate()
     {
-        // Speaker 목록 갱신
         UpdateSpeakersList();
-
     }
 
     // 모든 Speaker 컴포넌트를 가져와 speakers 배열 업데이트
@@ -52,6 +55,9 @@ public abstract class VoiceManager : MonoBehaviourPunCallbacks
         speakerPanel.SetActive(!speakerPanel.activeSelf);
     }
 
+    /// <summary>
+    /// 각 스피커의 재생 상태에 따라 플레이어 UI를 업데이트하는 함수
+    /// </summary>
     protected void CheckIsPlaying()
     {
         // 모든 플레이어 UI를 비활성화
@@ -71,6 +77,8 @@ public abstract class VoiceManager : MonoBehaviourPunCallbacks
             players[index].SetActive(true);
 
             Image img = playerTexts[index].GetComponentInChildren<Image>();
+
+
             // 로컬 플레이어 처리
             if (pv.IsMine)
             {
@@ -81,20 +89,60 @@ public abstract class VoiceManager : MonoBehaviourPunCallbacks
                     // 본인이 말할 때는 볼륨을 0, 그렇지 않을 때는 1로 설정
                     audioSource.volume = speaker.IsPlaying ? 0f : 1f;
                 }
+                // 로컬 플레이어의 음소거 여부 및 말하는 상태에 따른 이미지 설정
                 img.sprite = selfMuted ? muteImage : (speaker.IsPlaying ? speakImage : defaultImage);
             }
-
             else
             {
-                // 원격 플레이어 처리
+                // 원격 플레이어 처리: 음소거 상태 및 말하는 상태에 따른 이미지 설정
                 img.sprite = isMuted[index]
                     ? muteImage
                     : (speaker.IsPlaying ? speakImage : defaultImage);
             }
+            // 플레이어 닉네임 업데이트
             playerTexts[index].text = pv.Owner.NickName;
         }
     }
 
+    /// <summary>
+    /// 모든 Speaker 컴포넌트를 가진 플레이어를 확인하고 playerTexts를 업데이트
+    /// </summary>
+    private IEnumerator UpdatePlayerTextsBasedOnSpeaker()
+    {
+        while (!AllhasTag("HasInfo"))
+        {
+            yield return null; // 모든 플레이어의 CustomProperties가 준비될 때까지 대기
+        }
+
+        foreach (var speaker in speakers)
+        {
+            PhotonView pv = speaker.GetComponent<PhotonView>();
+            if (pv == null) continue;
+
+            int index = pv.OwnerActorNr - 1;
+            if (index < 0 || index >= playerTexts.Length) continue;
+
+            players[index].SetActive(true);
+            playerTexts[index].text = pv.Owner.NickName;
+        }
+    }
+
+    /// <summary>
+    /// 방에 입장했을 때 호출되는 콜백 함수
+    /// 로컬 플레이어의 CustomProperties에 "HasInfo"를 설정
+    /// </summary>
+    public override void OnJoinedRoom()
+    {
+        base.OnJoinedRoom();
+
+        // 로컬 플레이어의 정보가 준비되었음을 표시하는 프로퍼티 설정
+        ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
+        {
+            { "HasInfo", true }
+        };
+
+        PhotonNetwork.LocalPlayer.SetCustomProperties(props);
+    }
 
     // 방에 들어왔을때
     public override void OnPlayerEnteredRoom(Player newPlayer)
@@ -113,7 +161,10 @@ public abstract class VoiceManager : MonoBehaviourPunCallbacks
         }
     }
 
-    //방에서 떠났을때
+    /// <summary>
+    /// 플레이어가 방을 떠났을 때 호출되는 콜백 함수
+    /// 해당 플레이어의 UI를 비활성화(또는 닉네임 삭제)하고 스피커 목록을 업데이트
+    /// </summary>
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
         // 나간 플레이어의 ActorNumber를 인덱스로 사용
@@ -131,9 +182,9 @@ public abstract class VoiceManager : MonoBehaviourPunCallbacks
 
 
     /// <summary>
-    /// 특정 ActorNumber에 해당하는 플레이어의 음소거 상태를 토글,
-    /// 본인(로컬 플레이어)인 경우에는 Recorder를 토글하여 자신의 목소리가 다른 사람에게 전달 X,
-    /// 원격 플레이어인 경우에는 해당 Speaker를 비활성화하여 내 클라이언트에서만 들리지 않게 함
+    /// 특정 ActorNumber에 해당하는 플레이어의 음소거 상태를 토글하는 함수
+    /// - 로컬 플레이어인 경우 Recorder를 토글하여 자신의 목소리 전송 여부 제어
+    /// - 원격 플레이어인 경우 해당 Speaker 컴포넌트의 활성화를 토글하여 클라이언트에서만 음소거 처리
     /// </summary>
     /// <param name="actorNumber">음소거할 플레이어의 ActorNumber</param>
     public void ToggleSpeaker(int actorNumber)
