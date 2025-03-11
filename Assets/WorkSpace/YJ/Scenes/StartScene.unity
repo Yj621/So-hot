@@ -10901,7 +10901,7 @@ MonoBehaviour:
   nickNameInput: {fileID: 452127412}
   roomNameInput: {fileID: 232710047}
   roomListContent: {fileID: 1211973353}
-  roomListPrefab: {fileID: 1877822587159676456, guid: 630e79d1b44633347a23e21bb3489d10, type: 3}
+  roomListPrefab: {fileID: 5473248122059433146, guid: 4956378d43e549440bcea3adacecb496, type: 3}
 --- !u!4 &654510755
 Transform:
   m_ObjectHideFlags: 0

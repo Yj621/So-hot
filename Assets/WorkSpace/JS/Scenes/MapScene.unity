@@ -94822,6 +94822,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 3925733313417481075, guid: d5fcd1be7f34ca447a8ae89d51c43525, type: 3}
     - target: {fileID: 1834154482491023560, guid: 21037d7d15a731e47a92ad3a180595d6, type: 3}
+      propertyPath: playerGroup
+      value: 
+      objectReference: {fileID: 273526383}
+    - target: {fileID: 1834154482491023560, guid: 21037d7d15a731e47a92ad3a180595d6, type: 3}
       propertyPath: playerTypes.Array.size
       value: 4
       objectReference: {fileID: 0}
