@@ -1,3 +1,4 @@
+using JS.PlayerMove;
 using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,6 +9,8 @@ namespace Donghyun.Builder
 {
     public class SpawnManager : MonoBehaviour
     {
+        [SerializeField] private Transform playerGroup;
+
         private PlayerSetting playerSetting;
 
         private PhotonView pv;
@@ -39,6 +42,9 @@ namespace Donghyun.Builder
             //게임 매니저에 해당 플레이어를 넘겨준다
             gm.player = player;
             gm.playerNumber = playerNumber;
+
+            player.GetComponent<PlayerMove>().playerGroup = playerGroup;
+            player.GetComponent<PlayerMove>().SetPlayerParentRPC();
 
             //나머지 파츠들을 합침
             //pv.RPC("AddParts", RpcTarget.AllViaServer, gm.player.GetComponent<PhotonView>().ViewID, playerSetting.type);
