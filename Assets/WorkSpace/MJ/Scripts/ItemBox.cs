@@ -2,13 +2,13 @@ using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEditor.Progress;
 using Photon.Pun;
-using KJ.Player;
+using JS.PlayerMove;
 using Photon.Realtime;
 namespace MJ.Item.ItemBox
 {
     public class ItemBox : MonoBehaviourPun
     {
-        [SerializeField] ItemData[] items; //¾ÆÀÌÅÛ ÀüÃ¼ ¸ñ·Ï
+        [SerializeField] ItemData[] items; //ì•„ì´í…œ ì „ì²´ ëª©ë¡
 
         private void OnTriggerEnter(Collider other)
         {

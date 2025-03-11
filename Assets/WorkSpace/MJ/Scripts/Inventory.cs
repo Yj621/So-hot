@@ -1,18 +1,18 @@
-using KJ.Player;
+using JS.PlayerMove;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Photon.Pun;
+using YJ.UIManager;
 
 public class Inventory : MonoBehaviour
 {
     Queue<ItemData> inventory = new Queue<ItemData>(); //인벤토리
-    PlayerController itemUser; //아이템 사용자(=플레이어 자신)
+    PlayerMove itemUser; //아이템 사용자(=플레이어 자신)
     public int effectNumber; //사용 아이템의 이펙트 인덱스
     [SerializeField] Image frontInven; //인벤토리 앞칸 UI
     [SerializeField] Image terminalInven; //인벤토리 뒷칸 UI
-
+    UIManager uiManager;
     private void Start()
     {
         StartCoroutine(FindPlayerControllerWithDelay());
@@ -20,13 +20,18 @@ public class Inventory : MonoBehaviour
 
     IEnumerator FindPlayerControllerWithDelay()
     {
-        yield return new WaitForSeconds(5f); // 네트워크 동기화가 완료될 시간을 확보
-        itemUser = GetComponent<PlayerController>();
 
+        yield return new WaitForSeconds(5f); // 네트워크 동기화가 완료될 시간을 확보
+        itemUser = GetComponent<PlayerMove>();
+
+        GameObject frontInventoryObj = GameObject.Find("Front_Inventory");
+        GameObject terminalInventoryObj = GameObject.Find("Terminal_Inventory");
         if (itemUser == null)
         {
             Debug.LogError("PlayerController를 찾을 수 없음!");
         }
+        frontInven = frontInventoryObj.GetComponent<Image>();
+        terminalInven = terminalInventoryObj.GetComponent<Image>();
     }
 
     public void GetItem(ItemData item)
@@ -46,8 +51,7 @@ public class Inventory : MonoBehaviour
         }
 
     }
-    
-    [PunRPC]
+
     public void InitInventory()
     {
         inventory.Clear();
@@ -57,6 +61,7 @@ public class Inventory : MonoBehaviour
         terminalInven.gameObject.SetActive(false);
 
     }
+
 
     public void UseItem()
     {
