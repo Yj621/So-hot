@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviourPun
 {
     public static GameManager Instance;
 
-    int playerNumber;
+    public int playerNumber;
 
     public List<Transform> spawnPoints; //스폰 포인트(새로운 세이브 포인트에 trigger되면 spawnPoints[:4]를 해당 세이브 포인트들로 재할당)
     public GameObject player; //캐릭터 생성 시점에 받아온 player obj
