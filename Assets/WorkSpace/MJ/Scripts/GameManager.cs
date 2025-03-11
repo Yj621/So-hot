@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviourPun
     public List<Transform> spawnPoints; //스폰 포인트(새로운 세이브 포인트에 trigger되면 spawnPoints[:4]를 해당 세이브 포인트들로 재할당)
     public GameObject player; //캐릭터 생성 시점에 받아온 player obj
     private PhotonView photonView; //player의 포톤뷰
+    private bool[] deadPlayers; //플레이어 전원 죽음 상태 기록
+    private bool allPlayerDead; //플레이어 전원 사망 여부 체크
     public Vector3 fireSavePoint; //현재 저장된 fire 세이브 포인트의 위치 정보(세이브 포인트에 trigger되면 본 필드값이 수정되어야 함)
 
 
@@ -62,44 +64,31 @@ public class GameManager : MonoBehaviourPun
 
     void AllPlayerRespawn()
     {
+        for (int i = 0; i < deadPlayers.Length; i++)
+        {
+            deadPlayers[i] = false;
+        }
+        allPlayerDead = false;
         photonView.RPC("InitInventory", RpcTarget.All); 
         photonView.RPC("Init", RpcTarget.All);
+
     }
 
-    //[PunRPC]
-    //void PlayerDie(int playerViewID)
-    //{
-    //    GameObject playerObj = PhotonView.Find(playerViewID).gameObject;
-    //    PlayerState playerState = playerObj.GetComponent<PlayerState>();
-    //    playerState.Die();
-
-    //    //playerViewID가 맞는 Player를 찾아 GameManager에서도 사망 처리
-    //    if (playerObj == player1.gameObject) player1Dead = true;
-    //    else if (playerObj == player2.gameObject) player2Dead = true;
-    //    else if (playerObj == player3.gameObject) player3Dead = true;
-    //    else if (playerObj == player4.gameObject) player4Dead = true;
-
-    //    if (player1Dead && player2Dead && player3Dead && player4Dead)
-    //    {
-    //        photonView.RPC("AllPlayerRespawn", RpcTarget.All);
-    //    }
-    //    else
-    //    {
-    //        photonView.RPC("PlayerResurrection", RpcTarget.All, playerViewID);
-    //    }
-
-    //}
-
-    //[PunRPC]
-    //void PlayerResurrection(int playerViewID)
-    //{
-
-    //    GameObject playerObj = PhotonView.Find(playerViewID).gameObject;
-    //    PlayerState playerState = playerObj.GetComponent<PlayerState>();
-    //    Inventory playerInven = playerObj.GetComponent<Inventory>();
-    //    playerInven.InitInventory();
-    //    playerState.StartCoroutine(playerState.Revive());
-    //}
+    private void Update()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            if (deadPlayers[0] && deadPlayers[1] && deadPlayers[2] && deadPlayers[3])
+            {
+                if (!allPlayerDead)
+                {
+                    allPlayerDead = true;
+                    photonView.RPC("AllPlayerRespawn", RpcTarget.All);
+                }
+            }
+        }
+        else return;
+    }
 
 
 }
