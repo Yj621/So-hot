@@ -9,7 +9,6 @@ using UnityEngine.UI;
 
 public class LobbyVoice : VoiceManager
 {
-
     [SerializeField] private Transform playerGroup; // PlayerGroup의 Transform
 
     public static LobbyVoice Instance { get; private set; } // Singleton 인스턴스
@@ -20,6 +19,18 @@ public class LobbyVoice : VoiceManager
         {
             Instance = this;
         }
+    }
+
+    protected override void LateUpdate()
+    {
+        UpdateSpeakersList();
+        CheckIsPlaying();
+    }
+
+    // playerGroup 내의 모든 Speaker 컴포넌트를 가져와 speakers 배열 업데이트
+    protected override void UpdateSpeakersList()
+    {
+        speakers = playerGroup.GetComponentsInChildren<Speaker>(true);
     }
 
     public void DestroyVoiceManager()
@@ -44,22 +55,5 @@ public class LobbyVoice : VoiceManager
             Destroy(gameObject);
             Debug.Log("Destroy");
         }
-    }
-
-    protected override void LateUpdate()
-    {
-        UpdateSpeakersList();
-        CheckIsPlaying();
-    }
-
-    // playerGroup 내의 모든 Speaker 컴포넌트를 가져와 speakers 배열 업데이트
-    protected override void UpdateSpeakersList()
-    {
-        speakers = playerGroup.GetComponentsInChildren<Speaker>(true);
-        for (int i = 0; i < speakers.Length; i++)
-        {
-            Debug.Log($"Speaker {i}: {speakers[i].gameObject.name}");
-        }
-
     }
 }
