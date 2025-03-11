@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviourPun
 
         if (PhotonNetwork.IsMasterClient)
         {
-            photonView.RPC("InitPlayerPos", RpcTarget.All);
+            photonView.RPC("Init", RpcTarget.All);
         }
 
     }
