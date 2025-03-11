@@ -9,10 +9,6 @@ using UnityEngine.UI;
 
 public class MapVoice : VoiceManager
 {
-    protected override void Awake()
-    {
-
-    }
 
     // 방을 나간 플레이어가 있을 때 호출되는 콜백
     public override void OnLeftRoom()
