@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviourPun
 
     public List<Transform> spawnPoints; //스폰 포인트(새로운 세이브 포인트에 trigger되면 spawnPoints[:4]를 해당 세이브 포인트들로 재할당)
     public GameObject player; //캐릭터 생성 시점에 받아온 player obj
-
+    private PhotonView photonView; //player의 포톤뷰
     public Vector3 fireSavePoint; //현재 저장된 fire 세이브 포인트의 위치 정보(세이브 포인트에 trigger되면 본 필드값이 수정되어야 함)
 
 
@@ -36,6 +36,8 @@ public class GameManager : MonoBehaviourPun
 
         //TO-DO: On game start, all player's start positions have to be saved at 'spawnPoint[:4]'
 
+        photonView = player.GetComponent<PhotonView>();
+
         if (PhotonNetwork.IsMasterClient)
         {
             photonView.RPC("InitPlayerPos", RpcTarget.All);
@@ -44,10 +46,11 @@ public class GameManager : MonoBehaviourPun
     }
 
     [PunRPC]
-    void InitPlayerPos()
+    void Init()
     {
+        Fire.Instance.isOnFire = true;
+        Fire.Instance.gameObject.transform.position = fireSavePoint;
         player.gameObject.transform.position = spawnPoints[playerNumber].position;
-
     }
 
     [PunRPC]
@@ -57,25 +60,11 @@ public class GameManager : MonoBehaviourPun
         Debug.Log("게임 클리어");
     }
 
-    //void AllPlayerRespawn()
-    //{
-    //    Fire.Instance.isOnFire = true;
-    //    Fire.Instance.gameObject.transform.position = fireSavePoint;
-
-    //    player1Inventory.InitInventory();
-    //    player2Inventory.InitInventory();
-    //    player3Inventory.InitInventory();
-    //    player4Inventory.InitInventory();
-
-    //    photonView.RPC("InitInventory", RpcTarget.All); //아오이거뭐임
-
-    //    //TO-DO: 세이브 포인트 위치가 명확해지면 수정 (각 플레이어 리스폰 위치값 미세 조정 필요)
-    //    player1.gameObject.transform.position = savePoint;
-    //    player2.gameObject.transform.position = savePoint;
-    //    player3.gameObject.transform.position = savePoint;
-    //    player4.gameObject.transform.position = savePoint;
-
-    //}
+    void AllPlayerRespawn()
+    {
+        photonView.RPC("InitInventory", RpcTarget.All); 
+        photonView.RPC("Init", RpcTarget.All);
+    }
 
     //[PunRPC]
     //void PlayerDie(int playerViewID)
