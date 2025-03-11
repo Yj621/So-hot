@@ -61,6 +61,7 @@ namespace JS.PlayerMove
         private Inventory inventory;
         public bool saveLife = false;
         private bool invincible = false;
+        public Transform playerGroup;
 
         private void Start()
         {
@@ -450,6 +451,17 @@ namespace JS.PlayerMove
 
             isDie = true;
             StartCoroutine(DieAndBeGhost());
+        }
+
+        [PunRPC]
+        public void SetPlayerParentRPC()
+        {
+            photonView.RPC("SetPlayerParent", RpcTarget.AllViaServer);
+        }
+
+        private void SetPlayerParent()
+        {
+            transform.SetParent(playerGroup);
         }
 
         private void CatchObject(GameObject obj)
