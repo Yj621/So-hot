@@ -83,7 +83,7 @@ public class GameManager : MonoBehaviourPun
                 if (!allPlayerDead)
                 {
                     allPlayerDead = true;
-                    photonView.RPC("AllPlayerRespawn", RpcTarget.All);
+                    AllPlayerRespawn();
                 }
             }
         }
