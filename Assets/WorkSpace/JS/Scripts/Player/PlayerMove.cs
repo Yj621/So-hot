@@ -1,7 +1,9 @@
 using ExitGames.Client.Photon;
 using Photon.Pun;
+using Photon.Realtime;
 using Photon.Voice;
 using System.Collections;
+using System.Collections.Generic;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -52,6 +54,14 @@ namespace JS.PlayerMove
 
         private CinemachineCamera camera;
 
+        public Coroutine unlimitRunCoroutine;
+        public Coroutine gaugeStopCoroutine;
+
+        public List<GameObject> effectList;
+        private Inventory inventory;
+        public bool saveLife = false;
+        private bool invincible = false;
+
         private void Start()
         {
             controller = GetComponent<CharacterController>();
@@ -59,6 +69,7 @@ namespace JS.PlayerMove
             photonView = GetComponent<PhotonView>();
             UIManager.Instance.UpdateStaminaUI();
             originalMaterial = CharacterRenderer.material;
+            StartCoroutine(FindInventoryWithDelay());
 
             // 내 캐릭터만 카메라 설정
             if (photonView.IsMine)
@@ -248,8 +259,31 @@ namespace JS.PlayerMove
 
             if (other.CompareTag("Trap") && !isDie && !isGhost)
             {
+                if (invincible)
+                {
+                    Debug.Log("무적 상태: 데미지 없음");
+                    return;
+                }
+
+                if (saveLife)
+                {
+                    Debug.Log("죽음 면제 발동! 5초간 무적");
+                    ItemManager.Instance.photonView.RPC("ItemEffectOff", RpcTarget.All, photonView.ViewID, 1);
+                    StartCoroutine(InvincibilityTimer()); // 무적 타이머 시작
+                    saveLife = false; // 죽음 면제 효과는 1회만 사용
+                    return;
+                }
                 photonView.RPC("SetDieState", RpcTarget.AllBuffered);
             }
+
+        }
+
+        private IEnumerator InvincibilityTimer()
+        {
+            invincible = true;
+            yield return new WaitForSeconds(5f);
+            invincible = false;
+            Debug.Log("무적 해제됨");
         }
 
         IEnumerator DieAndBeGhost()
@@ -264,6 +298,17 @@ namespace JS.PlayerMove
             CharacterRenderer.material = originalMaterial;
             gameObject.layer = LayerMask.NameToLayer("Default");
             isGhost = false;
+        }
+
+        IEnumerator FindInventoryWithDelay()
+        {
+            yield return new WaitForSeconds(5f); // 0.5초 정도 기다리기 (네트워크 동기화 시간 확보)
+            inventory = FindAnyObjectByType<Inventory>();
+
+            if (inventory == null)
+            {
+                Debug.LogError("Inventory 객체를 찾지 못함!");
+            }
         }
 
         public void Move(Vector2 input)
@@ -281,6 +326,11 @@ namespace JS.PlayerMove
                 if (!isGhost)
                     animator.SetTrigger("Jump");
             }
+        }
+
+        public void UseItem()
+        {
+            inventory.UseItem();
         }
 
         public void SetRunning()
@@ -306,7 +356,6 @@ namespace JS.PlayerMove
 
         public void ReleaseThrow()
         {
-            Debug.Log("ReleaseThrow");
             if (isThrowingReady && heldObject != null)
             {
                 Vector3 throwPosition = heldObject.transform.position; // 던지기 시작 위치

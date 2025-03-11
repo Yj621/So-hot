@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using YJ.UIManager;
+using JS.PlayerMove;
 
 public class PlayerThrowGuide : MonoBehaviour
 {

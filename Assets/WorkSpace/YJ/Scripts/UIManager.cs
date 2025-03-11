@@ -148,7 +148,6 @@ namespace YJ.UIManager
         public void DrainStamina()
         {
             currentStamina -= staminaDrainRate * Time.deltaTime;
-            Debug.Log("currentStamina");
             if (currentStamina < 0)
             {
                 currentStamina = 0;
@@ -166,7 +165,7 @@ namespace YJ.UIManager
                 ActiveStamina();
                 currentStamina += staminaDrainRate * Time.deltaTime;
                 currentStamina = Mathf.Clamp(currentStamina, 0 , maxStamina);
-                Debug.Log("회복중,,");
+                //Debug.Log("회복중,,");
             }
             else
             {
@@ -213,7 +212,7 @@ namespace YJ.UIManager
                 ActiveThrow();
                 currentThrow += ThrowIncreaseGauge * Time.deltaTime;
                 currentThrow = Mathf.Clamp(currentThrow, 0, maxThrow);
-                Debug.Log("던짐 게이지 차는중");
+                //Debug.Log("던짐 게이지 차는중");
             }
             UpdateThrowUI(); // UI 업데이트
         }

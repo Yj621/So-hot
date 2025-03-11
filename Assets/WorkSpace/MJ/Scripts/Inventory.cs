@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using YJ.UIManager;
 
 public class Inventory : MonoBehaviour
 {
@@ -11,7 +12,7 @@ public class Inventory : MonoBehaviour
     public int effectNumber; //사용 아이템의 이펙트 인덱스
     [SerializeField] Image frontInven; //인벤토리 앞칸 UI
     [SerializeField] Image terminalInven; //인벤토리 뒷칸 UI
-
+    UIManager uiManager;
     private void Start()
     {
         StartCoroutine(FindPlayerControllerWithDelay());
@@ -19,13 +20,18 @@ public class Inventory : MonoBehaviour
 
     IEnumerator FindPlayerControllerWithDelay()
     {
+
         yield return new WaitForSeconds(5f); // 네트워크 동기화가 완료될 시간을 확보
         itemUser = GetComponent<PlayerMove>();
 
+        GameObject frontInventoryObj = GameObject.Find("Front_Inventory");
+        GameObject terminalInventoryObj = GameObject.Find("Terminal_Inventory");
         if (itemUser == null)
         {
             Debug.LogError("PlayerController를 찾을 수 없음!");
         }
+        frontInven = frontInventoryObj.GetComponent<Image>();
+        terminalInven = terminalInventoryObj.GetComponent<Image>();
     }
 
     public void GetItem(ItemData item)
@@ -55,6 +61,7 @@ public class Inventory : MonoBehaviour
         terminalInven.gameObject.SetActive(false);
 
     }
+
 
     public void UseItem()
     {

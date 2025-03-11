@@ -78,6 +78,11 @@ MonoBehaviour:
   - ResetCatchAnimation
   - SetDieState
   - CatchObjectRPC
+  - PlayAnyAnimation
+  - GaugeStop
+  - NoDie
+  - UnlimitRun
+  - UseItem
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

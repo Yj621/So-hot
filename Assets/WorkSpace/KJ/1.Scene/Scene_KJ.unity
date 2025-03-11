@@ -3806,10 +3806,14 @@ MonoBehaviour:
   heatDecreaseRate: 5
   hotSlider: {fileID: 705726281}
   staminaSlider: {fileID: 2049371406}
+  ThrowSlider: {fileID: 0}
   runLimit: 1
   maxStamina: 100
   currentStamina: 0
   staminaDrainRate: 10
+  currentThrow: 0
+  maxThrow: 100
+  ThrowIncreaseGauge: 0
 --- !u!4 &1729319302
 Transform:
   m_ObjectHideFlags: 0
@@ -4530,6 +4534,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1038814095386337408, guid: d4b030af034ca2b4688d41c0ee6c5df0, type: 3}
+      propertyPath: sceneViewId
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 1055500710627587929, guid: d4b030af034ca2b4688d41c0ee6c5df0, type: 3}
       propertyPath: m_Icon
       value: 
@@ -4537,6 +4545,10 @@ PrefabInstance:
     - target: {fileID: 3522818762960730726, guid: d4b030af034ca2b4688d41c0ee6c5df0, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 4617088576023083174, guid: d4b030af034ca2b4688d41c0ee6c5df0, type: 3}
+      propertyPath: sceneViewId
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6355099782688522986, guid: d4b030af034ca2b4688d41c0ee6c5df0, type: 3}
       propertyPath: sceneViewId
@@ -4593,6 +4605,10 @@ PrefabInstance:
     - target: {fileID: 7582799063638328077, guid: d4b030af034ca2b4688d41c0ee6c5df0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9137164113380988745, guid: d4b030af034ca2b4688d41c0ee6c5df0, type: 3}
+      propertyPath: sceneViewId
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
