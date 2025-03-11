@@ -72,10 +72,6 @@ namespace YJ.UIManager
 
         }
         /// <summary>
-        /// 불을 들고 있는 상태를 토글 (켜기/끄기)
-        /// </summary>
-
-        /// <summary>
         /// 뜨거움 게이지 증가 (최대값을 초과하지 않도록 제한)
         /// </summary>
         public void IncreaseHeat(float amount)
@@ -85,7 +81,6 @@ namespace YJ.UIManager
             heatGauge += amount;
             heatGauge = Mathf.Clamp(heatGauge, 0, maxHeat); // 최대치를 넘지 않도록 제한
 
-            Debug.Log($"현재 뜨거움 게이지: {heatGauge}");
             UpdateHotUI(); // UI 갱신
         }
 
@@ -97,7 +92,6 @@ namespace YJ.UIManager
             heatGauge -= amount;
             heatGauge = Mathf.Clamp(heatGauge, 0, maxHeat); // 최소 0 이하로 내려가지 않도록 제한
 
-            Debug.Log($"현재 뜨거움 게이지: {heatGauge}");
             UpdateHotUI(); // UI 갱신
         }
 
@@ -116,8 +110,6 @@ namespace YJ.UIManager
         {
             heatGauge = 0; // 게이지 0으로 초기화
             gaugePause = false; // 게이지 일시 정지 해제
-
-            Debug.Log("핫게이지 초기화됨, 불 제거됨.");
             UpdateHotUI(); // UI 갱신
         }
 
@@ -147,7 +139,6 @@ namespace YJ.UIManager
         public void DrainStamina()
         {
             currentStamina -= staminaDrainRate * Time.deltaTime;
-            Debug.Log("currentStamina");
             if (currentStamina < 0)
             {
                 currentStamina = 0;
@@ -165,7 +156,6 @@ namespace YJ.UIManager
                 ActiveStamina();
                 currentStamina += staminaDrainRate * Time.deltaTime;
                 currentStamina = Mathf.Clamp(currentStamina, 0 , maxStamina);
-                Debug.Log("회복중,,");
             }
             else
             {
@@ -212,7 +202,6 @@ namespace YJ.UIManager
                 ActiveThrow();
                 currentThrow += ThrowIncreaseGauge * Time.deltaTime;
                 currentThrow = Mathf.Clamp(currentThrow, 0, maxThrow);
-                Debug.Log("던짐 게이지 차는중");
             }
             UpdateThrowUI(); // UI 업데이트
         }

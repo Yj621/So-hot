@@ -56,10 +56,6 @@ public class LobbyVoice : VoiceManager
     protected override void UpdateSpeakersList()
     {
         speakers = playerGroup.GetComponentsInChildren<Speaker>(true);
-        for (int i = 0; i < speakers.Length; i++)
-        {
-            Debug.Log($"Speaker {i}: {speakers[i].gameObject.name}");
-        }
 
     }
 }

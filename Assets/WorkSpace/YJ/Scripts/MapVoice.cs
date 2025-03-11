@@ -9,11 +9,9 @@ using UnityEngine.UI;
 
 public class MapVoice : VoiceManager
 {
-
     // 방을 나간 플레이어가 있을 때 호출되는 콜백
     public override void OnLeftRoom()
     {
-        Debug.Log("Leave");
         StartCoroutine(DelayDestroy());
     }
 
@@ -33,21 +31,9 @@ public class MapVoice : VoiceManager
     // 맵씬에서는 매 프레임마다 "Player" 태그를 가진 오브젝트를 찾아 UI를 갱신합니다.
     protected override void LateUpdate()
     {
-        base.LateUpdate(); // Speaker 목록 갱신
         UpdateSpeakersList();
-
         // UI 업데이트 로직 호출
         CheckIsPlaying();
-
-        // 추가적으로 필요하다면, 각 플레이어의 PhotonView를 통해 추가 정보를 처리할 수 있음
-        GameObject[] playerObjects = GameObject.FindGameObjectsWithTag("Player");
-        foreach (GameObject playerObj in playerObjects)
-        {
-            PhotonView pv = playerObj.GetComponent<PhotonView>();
-            if (pv == null)
-                continue;
-            // 여기서 추가로 처리할 로직 작성 (예: 특정 조건에 따른 효과 적용 등)
-        }
     }
 
     protected override void UpdateSpeakersList()
