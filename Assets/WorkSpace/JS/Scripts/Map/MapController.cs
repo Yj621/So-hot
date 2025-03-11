@@ -14,7 +14,6 @@ public class MapController : MonoBehaviourPunCallbacks
     public BoxCollider[] CherryCollider;
     public GameObject CherryPrefab;
     public float DropInterval = 0.1f;
-    private int CurrentCherry = 0;
 
     public BoxCollider[] BamBooCollider;
     public GameObject BamBooPrefab;
@@ -22,7 +21,6 @@ public class MapController : MonoBehaviourPunCallbacks
     public float BamBooSpeed = 5f;
     public float BamBooDuration = 5f;
 
-    // 마스터 클라이언트만 오브젝트 생성
     IEnumerator CheckMasterClient()
     {
         yield return new WaitForSeconds(5f);
@@ -73,32 +71,31 @@ public class MapController : MonoBehaviourPunCallbacks
         }
     }
 
-    // 바위 생성
     void RockFall()
     {
-        for (int i = 0; i < RockFallPoints.Length; i++)
+        foreach (Transform point in RockFallPoints)
         {
-            GameObject rock = PhotonNetwork.Instantiate(RockPrefab.name, RockFallPoints[i].position, Quaternion.identity);
+            GameObject rock = PhotonNetwork.Instantiate(RockPrefab.name, point.position, Quaternion.identity);
             Rigidbody rb = rock.GetComponent<Rigidbody>();
 
-            rb.linearVelocity = Vector3.down * RockSpeed;
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector3.down * RockSpeed;
+            }
 
             StartCoroutine(DestroyAfterTime(rock, RockDuration));
         }
     }
 
-    // 체리 생성 (삭제 로직 없음, Cherry.cs에서 자동 삭제)
     void SpwanCherry()
     {
-        for (int i = 0; i < CherryCollider.Length; i++)
+        foreach (BoxCollider collider in CherryCollider)
         {
-            Vector3 spawnPosition = GetPoint(CherryCollider[i]);
+            Vector3 spawnPosition = GetPoint(collider);
             PhotonNetwork.Instantiate(CherryPrefab.name, spawnPosition, Quaternion.identity);
-            CurrentCherry++;
         }
     }
 
-    // 대나무 생성
     void SpwanBamBoo()
     {
         for (int i = 0; i < BamBooCollider.Length; i++)
@@ -108,25 +105,25 @@ public class MapController : MonoBehaviourPunCallbacks
             GameObject bamBoo = PhotonNetwork.Instantiate(BamBooPrefab.name, spawnPosition, rotation);
             Rigidbody rb = bamBoo.GetComponent<Rigidbody>();
 
-            Vector3 direction = (i == 0) ? Vector3.left : Vector3.right;
-            rb.linearVelocity = direction * BamBooSpeed;
+            if (rb != null)
+            {
+                Vector3 direction = (i == 0) ? Vector3.left : Vector3.right;
+                rb.linearVelocity = direction * BamBooSpeed;
+            }
 
             StartCoroutine(DestroyAfterTime(bamBoo, BamBooDuration));
         }
     }
 
-    // 일정 시간이 지나면 네트워크 오브젝트 삭제
     IEnumerator DestroyAfterTime(GameObject obj, float duration)
     {
         yield return new WaitForSeconds(duration);
-
         if (obj != null && obj.GetComponent<PhotonView>().IsMine)
         {
             PhotonNetwork.Destroy(obj);
         }
     }
 
-    // 체리 스폰 위치 계산
     Vector3 GetPoint(BoxCollider collider)
     {
         Vector3 areaSize = collider.bounds.size;
@@ -139,7 +136,6 @@ public class MapController : MonoBehaviourPunCallbacks
         return new Vector3(randomX, randomY, randomZ);
     }
 
-    // 대나무 스폰 위치 계산
     Vector3 GetRandomPointFromCollider(BoxCollider collider)
     {
         Vector3 areaSize = collider.bounds.size;

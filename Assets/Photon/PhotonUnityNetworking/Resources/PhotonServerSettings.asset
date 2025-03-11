@@ -79,6 +79,7 @@ MonoBehaviour:
   - SetDieState
   - InitInventory
   - Init
+  - StartActivateTrap
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
