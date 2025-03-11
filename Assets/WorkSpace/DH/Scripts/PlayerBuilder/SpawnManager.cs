@@ -38,6 +38,7 @@ namespace Donghyun.Builder
 
             //게임 매니저에 해당 플레이어를 넘겨준다
             gm.player = player;
+            gm.playerNumber = playerNumber;
 
             //나머지 파츠들을 합침
             //pv.RPC("AddParts", RpcTarget.AllViaServer, gm.player.GetComponent<PhotonView>().ViewID, playerSetting.type);
