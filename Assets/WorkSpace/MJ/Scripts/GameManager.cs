@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviourPun
     public List<Transform> spawnPoints; //스폰 포인트(새로운 세이브 포인트에 trigger되면 spawnPoints[:4]를 해당 세이브 포인트들로 재할당)
     public GameObject player; //캐릭터 생성 시점에 받아온 player obj
     private PhotonView photonView; //player의 포톤뷰
-    private bool[] deadPlayers; //플레이어 전원 죽음 상태 기록
+    public bool[] deadPlayers; //플레이어 전원 죽음 상태 기록
     private bool allPlayerDead; //플레이어 전원 사망 여부 체크
     public Vector3 fireSavePoint; //현재 저장된 fire 세이브 포인트의 위치 정보(세이브 포인트에 trigger되면 본 필드값이 수정되어야 함)
 
