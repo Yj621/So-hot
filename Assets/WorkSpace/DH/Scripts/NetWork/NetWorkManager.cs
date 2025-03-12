@@ -150,7 +150,14 @@ namespace Donghyun.Network
             if (master())
             {
                 MasterSetting();
-                emptyPlayer.slot = new SortedSet<int> { 0, 1, 2, 3 };
+                if (HasTag("Number"))
+                {
+                    ConvertJsonToEmptyPlayerSlot();
+                }
+                else
+                {
+                    emptyPlayer.slot = new SortedSet<int> { 0, 1, 2, 3 };
+                }
             }
             else
             {
@@ -167,16 +174,23 @@ namespace Donghyun.Network
 
 
             //플레이어의 본인 슬롯을 할당
-            playerNumber = emptyPlayer.slot.Min;
-            Debug.Log("슬롯" + emptyPlayer.slot.Min);
-            SetTag("Number", playerNumber, PhotonNetwork.LocalPlayer);
+            if (!HasTag("Number"))
+            {
+                playerNumber = emptyPlayer.slot.Min;
+                Debug.Log("슬롯" + emptyPlayer.slot.Min);
+                SetTag("Number", playerNumber, PhotonNetwork.LocalPlayer);
+                emptyPlayer.slot.Remove(playerNumber);
 
-            emptyPlayer.slot.Remove(playerNumber);
+                //빈 슬롯 할당 후 커스텀 프로퍼티 바꾸기
+                ConvertEmptyPlayerSlotToJson();
+            }
+            else
+            {
+                playerNumber = (int)GetTag(PhotonNetwork.LocalPlayer, "Number");
+            }
+            
             playerSetting.SetPlayerSlotRPC(playerNumber, RpcTarget.AllBufferedViaServer);
             SetTag(ActorNumberString, playerNumber, PhotonNetwork.LocalPlayer);
-
-            //빈 슬롯 할당 후 커스텀 프로퍼티 바꾸기
-            ConvertEmptyPlayerSlotToJson();
 
             //본인이므로 이름을 빨간색으로 만들어 줌
             playerSetting.SetNickNameColor(Color.red);
