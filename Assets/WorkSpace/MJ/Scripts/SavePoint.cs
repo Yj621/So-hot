@@ -1,16 +1,21 @@
+using NUnit.Framework;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class SavePoint : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    private GameManager gm = GameManager.Instance;
+    [SerializeField] List<Transform> spawnPoints = new List<Transform>();
+    Fire fire = Fire.Instance;
+    [SerializeField] Transform firePoint;
 
-    // Update is called once per frame
-    void Update()
+    private void OnTriggerEnter(Collider other)
     {
-        
+        if (other.CompareTag("Fire"))
+        {
+            gm.spawnPoints = spawnPoints;
+            gm.fireSavePoint = firePoint.position;
+            fire.gameObject.transform.position = firePoint.position;
+        }
     }
 }
