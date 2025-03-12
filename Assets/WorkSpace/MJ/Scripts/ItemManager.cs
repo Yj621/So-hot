@@ -41,7 +41,7 @@ public class ItemManager : MonoBehaviourPun
         int effectIdx = player.gameObject.GetComponent<Inventory>().effectNumber;
 
         // 변경된 RPC 호출 방식
-        ItemManager.Instance.photonView.RPC("ItemEffectOn", RpcTarget.All, player.photonView.ViewID, effectIdx);
+        photonView.RPC("ItemEffectOn", RpcTarget.All, player.photonView.ViewID, effectIdx);
 
         StartCoroutine(CorGaugeStop(5f, player));
     }
@@ -52,7 +52,7 @@ public class ItemManager : MonoBehaviourPun
 
         int effectIdx = player.gameObject.GetComponent<Inventory>().effectNumber;
 
-        ItemManager.Instance.photonView.RPC("ItemEffectOn", RpcTarget.All, player.photonView.ViewID, effectIdx);
+        photonView.RPC("ItemEffectOn", RpcTarget.All, player.photonView.ViewID, effectIdx);
     }
 
     public void UnlimitRun(PlayerMove player)
@@ -66,15 +66,16 @@ public class ItemManager : MonoBehaviourPun
 
         int effectIdx = player.gameObject.GetComponent<Inventory>().effectNumber;
 
-        ItemManager.Instance.photonView.RPC("ItemEffectOn", RpcTarget.All, player.photonView.ViewID, effectIdx);
+        photonView.RPC("ItemEffectOn", RpcTarget.All, player.photonView.ViewID, effectIdx);
 
         player.unlimitRunCoroutine = StartCoroutine(CorUnlimitRun(5f, player));
     }
 
     [PunRPC]
-    void ItemEffectOn(int playerViewID, int idx)
+    public void ItemEffectOn(int playerViewID, int idx)
     {
         GameObject playerObj = PhotonView.Find(playerViewID)?.gameObject;
+        Debug.Log(playerObj.name);
         if (playerObj == null)
         {
             Debug.LogError($"Player with ViewID {playerViewID} not found!");
@@ -88,7 +89,7 @@ public class ItemManager : MonoBehaviourPun
             return;
         }
 
-        player.effectList[idx].SetActive(true);
+        player.ItemEffectOn(idx); // 이제 플레이어 오브젝트에서 실행됨
     }
 
     [PunRPC]
@@ -108,14 +109,15 @@ public class ItemManager : MonoBehaviourPun
             return;
         }
 
-        player.effectList[idx].SetActive(false);
+        player.ItemEffectOff(idx); // 플레이어 오브젝트에서 실행됨
     }
+
 
     IEnumerator CorUnlimitRun(float time, PlayerMove player)
     {
         int effectIdx = player.gameObject.GetComponent<Inventory>().effectNumber;
         yield return new WaitForSeconds(time);
-        ItemManager.Instance.photonView.RPC("ItemEffectOff", RpcTarget.All, player.photonView.ViewID, effectIdx);
+        photonView.RPC("ItemEffectOff", RpcTarget.All, player.photonView.ViewID, effectIdx);
         UIManager.Instance.runLimit = true;
         player.unlimitRunCoroutine = null;
     }
@@ -124,7 +126,7 @@ public class ItemManager : MonoBehaviourPun
     {
         int effectIdx = player.gameObject.GetComponent<Inventory>().effectNumber;
         yield return new WaitForSeconds(time);
-        ItemManager.Instance.photonView.RPC("ItemEffectOff", RpcTarget.All, player.photonView.ViewID, effectIdx);
+        photonView.RPC("ItemEffectOff", RpcTarget.All, player.photonView.ViewID, effectIdx);
         UIManager.Instance.gaugePause = false;
         player.gaugeStopCoroutine = null;
     }

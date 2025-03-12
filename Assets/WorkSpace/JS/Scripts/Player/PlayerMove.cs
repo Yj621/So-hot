@@ -5,6 +5,7 @@ using Photon.Voice;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Cinemachine;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 using YJ.UIManager;
@@ -19,10 +20,17 @@ namespace JS.PlayerMove
         private new PhotonView photonView;
 
         [Header("이동 설정")]
-        public float walkSpeed = 5f;
-        public float runSpeed = 8f;
-        public float jumpHeight = 2f;
-        public float gravity = -9.81f;
+        public float walkSpeed = 15f;
+        public float runSpeed = 25f;
+        public float jumpHeight = 10f;
+        private float AwalkSpeed = 15f;
+        private float ArunSpeed = 25f;
+        private float AjumpHeight = 10f;
+        public float slowSpeed = 7f;
+        public float slowRun = 15f;
+        public float slowJumpPower = 6f;
+        public float gravity = -52.3f;
+        private bool isSlow = false;
 
         private Vector3 velocity;
         private bool isGrounded;
@@ -191,6 +199,7 @@ namespace JS.PlayerMove
 
                     if (isThrowingReady) // 차징 중이었으면 던지기
                     {
+                        photonView.RPC("PlayThrowAnimation", RpcTarget.AllViaServer);
                         throwDirection = Camera.main.transform.forward;
                         throwForce = Mathf.Lerp(minThrowForce, maxThrowForce, UIManager.Instance.currentThrow / UIManager.Instance.maxThrow);
                     }
@@ -200,13 +209,21 @@ namespace JS.PlayerMove
                         throwDirection = Vector3.down;
                         throwForce = minThrowForce;
                     }
-                    photonView.RPC("ThrowObjectRPC", RpcTarget.AllViaServer, throwPosition, throwDirection, throwForce);
+                    int heldObjectViewID = heldObject.GetComponent<PhotonView>().ViewID;
+                    photonView.RPC("ThrowObjectRPC", RpcTarget.AllViaServer, heldObjectViewID, throwPosition, throwDirection, throwForce);
                     isThrowingReady = false;
                 }
+
+                StartCoroutine(WaitForHeatGaugeReset());
             }
 
-            if (UIManager.Instance.heatGauge == 0 && wasOverHeat)
+            IEnumerator WaitForHeatGaugeReset()
             {
+                // heatGauge가 0이 아닐 동안 매 프레임 대기
+                while (UIManager.Instance.heatGauge > 0)
+                {
+                    yield return null;
+                }
                 wasOverHeat = false;
             }
 
@@ -248,10 +265,12 @@ namespace JS.PlayerMove
         }
         private void OnTriggerEnter(Collider other)
         {
+            if (!photonView.IsMine) return;
             if (isThrowing) return;
 
             if (!wasOverHeat) // 과열 시 잡을 수 없음
             {
+                if (wasOverHeat) return;
                 if (other.CompareTag("Fire") && !isDie && !isGhost)
                 {
                     CatchObject(other.gameObject);
@@ -277,6 +296,37 @@ namespace JS.PlayerMove
                 photonView.RPC("SetDieState", RpcTarget.AllBuffered);
             }
 
+            if (other.CompareTag("Mud"))
+            {
+                SetSlow(true, slowSpeed, slowRun, slowJumpPower);
+            }
+
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            if (other.CompareTag("Mud"))
+            {
+                SetSlow(false);
+            }
+        }
+
+        public void SetSlow(bool slow, float newSpeed = 0f, float newRun = 0f, float newJumpPower = 0f)
+        {
+            if (slow)
+            {
+                walkSpeed = newSpeed;
+                runSpeed = newRun;
+                jumpHeight = newJumpPower;
+                isSlow = true;
+            }
+            else
+            {
+                walkSpeed = AwalkSpeed;
+                runSpeed = ArunSpeed;
+                jumpHeight = AjumpHeight;
+                isSlow = false;
+            }
         }
 
         private IEnumerator InvincibilityTimer()
@@ -331,7 +381,10 @@ namespace JS.PlayerMove
 
         public void UseItem()
         {
-            inventory.UseItem();
+            if (!isDie)
+            {
+                inventory.UseItem();
+            }
         }
 
         public void SetRunning()
@@ -355,68 +408,100 @@ namespace JS.PlayerMove
             }
         }
 
+        public void ItemEffectOn(int idx)
+        {
+            if (effectList[idx] != null)
+            {
+                effectList[idx].SetActive(true);
+            }
+        }
+
+        public void ItemEffectOff(int idx)
+        {
+            if (effectList[idx] != null)
+            {
+                effectList[idx].SetActive(false);
+            }
+        }
+
+        private void CatchObject(GameObject obj)
+        {
+            if (!photonView.IsMine) return;
+            if (wasOverHeat) return;
+
+            photonView.RPC("SetCatchingFire", RpcTarget.AllBuffered, true);
+            photonView.RPC("PlayCatchAnimation", RpcTarget.AllViaServer);
+
+            PhotonView objPhotonView = obj.GetComponent<PhotonView>();
+            if (objPhotonView != null && !objPhotonView.IsMine)
+            {
+                objPhotonView.RequestOwnership();
+            }
+
+            heldObject = obj;
+            Rigidbody rb = obj.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.isKinematic = true;
+            }
+            // 오브젝트를 holdPoint의 자식으로 설정
+            objPhotonView.RPC("RPC_SetHeldState", RpcTarget.AllBuffered, photonView.ViewID);
+        }
+
         public void ReleaseThrow()
         {
+            Debug.Log("ReleaseThrow");
             if (isThrowingReady && heldObject != null)
             {
                 Vector3 throwPosition = heldObject.transform.position; // 던지기 시작 위치
                 Vector3 throwDirection = Camera.main.transform.forward; // 던지는 방향 (플레이어 시점)
                 float throwForce = Mathf.Lerp(minThrowForce, maxThrowForce, UIManager.Instance.currentThrow / UIManager.Instance.maxThrow);
 
-                photonView.RPC("RequestThrowObject", RpcTarget.MasterClient, throwDirection);
+                int heldObjectViewID = heldObject.GetComponent<PhotonView>().ViewID;
+                photonView.RPC("ThrowObjectRPC", RpcTarget.AllViaServer, heldObjectViewID, throwPosition, throwDirection, throwForce);
 
                 isThrowingReady = false;
                 isThrowing = true;
+                photonView.RPC("PlayThrowAnimation", RpcTarget.AllViaServer);
+                photonView.RPC("SetCatchingFire", RpcTarget.AllBuffered, false);
             }
         }
 
         [PunRPC]
-        void RequestThrowObject(Vector3 throwDirection, PhotonMessageInfo info)
+        void ThrowObjectRPC(int heldObjectViewID, Vector3 throwPosition, Vector3 throwDirection, float throwForce)
         {
-            if (!PhotonNetwork.IsMasterClient) return;
-            if (heldObject == null) return;
+            // 전달받은 ViewID를 이용해 물체를 찾음
+            PhotonView objPhotonView = PhotonView.Find(heldObjectViewID);
+            if (objPhotonView == null) return;
+            GameObject obj = objPhotonView.gameObject;
+            obj.transform.parent = null;
 
-            Rigidbody rb = heldObject.GetComponent<Rigidbody>();
+            Rigidbody rb = obj.GetComponent<Rigidbody>();
             if (rb != null)
             {
+                // 던지기 시작 위치로 설정 후 물리 적용
+                obj.transform.position = throwPosition;
                 rb.isKinematic = false;
-                rb.AddForce(throwDirection * maxThrowForce, ForceMode.Impulse);
-                rb.AddTorque(Random.insideUnitSphere * 10f, ForceMode.Impulse);
+                rb.AddForce(throwDirection * throwForce, ForceMode.Impulse);
             }
 
-            Vector3 newPos = heldObject.transform.position;
-            Vector3 newVel = rb.linearVelocity;
-            Vector3 newRot = heldObject.transform.eulerAngles;
-
-            photonView.RPC("SyncThrownObject", RpcTarget.Others, newPos, newVel, newRot);
-
-            // 소유권 해제
-            PhotonView objPhotonView = heldObject.GetComponent<PhotonView>();
-            if (objPhotonView != null && objPhotonView.IsMine)
+            // 만약 현재 소유한 클라이언트라면, 마스터에게 소유권을 이전
+            if (objPhotonView.IsMine)
             {
-                objPhotonView.TransferOwnership(PhotonNetwork.MasterClient); // 마스터 클라이언트에게 돌려주기
+                objPhotonView.TransferOwnership(PhotonNetwork.MasterClient);
             }
 
-            heldObject.transform.parent = null;
-            heldObject = null;
+            // 물체의 부모 해제
+            obj.transform.parent = null;
+
+            // 각 클라이언트에서 보유중인 heldObject가 해당 물체라면 null로 초기화
+            if (heldObject == obj)
+            {
+                heldObject = null;
+            }
             CatchingFire = false;
-
-            photonView.RPC("PlayThrowAnimation", RpcTarget.AllViaServer);
         }
 
-        [PunRPC]
-        void SyncThrownObject(Vector3 position, Vector3 velocity, Vector3 rotation)
-        {
-            if (heldObject == null) return;
-
-            Rigidbody rb = heldObject.GetComponent<Rigidbody>();
-            if (rb != null)
-            {
-                heldObject.transform.position = position;
-                rb.linearVelocity = velocity;
-                heldObject.transform.eulerAngles = rotation;
-            }
-        }
 
         [PunRPC]
         void PlayThrowReadyAnimation()
@@ -464,24 +549,10 @@ namespace JS.PlayerMove
             transform.SetParent(playerGroup);
         }
 
-        private void CatchObject(GameObject obj)
+        [PunRPC]
+        void SetCatchingFire(bool state)
         {
-            if (!photonView.IsMine) return; // 본인만 실행
-            CatchingFire = true;
-            photonView.RPC("PlayCatchAnimation", RpcTarget.AllViaServer);
-
-            // 물체의 PhotonView 가져오기
-            PhotonView objPhotonView = obj.GetComponent<PhotonView>();
-            if (objPhotonView != null && !objPhotonView.IsMine)
-            {
-                objPhotonView.TransferOwnership(PhotonNetwork.LocalPlayer);
-            }
-
-            heldObject = obj;
-            obj.GetComponent<Rigidbody>().isKinematic = true;
-            obj.transform.position = holdPoint.position;
-            obj.transform.parent = holdPoint;
+            CatchingFire = state;
         }
-
     }
 }

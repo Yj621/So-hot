@@ -14,9 +14,10 @@ GameObject:
   - component: {fileID: 4655223306050566464}
   - component: {fileID: 441047806118719105}
   - component: {fileID: -926897260975875756}
+  - component: {fileID: -7103184671131500057}
   m_Layer: 6
   m_Name: Cherry
-  m_TagString: Destroyable
+  m_TagString: Trap
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -153,6 +154,27 @@ MonoBehaviour:
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!135 &-7103184671131500057
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 129877247698336699}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.13178574
+  m_Center: {x: 0, y: 0.018653601, z: -0.03141388}
 --- !u!1 &671781522471704341
 GameObject:
   m_ObjectHideFlags: 0
