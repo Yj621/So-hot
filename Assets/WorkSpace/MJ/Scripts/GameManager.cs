@@ -11,7 +11,8 @@ public class GameManager : MonoBehaviourPun
 
     public List<Transform> spawnPoints; //스폰 포인트
     public GameObject player; //캐릭터 생성 시점에 받아온 player obj
-    private PhotonView photonView; //player의 포톤뷰
+    private PhotonView gmPv; //GameManager의 포톤뷰 
+    private PhotonView playerPv; //플레이어의 포톤뷰
     public bool[] deadPlayers; //플레이어 전원 죽음 상태 기록
     private bool allPlayerDead; //플레이어 전원 사망 여부 체크
     public Transform fireSavePoint; //현재 저장된 fire 세이브 포인트의 위치 정보
@@ -28,17 +29,17 @@ public class GameManager : MonoBehaviourPun
         {
             Destroy(gameObject);
         }
-
+        gmPv = GetComponent<PhotonView>();
     }
 
     public void SetPlayerPhotonView(GameObject newPlayer)
     {
         player = newPlayer;
-        photonView = player.GetComponent<PhotonView>();
+        playerPv = player.GetComponentInChildren<PhotonView>();
 
         if (PhotonNetwork.IsMasterClient)
         {
-            photonView.RPC("Init", RpcTarget.All);
+            gmPv.RPC("Init", RpcTarget.All);
         }
     }
 
@@ -66,8 +67,8 @@ public class GameManager : MonoBehaviourPun
             deadPlayers[i] = false;
         }
         allPlayerDead = false;
-        photonView.RPC("InitInventory", RpcTarget.All); 
-        photonView.RPC("Init", RpcTarget.All);
+        playerPv.RPC("InitInventory", RpcTarget.All);
+        gmPv.RPC("Init", RpcTarget.All);
 
     }
 
