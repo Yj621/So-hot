@@ -11,11 +11,10 @@ public class GameManager : MonoBehaviourPun
 
     public List<Transform> spawnPoints; //스폰 포인트
     public GameObject player; //캐릭터 생성 시점에 받아온 player obj
-    private bool isOnFire = Fire.Instance.isOnFire; //불의 활성화 여부 확인
     private PhotonView photonView; //player의 포톤뷰
     public bool[] deadPlayers; //플레이어 전원 죽음 상태 기록
     private bool allPlayerDead; //플레이어 전원 사망 여부 체크
-    public Vector3 fireSavePoint; //현재 저장된 fire 세이브 포인트의 위치 정보
+    public Transform fireSavePoint; //현재 저장된 fire 세이브 포인트의 위치 정보
 
 
     void Awake()
@@ -31,10 +30,6 @@ public class GameManager : MonoBehaviourPun
 
         playerNumber = (int)GetTag(PhotonNetwork.LocalPlayer, "Number");
 
-        //fireSavePoint = Fire.Instance.firstFirePos;
-
-        //TO-DO: On game start, all player's start positions have to be saved at 'spawnPoint[:4]'
-
         photonView = player.GetComponent<PhotonView>();
 
         if (PhotonNetwork.IsMasterClient)
@@ -48,7 +43,7 @@ public class GameManager : MonoBehaviourPun
     void Init()
     {
         Fire.Instance.isOnFire = true;
-        Fire.Instance.gameObject.transform.position = fireSavePoint;
+        Fire.Instance.gameObject.transform.position = fireSavePoint.position;
         player.gameObject.transform.position = spawnPoints[playerNumber].position;
     }
 
@@ -83,7 +78,7 @@ public class GameManager : MonoBehaviourPun
                     AllPlayerRespawn();
                 }
             }
-            if (!isOnFire)
+            if (!Fire.Instance.isOnFire)
             {
                 AllPlayerRespawn();
             }

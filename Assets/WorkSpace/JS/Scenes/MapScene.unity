@@ -35624,13 +35624,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerNumber: 0
   spawnPoints:
-  - {fileID: 712911641}
-  - {fileID: 635385496}
-  - {fileID: 418642128}
-  - {fileID: 1121394625}
+  - {fileID: 1946051754}
+  - {fileID: 890589648}
+  - {fileID: 739376634}
+  - {fileID: 1272164502}
   player: {fileID: 0}
   deadPlayers: 
-  fireSavePoint: {x: 0, y: 0, z: 0}
+  fireSavePoint: {fileID: 629093724}
 --- !u!4 &734441382
 Transform:
   m_ObjectHideFlags: 0
