@@ -82,6 +82,17 @@ MonoBehaviour:
   - GaugeStop
   - PlayAnyAnimation
   - SetPlayerParentRPC
+  - SetCatchingFire
+  - CatchObject
+  - SetKinematicState
+  - FireOff
+  - ResetFire
+  - SetGroundState
+  - SyncFireState
+  - ReleaseThrow
+  - UpdateHeldObjectPosition
+  - UpdateHeldObjectTransform
+  - RPC_SetHeldState
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

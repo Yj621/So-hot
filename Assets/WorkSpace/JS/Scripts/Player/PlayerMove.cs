@@ -199,6 +199,7 @@ namespace JS.PlayerMove
 
                     if (isThrowingReady) // 차징 중이었으면 던지기
                     {
+                        photonView.RPC("PlayThrowAnimation", RpcTarget.AllViaServer);
                         throwDirection = Camera.main.transform.forward;
                         throwForce = Mathf.Lerp(minThrowForce, maxThrowForce, UIManager.Instance.currentThrow / UIManager.Instance.maxThrow);
                     }
@@ -208,13 +209,21 @@ namespace JS.PlayerMove
                         throwDirection = Vector3.down;
                         throwForce = minThrowForce;
                     }
-                    photonView.RPC("ThrowObjectRPC", RpcTarget.AllViaServer, throwPosition, throwDirection, throwForce);
+                    int heldObjectViewID = heldObject.GetComponent<PhotonView>().ViewID;
+                    photonView.RPC("ThrowObjectRPC", RpcTarget.AllViaServer, heldObjectViewID, throwPosition, throwDirection, throwForce);
                     isThrowingReady = false;
                 }
+
+                StartCoroutine(WaitForHeatGaugeReset());
             }
 
-            if (UIManager.Instance.heatGauge == 0 && wasOverHeat)
+            IEnumerator WaitForHeatGaugeReset()
             {
+                // heatGauge가 0이 아닐 동안 매 프레임 대기
+                while (UIManager.Instance.heatGauge > 0)
+                {
+                    yield return null;
+                }
                 wasOverHeat = false;
             }
 
@@ -256,10 +265,12 @@ namespace JS.PlayerMove
         }
         private void OnTriggerEnter(Collider other)
         {
+            if (!photonView.IsMine) return;
             if (isThrowing) return;
 
             if (!wasOverHeat) // 과열 시 잡을 수 없음
             {
+                if (wasOverHeat) return;
                 if (other.CompareTag("Fire") && !isDie && !isGhost)
                 {
                     CatchObject(other.gameObject);
@@ -413,6 +424,29 @@ namespace JS.PlayerMove
             }
         }
 
+        private void CatchObject(GameObject obj)
+        {
+            if (!photonView.IsMine) return;
+            if (wasOverHeat) return;
+
+            photonView.RPC("SetCatchingFire", RpcTarget.AllBuffered, true);
+            photonView.RPC("PlayCatchAnimation", RpcTarget.AllViaServer);
+
+            PhotonView objPhotonView = obj.GetComponent<PhotonView>();
+            if (objPhotonView != null && !objPhotonView.IsMine)
+            {
+                objPhotonView.RequestOwnership();
+            }
+
+            heldObject = obj;
+            Rigidbody rb = obj.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.isKinematic = true;
+            }
+            // 오브젝트를 holdPoint의 자식으로 설정
+            objPhotonView.RPC("RPC_SetHeldState", RpcTarget.AllBuffered, photonView.ViewID);
+        }
 
         public void ReleaseThrow()
         {
@@ -423,38 +457,48 @@ namespace JS.PlayerMove
                 Vector3 throwDirection = Camera.main.transform.forward; // 던지는 방향 (플레이어 시점)
                 float throwForce = Mathf.Lerp(minThrowForce, maxThrowForce, UIManager.Instance.currentThrow / UIManager.Instance.maxThrow);
 
-                photonView.RPC("ThrowObjectRPC", RpcTarget.AllViaServer, throwPosition, throwDirection, throwForce);
+                int heldObjectViewID = heldObject.GetComponent<PhotonView>().ViewID;
+                photonView.RPC("ThrowObjectRPC", RpcTarget.AllViaServer, heldObjectViewID, throwPosition, throwDirection, throwForce);
 
                 isThrowingReady = false;
                 isThrowing = true;
-
                 photonView.RPC("PlayThrowAnimation", RpcTarget.AllViaServer);
                 photonView.RPC("SetCatchingFire", RpcTarget.AllBuffered, false);
             }
         }
 
         [PunRPC]
-        void ThrowObjectRPC(Vector3 throwPosition, Vector3 throwDirection, float throwForce)
+        void ThrowObjectRPC(int heldObjectViewID, Vector3 throwPosition, Vector3 throwDirection, float throwForce)
         {
-            if (heldObject == null) return;
+            // 전달받은 ViewID를 이용해 물체를 찾음
+            PhotonView objPhotonView = PhotonView.Find(heldObjectViewID);
+            if (objPhotonView == null) return;
+            GameObject obj = objPhotonView.gameObject;
+            obj.transform.parent = null;
 
-            Rigidbody rb = heldObject.GetComponent<Rigidbody>();
+            Rigidbody rb = obj.GetComponent<Rigidbody>();
             if (rb != null)
             {
-                heldObject.transform.position = throwPosition;
+                // 던지기 시작 위치로 설정 후 물리 적용
+                obj.transform.position = throwPosition;
                 rb.isKinematic = false;
                 rb.AddForce(throwDirection * throwForce, ForceMode.Impulse);
             }
 
-            // 소유권 해제
-            PhotonView objPhotonView = heldObject.GetComponent<PhotonView>();
-            if (objPhotonView != null && objPhotonView.IsMine)
+            // 만약 현재 소유한 클라이언트라면, 마스터에게 소유권을 이전
+            if (objPhotonView.IsMine)
             {
-                objPhotonView.TransferOwnership(PhotonNetwork.MasterClient); // 마스터 클라이언트에게 돌려주기
+                objPhotonView.TransferOwnership(PhotonNetwork.MasterClient);
             }
 
-            heldObject.transform.parent = null;
-            heldObject = null;
+            // 물체의 부모 해제
+            obj.transform.parent = null;
+
+            // 각 클라이언트에서 보유중인 heldObject가 해당 물체라면 null로 초기화
+            if (heldObject == obj)
+            {
+                heldObject = null;
+            }
             CatchingFire = false;
         }
 
@@ -504,32 +548,6 @@ namespace JS.PlayerMove
         {
             transform.SetParent(playerGroup);
         }
-
-        private void CatchObject(GameObject obj)
-        {
-            if (!photonView.IsMine) return; // 본인만 실행
-
-            if (obj.CompareTag("Fire") && CatchingFire == true)
-            {
-                return;
-            }
-
-            photonView.RPC("SetCatchingFire", RpcTarget.AllBuffered, true);
-            photonView.RPC("PlayCatchAnimation", RpcTarget.AllViaServer);
-
-            // 물체의 PhotonView 가져오기
-            PhotonView objPhotonView = obj.GetComponent<PhotonView>();
-            if (objPhotonView != null && !objPhotonView.IsMine)
-            {
-                objPhotonView.RequestOwnership(); // 소유권 요청
-            }
-
-            heldObject = obj;
-            obj.GetComponent<Rigidbody>().isKinematic = true;
-            obj.transform.position = holdPoint.position;
-            obj.transform.parent = holdPoint;
-        }
-
 
         [PunRPC]
         void SetCatchingFire(bool state)
