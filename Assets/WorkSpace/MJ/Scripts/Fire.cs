@@ -8,16 +8,19 @@ public class Fire : MonoBehaviourPun
     public bool isOnFire = true; //불이 켜져 있는지 확인
     public bool isOnGround = false; //불이 바닥에 있는지 여부 확인
     public float timer = 5f; // 불이 바닥에서 유지되는 시간
-    public Vector3 firstFirePos; //불이 처음 로드될 때의 위치
 
-    
+
     private void Awake()
     {
-        firstFirePos = transform.position; //초기 위치 저장
-    }
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
 
-    private void Start()
-    {
         if (photonView.IsMine)
         {
             //불의 상태를 모든 클라이언트에서 동기화
@@ -94,7 +97,7 @@ public class Fire : MonoBehaviourPun
         isOnFire = true;
         isOnGround = false;
         timer = 5f;
-        transform.position = firstFirePos; //처음 위치로 되돌리기
+        gameObject.transform.position = GameManager.Instance.fireSavePoint.position;
     }
 
     [PunRPC]
@@ -104,7 +107,7 @@ public class Fire : MonoBehaviourPun
         isOnGround = groundState;
         timer = fireTimer;
     }
-    
+
 
     [PunRPC]
     public void RPC_SetHeldState(int catcherPhotonViewID)
