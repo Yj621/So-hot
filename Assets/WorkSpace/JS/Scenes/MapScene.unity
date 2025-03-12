@@ -35629,8 +35629,9 @@ MonoBehaviour:
   - {fileID: 739376634}
   - {fileID: 1272164502}
   player: {fileID: 0}
-  deadPlayers: 
+  deadPlayers: 00000000
   fireSavePoint: {fileID: 629093724}
+  isOnFire: 1
 --- !u!4 &734441382
 Transform:
   m_ObjectHideFlags: 0
