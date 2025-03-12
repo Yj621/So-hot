@@ -1,4 +1,5 @@
 using Photon.Pun;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Fire : MonoBehaviourPun
@@ -60,7 +61,6 @@ public class Fire : MonoBehaviourPun
         if (!isOnFire) return;
 
         isOnFire = false;
-        GameManager.Instance.photonView.RPC("AllPlayerRespawn", RpcTarget.All);
     }
 
     private void Update()
