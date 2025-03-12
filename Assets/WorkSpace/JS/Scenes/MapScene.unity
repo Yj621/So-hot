@@ -39665,6 +39665,9 @@ MonoBehaviour:
   maxStamina: 100
   currentStamina: 100
   staminaDrainRate: 10
+  initialTime: 15
+  dieTimerPanel: {fileID: 1249126763}
+  timerText: {fileID: 1249980919}
   currentThrow: 0
   maxThrow: 10
   ThrowIncreaseGauge: 10
@@ -58127,7 +58130,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1249126764}
   - component: {fileID: 1249126767}
-  - component: {fileID: 1249126766}
   - component: {fileID: 1249126765}
   m_Layer: 5
   m_Name: Die_Timer
@@ -58188,20 +58190,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &1249126766
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1249126763}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 971ef1bf31998a54eb13c8d65074344d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  initialTime: 15
-  timerText: {fileID: 1249980919}
 --- !u!222 &1249126767
 CanvasRenderer:
   m_ObjectHideFlags: 0
