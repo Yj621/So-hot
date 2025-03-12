@@ -14,7 +14,7 @@ public class SavePoint : MonoBehaviour
         if (other.CompareTag("Fire"))
         {
             gm.spawnPoints = spawnPoints;
-            gm.fireSavePoint = firePoint.position;
+            gm.fireSavePoint = firePoint;
             fire.gameObject.transform.position = firePoint.position;
         }
     }
