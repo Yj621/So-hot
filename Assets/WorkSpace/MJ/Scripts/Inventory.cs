@@ -24,8 +24,8 @@ public class Inventory : MonoBehaviour
         yield return new WaitForSeconds(5f); // 네트워크 동기화가 완료될 시간을 확보
         itemUser = GetComponent<PlayerMove>();
 
-        GameObject frontInventoryObj = GameObject.Find("Front_Inventory");
-        GameObject terminalInventoryObj = GameObject.Find("Terminal_Inventory");
+        GameObject frontInventoryObj = GameObject.Find("Front");
+        GameObject terminalInventoryObj = GameObject.Find("Terminal");
         if (itemUser == null)
         {
             Debug.LogError("PlayerController를 찾을 수 없음!");
