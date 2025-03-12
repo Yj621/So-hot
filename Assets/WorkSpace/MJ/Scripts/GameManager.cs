@@ -30,10 +30,6 @@ public class GameManager : MonoBehaviourPun
 
         playerNumber = (int)GetTag(PhotonNetwork.LocalPlayer, "Number");
 
-        //fireSavePoint = Fire.Instance.firstFirePos;
-
-        //TO-DO: On game start, all player's start positions have to be saved at 'spawnPoint[:4]'
-
         photonView = player.GetComponent<PhotonView>();
 
         if (PhotonNetwork.IsMasterClient)
