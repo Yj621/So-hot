@@ -1,57 +1,57 @@
-using UnityEngine;
+//using UnityEngine;
 
-namespace KJ.Player
-{
-    [RequireComponent(typeof(Animator))]
-    public class PlayerAnimationController : MonoBehaviour
-    {
-        private Animator animator;
-        private PlayerMovement playerMovement;
-        private bool isDead = false; // »ç¸Á »óÅÂ È®ÀÎ¿ë
+//namespace KJ.Player
+//{
+//    [RequireComponent(typeof(Animator))]
+//    public class PlayerAnimationController : MonoBehaviour
+//    {
+//        private Animator animator;
+//        private PlayerMovement playerMovement;
+//        private bool isDead = false; // ì‚¬ë§ ìƒíƒœ í™•ì¸ìš©
 
-        private void Start()
-        {
-            animator = GetComponent<Animator>();
-            playerMovement = GetComponent<PlayerMovement>();
-        }
+//        private void Start()
+//        {
+//            animator = GetComponent<Animator>();
+//            playerMovement = GetComponent<PlayerMovement>();
+//        }
 
-        private void Update()
-        {
-            if (isDead) return; // »ç¸Á »óÅÂ¿¡¼­´Â ¾Ö´Ï¸ŞÀÌ¼Ç ¾÷µ¥ÀÌÆ® Áß´Ü
+//        private void Update()
+//        {
+//            if (isDead) return; // ì‚¬ë§ ìƒíƒœì—ì„œëŠ” ì• ë‹ˆë©”ì´ì…˜ ì—…ë°ì´íŠ¸ ì¤‘ë‹¨
 
-            // ÀÌµ¿ ¼Óµµ¸¦ ¾Ö´Ï¸ŞÀÌ¼Ç ºí·»µå Æ®¸®·Î Àü´Ş
-            float speed = playerMovement.GetCurrentSpeedNormalized();
-            animator.SetFloat("Speed", speed);
+//            // ì´ë™ ì†ë„ë¥¼ ì• ë‹ˆë©”ì´ì…˜ ë¸”ë Œë“œ íŠ¸ë¦¬ë¡œ ì „ë‹¬
+//            float speed = playerMovement.GetCurrentSpeedNormalized();
+//            animator.SetFloat("Speed", speed);
 
-            // Á¡ÇÁ »óÅÂ È®ÀÎÇÏ¿© ¾Ö´Ï¸ŞÀÌ¼Ç ¹İ¿µ
-            animator.SetBool("isGrounded", playerMovement.IsGrounded);
-        }
+//            // ì í”„ ìƒíƒœ í™•ì¸í•˜ì—¬ ì• ë‹ˆë©”ì´ì…˜ ë°˜ì˜
+//            animator.SetBool("isGrounded", playerMovement.IsGrounded);
+//        }
 
-        /// <summary>
-        /// ÇÃ·¹ÀÌ¾î »ç¸Á ¾Ö´Ï¸ŞÀÌ¼Ç ½ÇÇà
-        /// </summary>
-        public void PlayDeathAnimation()
-        {
-            if (animator != null && !isDead)
-            {
-                isDead = true;
-                animator.SetTrigger("Die");
-                Debug.Log("»ç¸Á ¾Ö´Ï¸ŞÀÌ¼Ç ½ÇÇà");
-            }
-        }
+//        /// <summary>
+//        /// í”Œë ˆì´ì–´ ì‚¬ë§ ì• ë‹ˆë©”ì´ì…˜ ì‹¤í–‰
+//        /// </summary>
+//        public void PlayDeathAnimation()
+//        {
+//            if (animator != null && !isDead)
+//            {
+//                isDead = true;
+//                animator.SetTrigger("Die");
+//                Debug.Log("ì‚¬ë§ ì• ë‹ˆë©”ì´ì…˜ ì‹¤í–‰");
+//            }
+//        }
 
-        /// <summary>
-        /// ÇÃ·¹ÀÌ¾î ºÎÈ° ¾Ö´Ï¸ŞÀÌ¼Ç ½ÇÇà
-        /// </summary>
-        public void PlayReviveAnimation()
-        {
-            if (animator != null && isDead)
-            {
-                isDead = false;
-                animator.ResetTrigger("Die"); // »ç¸Á Æ®¸®°Å ÇØÁ¦
-                animator.SetTrigger("Revive"); // ºÎÈ° Æ®¸®°Å ½ÇÇà
-                Debug.Log("ºÎÈ° ¾Ö´Ï¸ŞÀÌ¼Ç ½ÇÇà");
-            }
-        }
-    }
-}
+//        /// <summary>
+//        /// í”Œë ˆì´ì–´ ë¶€í™œ ì• ë‹ˆë©”ì´ì…˜ ì‹¤í–‰
+//        /// </summary>
+//        public void PlayReviveAnimation()
+//        {
+//            if (animator != null && isDead)
+//            {
+//                isDead = false;
+//                animator.ResetTrigger("Die"); // ì‚¬ë§ íŠ¸ë¦¬ê±° í•´ì œ
+//                animator.SetTrigger("Revive"); // ë¶€í™œ íŠ¸ë¦¬ê±° ì‹¤í–‰
+//                Debug.Log("ë¶€í™œ ì• ë‹ˆë©”ì´ì…˜ ì‹¤í–‰");
+//            }
+//        }
+//    }
+//}
