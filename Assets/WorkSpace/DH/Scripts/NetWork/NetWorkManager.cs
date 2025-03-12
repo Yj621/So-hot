@@ -10,6 +10,7 @@ using static TotalMultiManager;
 using System.Collections;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 using Donghyun.Builder;
+using UnityEngine.InputSystem;
 
 
 namespace Donghyun.Network
@@ -41,6 +42,10 @@ namespace Donghyun.Network
         [SerializeField] private GameObject readyButtonObj;
         [SerializeField] private Button exitButton;
 
+        [Header("----- 씬 이동 관련 -----")]
+        [SerializeField] private string nextScene;
+        [SerializeField] private string preScene;
+
         private static NetWorkManager instance;
 
         private PhotonView pv; //포톤 뷰
@@ -64,6 +69,8 @@ namespace Donghyun.Network
 
         void Awake()
         {
+            SetTag("LoadLobby", true);
+
             instance = this;
 
             RoomInitSetting(); //방 초기 포톤 설정
@@ -126,6 +133,8 @@ namespace Donghyun.Network
 
         private void PlayerInitSetting()
         {
+            Debug.Log("플레이어 생성 로직 실행");
+
             //플레이어 생성 후 변수 초기화
             player = PhotonNetwork.Instantiate(spawnPrefabName, Vector3.zero, Quaternion.identity);
 
@@ -141,7 +150,14 @@ namespace Donghyun.Network
             if (master())
             {
                 MasterSetting();
-                emptyPlayer.slot = new SortedSet<int> { 0, 1, 2, 3 };
+                if (HasTag("Number"))
+                {
+                    ConvertJsonToEmptyPlayerSlot();
+                }
+                else
+                {
+                    emptyPlayer.slot = new SortedSet<int> { 0, 1, 2, 3 };
+                }
             }
             else
             {
@@ -158,15 +174,23 @@ namespace Donghyun.Network
 
 
             //플레이어의 본인 슬롯을 할당
-            playerNumber = emptyPlayer.slot.Min;
-            SetTag("Number", playerNumber, PhotonNetwork.LocalPlayer);
+            if (!HasTag("Number"))
+            {
+                playerNumber = emptyPlayer.slot.Min;
+                Debug.Log("슬롯" + emptyPlayer.slot.Min);
+                SetTag("Number", playerNumber, PhotonNetwork.LocalPlayer);
+                emptyPlayer.slot.Remove(playerNumber);
 
-            emptyPlayer.slot.Remove(playerNumber);
+                //빈 슬롯 할당 후 커스텀 프로퍼티 바꾸기
+                ConvertEmptyPlayerSlotToJson();
+            }
+            else
+            {
+                playerNumber = (int)GetTag(PhotonNetwork.LocalPlayer, "Number");
+            }
+            
             playerSetting.SetPlayerSlotRPC(playerNumber, RpcTarget.AllBufferedViaServer);
             SetTag(ActorNumberString, playerNumber, PhotonNetwork.LocalPlayer);
-
-            //빈 슬롯 할당 후 커스텀 프로퍼티 바꾸기
-            ConvertEmptyPlayerSlotToJson();
 
             //본인이므로 이름을 빨간색으로 만들어 줌
             playerSetting.SetNickNameColor(Color.red);
@@ -208,10 +232,12 @@ namespace Donghyun.Network
         //방에서 완전히 떠난 뒤 실행
         public override void OnLeftRoom()
         {
+            Debug.Log("LobbyScene - 인원 퇴장 (본인)");
+
             PhotonNetwork.AutomaticallySyncScene = false;
 
             PhotonNetwork.Disconnect();
-            SceneManager.LoadScene("StartScene");
+            SceneManager.LoadScene(preScene);
         }
 
         //누군가 방을 들어올때
@@ -258,12 +284,13 @@ namespace Donghyun.Network
         //게임 실행시 코루틴
         private IEnumerator GameStartRoutine()
         {
+            Debug.Log("게임 시작");
             // LobbyVoice의 OnLeftRoom을 수동으로 호출하여 DelayDestroy를 실행
             if (LobbyVoice.Instance != null)
             {
                 LobbyVoice.Instance.DestroyVoiceManager(); // OnLeftRoom 호출하여 DelayDestroy 실행
             }
-
+            
             ReadyManager.Instance.SetPlayerInfoRPC();
             PhotonNetwork.CurrentRoom.IsOpen = false;  // 방을 닫아 새로운 플레이어가 못 들어오게 함
             PhotonNetwork.CurrentRoom.IsVisible = false; // 로비에서 방이 보이지 않도록 설정
@@ -271,7 +298,7 @@ namespace Donghyun.Network
 
             yield return HasPlayerInfo();
 
-            PhotonNetwork.LoadLevel("MapScene");
+            PhotonNetwork.LoadLevel(nextScene);
         }
 
         private IEnumerator HasPlayerInfo()

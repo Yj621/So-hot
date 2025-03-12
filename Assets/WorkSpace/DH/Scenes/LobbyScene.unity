@@ -3095,6 +3095,8 @@ MonoBehaviour:
   startButtonObj: {fileID: 1528170916}
   readyButtonObj: {fileID: 645133138}
   exitButton: {fileID: 1359392860}
+  nextScene: Test
+  preScene: StartScene
 --- !u!4 &636437296
 Transform:
   m_ObjectHideFlags: 0
@@ -7087,7 +7089,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1653983577
 MonoBehaviour:
   m_ObjectHideFlags: 0
