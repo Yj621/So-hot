@@ -28,16 +28,19 @@ public class GameManager : MonoBehaviourPun
             Destroy(gameObject);
         }
 
-        playerNumber = (int)GetTag(PhotonNetwork.LocalPlayer, "Number");
+    }
 
+    public void SetPlayerPhotonView(GameObject newPlayer)
+    {
+        player = newPlayer;
         photonView = player.GetComponent<PhotonView>();
 
         if (PhotonNetwork.IsMasterClient)
         {
             photonView.RPC("Init", RpcTarget.All);
         }
-
     }
+
 
     [PunRPC]
     void Init()
