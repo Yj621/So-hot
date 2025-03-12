@@ -147,6 +147,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a3af15b6386bb64f93fc4afc21de35c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Character: []
   readyText: {fileID: 7898793997718039915}
   masterText: {fileID: 4063267418618792985}
   nameText: {fileID: 4311983420818030590}
