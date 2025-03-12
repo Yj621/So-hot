@@ -1,4 +1,5 @@
 using Photon.Pun;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Fire : MonoBehaviourPun
@@ -59,13 +60,16 @@ public class Fire : MonoBehaviourPun
 
         isOnFire = false;
         isOnGround = false; //바닥에 있을 필요 없음
-        GameManager.Instance.photonView.RPC("AllPlayerRespawn", RpcTarget.All);
     }
 
     private void Update()
     {
         if (!photonView.IsMine) return;
 
+        if (!isOnFire)
+        {
+            GameManager.Instance.isOnFire = false;
+        }
         if (isOnGround)
         {
             timer -= Time.deltaTime;
