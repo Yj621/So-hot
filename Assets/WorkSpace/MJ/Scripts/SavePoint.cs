@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class SavePoint : MonoBehaviour
 {
+
     [SerializeField] List<Transform> spawnPoints;
     [SerializeField] Transform firePoint;
 
@@ -14,6 +15,15 @@ public class SavePoint : MonoBehaviour
         {
             GameManager.Instance.spawnPoints = spawnPoints;
             GameManager.Instance.fireSavePoint = firePoint;
+            Fire.Instance.isFireOnSP = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Fire"))
+        {
+            Fire.Instance.isFireOnSP = false;
         }
     }
 }
