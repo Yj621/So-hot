@@ -94,6 +94,8 @@ MonoBehaviour:
   - UpdateHeldObjectTransform
   - RPC_SetHeldState
   - StartActivateTrap
+  - SetBamBooVelocity
+  - RpcSpwanBamBoo
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

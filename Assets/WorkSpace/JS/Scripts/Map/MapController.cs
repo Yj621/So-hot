@@ -102,18 +102,28 @@ public class MapController : MonoBehaviourPunCallbacks
         {
             Vector3 spawnPosition = GetRandomPointFromCollider(BamBooCollider[i]);
             Quaternion rotation = Quaternion.Euler(0, 0, 90);
-            GameObject bamBoo = PhotonNetwork.Instantiate(BamBooPrefab.name, spawnPosition, rotation);
-            Rigidbody rb = bamBoo.GetComponent<Rigidbody>();
 
-            if (rb != null)
-            {
-                Vector3 direction = (i == 0) ? Vector3.left : Vector3.right;
-                rb.linearVelocity = direction * BamBooSpeed;
-            }
-
-            StartCoroutine(DestroyAfterTime(bamBoo, BamBooDuration));
+            // 모든 클라이언트에서 실행하도록 RPC 호출
+            photonView.RPC("RpcSpwanBamBoo", RpcTarget.AllBuffered, spawnPosition, rotation);
         }
     }
+
+
+    [PunRPC]
+    void RpcSpwanBamBoo(Vector3 position, Quaternion rotation)
+    {
+        GameObject bamBoo = PhotonNetwork.Instantiate(BamBooPrefab.name, position, rotation);
+        Rigidbody rb = bamBoo.GetComponent<Rigidbody>();
+
+        if (rb != null)
+        {
+            Vector3 direction = position.x < 0 ? Vector3.right : Vector3.left;
+            rb.linearVelocity = direction * BamBooSpeed;
+        }
+
+        StartCoroutine(DestroyAfterTime(bamBoo, BamBooDuration));
+    }
+
 
     IEnumerator DestroyAfterTime(GameObject obj, float duration)
     {
