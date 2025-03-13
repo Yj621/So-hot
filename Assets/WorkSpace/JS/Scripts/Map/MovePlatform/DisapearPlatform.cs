@@ -14,15 +14,15 @@ public class DisappearPlatform : MonoBehaviourPunCallbacks
         platformRenderer = GetComponent<MeshRenderer>();
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        // 플레이어가 발판 위에 서면 작동
-        if (collision.gameObject.CompareTag("Player") && isActive)
+        if (other.CompareTag("Player") && isActive)
         {
             Debug.Log("플레이어가 발판을 밟음");
             photonView.RPC("StartDisappear", RpcTarget.All);
         }
     }
+
 
     [PunRPC]
     void StartDisappear()
