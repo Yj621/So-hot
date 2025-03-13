@@ -45,8 +45,6 @@ namespace Donghyun.Builder
             gm.SetPlayerPhotonView(player);
             gm.playerNumber = playerNumber;
 
-            player.GetComponent<PlayerMove>().playerGroup = playerGroup;
-            player.GetComponent<PlayerMove>().SetPlayerParentRPC();
 
             //나머지 파츠들을 합침
             //pv.RPC("AddParts", RpcTarget.AllViaServer, gm.player.GetComponent<PhotonView>().ViewID, playerSetting.type);
@@ -57,6 +55,9 @@ namespace Donghyun.Builder
         private IEnumerator StartGame()
         {
             yield return Loading();
+
+            player.GetComponentInChildren<PlayerMove>().playerGroup = playerGroup;
+            player.GetComponentInChildren<PlayerMove>().SetPlayerParentRPC();
 
             if (master())
             {

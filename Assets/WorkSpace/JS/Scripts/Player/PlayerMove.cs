@@ -71,11 +71,15 @@ namespace JS.PlayerMove
         private bool invincible = false;
         public Transform playerGroup;
 
+        private void Awake()
+        {
+            photonView = GetComponent<PhotonView>();
+        }
+
         private void Start()
         {
             controller = GetComponent<CharacterController>();
             animator = GetComponent<Animator>();
-            photonView = GetComponent<PhotonView>();
             UIManager.Instance.UpdateStaminaUI();
             originalMaterial = CharacterRenderer.material;
             StartCoroutine(FindInventoryWithDelay());
@@ -553,15 +557,15 @@ namespace JS.PlayerMove
             StartCoroutine(DieAndBeGhost());
         }
 
-        [PunRPC]
         public void SetPlayerParentRPC()
         {
             photonView.RPC("SetPlayerParent", RpcTarget.AllViaServer);
         }
 
+        [PunRPC]
         private void SetPlayerParent()
         {
-            transform.SetParent(playerGroup);
+            transform.parent.SetParent(playerGroup);
         }
 
         [PunRPC]

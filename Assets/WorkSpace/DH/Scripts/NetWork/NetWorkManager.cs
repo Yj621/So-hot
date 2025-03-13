@@ -195,6 +195,7 @@ namespace Donghyun.Network
         //본인이 방을 떠날 때
         public void LeaveRoom()
         {
+            PhotonNetwork.LocalPlayer.CustomProperties.Clear();
             PhotonNetwork.LeaveRoom();
         }
 
@@ -274,12 +275,7 @@ namespace Donghyun.Network
         private IEnumerator GameStartRoutine()
         {
             Debug.Log("게임 시작");
-            // LobbyVoice의 OnLeftRoom을 수동으로 호출하여 DelayDestroy를 실행
-            if (LobbyVoice.Instance != null)
-            {
-                LobbyVoice.Instance.DestroyVoiceManager(); // OnLeftRoom 호출하여 DelayDestroy 실행
-            }
-            
+
             ReadyManager.Instance.SetPlayerInfoRPC();
             PhotonNetwork.CurrentRoom.IsOpen = false;  // 방을 닫아 새로운 플레이어가 못 들어오게 함
             PhotonNetwork.CurrentRoom.IsVisible = false; // 로비에서 방이 보이지 않도록 설정

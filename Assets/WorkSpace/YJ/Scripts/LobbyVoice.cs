@@ -11,20 +11,6 @@ public class LobbyVoice : VoiceManager
 {
     [SerializeField] private Transform playerGroup; // PlayerGroup의 Transform
 
-    public static LobbyVoice Instance { get; private set; } // Singleton 인스턴스
-
-    protected override void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
-
     protected override void LateUpdate()
     {
         UpdateSpeakersList();

@@ -13,6 +13,8 @@ using ExitGames.Client.Photon;
 
 public abstract class VoiceManager : MonoBehaviourPunCallbacks
 {
+    public static VoiceManager Instance { get; private set; } // Singleton 인스턴스
+
     public GameObject[] players;  // 각 플레이어 GameObject
     public TextMeshProUGUI[] playerTexts;  // 각 플레이어의 TextMeshProUGUI 배열
 
@@ -29,8 +31,18 @@ public abstract class VoiceManager : MonoBehaviourPunCallbacks
     // 로컬 플레이어의 자체 음소거 상태 변수
     protected bool selfMuted = false;
 
-    protected virtual void Awake()
-    { }
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(Instance.gameObject);
+            Instance = this;
+        }
+    }
 
     protected virtual void Start()
     {
