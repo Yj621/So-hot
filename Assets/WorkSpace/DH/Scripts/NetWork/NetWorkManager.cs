@@ -9,8 +9,6 @@ using System;
 using static TotalMultiManager;
 using System.Collections;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
-using Donghyun.Builder;
-using UnityEngine.InputSystem;
 
 
 namespace Donghyun.Network
@@ -55,8 +53,6 @@ namespace Donghyun.Network
         //플레이어 개인이 소유하는 본인 변수들
         private int playerNumber;
         private bool isReady;
-        private int ActorNumber;
-        private string ActorNumberString;
         private GameObject player;
         private LobbyPlayer playerSetting;
         private Button startButton;
@@ -143,9 +139,6 @@ namespace Donghyun.Network
             ReadyManager.Instance.ResetSelection();
 
             playerSetting = player.GetComponent<LobbyPlayer>();
-
-            ActorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
-            ActorNumberString = ActorNumber.ToString();
         
             if (master())
             {
@@ -178,7 +171,7 @@ namespace Donghyun.Network
             {
                 playerNumber = emptyPlayer.slot.Min;
                 Debug.Log("슬롯" + emptyPlayer.slot.Min);
-                SetTag("Number", playerNumber, PhotonNetwork.LocalPlayer);
+                SetTag("Number", playerNumber);
                 emptyPlayer.slot.Remove(playerNumber);
 
                 //빈 슬롯 할당 후 커스텀 프로퍼티 바꾸기
@@ -190,7 +183,6 @@ namespace Donghyun.Network
             }
             
             playerSetting.SetPlayerSlotRPC(playerNumber, RpcTarget.AllBufferedViaServer);
-            SetTag(ActorNumberString, playerNumber, PhotonNetwork.LocalPlayer);
 
             //본인이므로 이름을 빨간색으로 만들어 줌
             playerSetting.SetNickNameColor(Color.red);
@@ -256,15 +248,12 @@ namespace Donghyun.Network
             RoomRenewal();
 
             ConvertJsonToEmptyPlayerSlot();
-            emptyPlayer.slot.Add((int)GetTag(otherPlayer, otherPlayer.ActorNumber.ToString()));
+            emptyPlayer.slot.Add((int)GetTag(otherPlayer, "Number"));
             ConvertEmptyPlayerSlotToJson();
 
             otherPlayer.CustomProperties.Clear();
 
             pv.RPC("SetStartButton", RpcTarget.MasterClient);
-
-            ht.Remove(otherPlayer.ActorNumber.ToString());
-            PhotonNetwork.CurrentRoom.SetCustomProperties(ht);
         }
 
         //방 정보 갱신
@@ -301,6 +290,7 @@ namespace Donghyun.Network
             PhotonNetwork.LoadLevel(nextScene);
         }
 
+        //플레이어 정보가 모두에게 세팅되어있는가 판별
         private IEnumerator HasPlayerInfo()
         {
             while (!AllhasTag("HasInfo")) { yield return null; }

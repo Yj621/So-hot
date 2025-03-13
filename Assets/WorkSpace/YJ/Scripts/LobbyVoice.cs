@@ -19,6 +19,10 @@ public class LobbyVoice : VoiceManager
         {
             Instance = this;
         }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     protected override void LateUpdate()
@@ -35,7 +39,7 @@ public class LobbyVoice : VoiceManager
 
     public void DestroyVoiceManager()
     {
-        StartCoroutine(DelayDestroy());
+        //StartCoroutine(DelayDestroy());
     }
 
     // 방을 나간 플레이어가 있을 때 호출되는 콜백
