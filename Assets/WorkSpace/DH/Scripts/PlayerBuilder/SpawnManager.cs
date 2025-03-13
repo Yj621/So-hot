@@ -40,7 +40,7 @@ namespace Donghyun.Builder
             player = PhotonNetwork.Instantiate("Character/"+playerSetting.type.ToString(), gm.spawnPoints[playerSetting.playerNumber].position, Quaternion.identity);
 
             //게임 매니저에 해당 플레이어를 넘겨준다
-            gm.player = player;
+            gm.SetPlayerPhotonView(player);
             gm.playerNumber = playerNumber;
 
             player.GetComponent<PlayerMove>().playerGroup = playerGroup;

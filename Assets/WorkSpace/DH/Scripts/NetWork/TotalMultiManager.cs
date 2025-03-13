@@ -52,6 +52,18 @@ public class TotalMultiManager
     }
 
     /// <summary>
+    /// 해당 키를 해당 유저가 가지고 있는지 리턴
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public static bool HasTag(string key, Player player = null)
+    {
+        if (player == null) player = PhotonNetwork.LocalPlayer;
+        if (player.CustomProperties[key] == null) return false;
+        else return true;
+    }
+
+    /// <summary>
     /// 방에 있는 모두가 해당 키를 가지고 있는지 리턴
     /// </summary>
     /// <param name="key"></param>

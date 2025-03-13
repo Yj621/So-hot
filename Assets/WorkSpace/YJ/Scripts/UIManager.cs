@@ -1,7 +1,8 @@
-using Photon.Pun;
+using System.Collections;
 using UnityEngine;
-using UnityEngine.InputSystem.XR;
 using UnityEngine.UI;
+using TMPro;
+
 
 namespace YJ.UIManager
 {
@@ -25,12 +26,17 @@ namespace YJ.UIManager
         public float currentStamina; // 현재 스태미나 값
         public float staminaDrainRate = 10f; // 스태미나 소모율
 
+        [Header("타이머 관련")]
+        [SerializeField] private float initialTime = 15.0f; // 초기 시간
+        [SerializeField] private GameObject dieTimerPanel;
+        private float time;
+        public TextMeshProUGUI timerText;
 
-        public float currentThrow= 0f;
+        [Header("던지는 게이지 관련")]
+        public float currentThrow = 0f;
         public float maxThrow = 100f;
         public float ThrowIncreaseGauge;
 
-       
 
         public static UIManager Instance { get; private set; }
 
@@ -48,6 +54,8 @@ namespace YJ.UIManager
             currentStamina = maxStamina;
         }
 
+
+        //뜨거움 게이지 관련 함수
 
         // 실제 뜨거움 게이지 업데이트 함수
         public void UpdateHotGauge(float currentHeat, float maxHeat)
@@ -67,17 +75,7 @@ namespace YJ.UIManager
         }
 
 
-        void Update()
-        {
-
-        }
-        /// <summary>
-        /// 불을 들고 있는 상태를 토글 (켜기/끄기)
-        /// </summary>
-
-        /// <summary>
-        /// 뜨거움 게이지 증가 (최대값을 초과하지 않도록 제한)
-        /// </summary>
+        //뜨거움 게이지 증가 (최대값을 초과하지 않도록 제한)
         public void IncreaseHeat(float amount)
         {
             if (gaugePause) return;
@@ -90,9 +88,7 @@ namespace YJ.UIManager
             UpdateHotUI(); // UI 갱신
         }
 
-        /// <summary>
-        /// 뜨거움 게이지 감소 (최소값을 아래로 내려가지 않도록 제한)
-        /// </summary>
+        //뜨거움 게이지 감소 (최소값을 아래로 내려가지 않도록 제한)
         public void DecreaseHeat(float amount)
         {
             heatGauge -= amount;
@@ -102,17 +98,13 @@ namespace YJ.UIManager
             UpdateHotUI(); // UI 갱신
         }
 
-        /// <summary>
-        /// 뜨거움 게이지가 최대치인지 확인
-        /// </summary>
+        //뜨거움 게이지가 최대치인지 확인
         public bool IsOverheated()
         {
             return heatGauge >= maxHeat;
         }
 
-        /// <summary>
-        /// 사망 후 뜨거움 게이지 초기화 및 불 제거
-        /// </summary>
+        //사망 후 뜨거움 게이지 초기화 및 불 제거
         public void ResetHeatOnDeath()
         {
             heatGauge = 0; // 게이지 0으로 초기화
@@ -122,14 +114,14 @@ namespace YJ.UIManager
             UpdateHotUI(); // UI 갱신
         }
 
-        /// <summary>
-        /// 핫게이지 UI 업데이트
-        /// </summary>
+        //핫게이지 UI 업데이트
         public void UpdateHotUI()
         {
             UpdateHotGauge(heatGauge, maxHeat); // 현재 게이지 상태를 UI에 반영
 
         }
+
+        //스태미나 관련 함수
 
         //스태미나 활성화
         public void ActiveStamina()
@@ -142,9 +134,7 @@ namespace YJ.UIManager
             staminaSlider.gameObject.SetActive(false);
         }
 
-        /// <summary>
-        /// 스태미나 감소
-        /// </summary>
+        //스태미나 감소
         public void DrainStamina()
         {
             currentStamina -= staminaDrainRate * Time.deltaTime;
@@ -155,16 +145,14 @@ namespace YJ.UIManager
             UpdateStaminaUI(); // UI 업데이트
         }
 
-        /// <summary>
-        /// 스태미나 회복
-        /// </summary>
+        //스태미나 회복
         public void RecoverStamina()
         {
-            if(currentStamina < maxStamina)
+            if (currentStamina < maxStamina)
             {
                 ActiveStamina();
                 currentStamina += staminaDrainRate * Time.deltaTime;
-                currentStamina = Mathf.Clamp(currentStamina, 0 , maxStamina);
+                currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
                 //Debug.Log("회복중,,");
             }
             else
@@ -174,9 +162,8 @@ namespace YJ.UIManager
 
             UpdateStaminaUI(); // UI 업데이트
         }
-        /// <summary>
-        /// 스태미나 UI 업데이트
-        /// </summary>
+
+        //스태미나 UI 업데이트
         public void UpdateStaminaUI()
         {
             UpdateStaminaGauge(currentStamina, maxStamina);
@@ -188,6 +175,9 @@ namespace YJ.UIManager
             currentStamina = maxStamina;
             UpdateStaminaUI(); // UI 업데이트
         }
+
+
+        //던지는 게이지 관련 함수
 
         public void ActiveThrow()
         {
@@ -224,6 +214,54 @@ namespace YJ.UIManager
             DeactiveThrow();
         }
 
+
+        //타이머 관련 함수      
+
+        // 타이머 ON  
+        public void TimerStart()
+        {
+            dieTimerPanel.SetActive(false);
+            ResetTimer();
+        }
+        private void ResetTimer()
+        {
+            StopAllCoroutines(); // 현재 실행 중인 코루틴 중지
+            time = initialTime; // 시간을 초기값으로 설정
+            timerText.color = new Color32(0x5A, 0x58, 0x55, 0xFF);
+            StartTimer(); // 타이머 다시 시작
+        }
+
+        private void StartTimer()
+        {
+            StartCoroutine(Countdown());
+        }
+
+        private IEnumerator Countdown()
+        {
+            while (time > 0)
+            {
+                int minutes = Mathf.FloorToInt(time / 60); // 분 계산
+                int seconds = Mathf.FloorToInt(time % 60); // 초 계산
+                timerText.text = $"{minutes:D2}:{seconds:D2}"; // 두 자리 분:초 형식
+
+                yield return new WaitForSeconds(1.0f);
+                time -= 1;
+                if (time < 5)
+                {
+                    timerText.color = Color.red;
+                }
+            }
+            timerText.text = "00:00";
+            TimerEnd();
+        }
+
+        private void TimerEnd()
+        {
+            //부활시 Die Timer 비활성화
+            dieTimerPanel.SetActive(true);
+            Debug.Log("타이머 끝, 부활");
+        }
     }
+    
 }
 
