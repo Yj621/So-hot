@@ -101649,50 +101649,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 799365562145348719, guid: 8349918ee544f7044b6eafcccbfea1ad, type: 3}
-      propertyPath: firstFirePos.y
-      value: 8.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 799365562145348719, guid: 8349918ee544f7044b6eafcccbfea1ad, type: 3}
-      propertyPath: firstFirePos.z
-      value: 483.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 982299073872257044, guid: 8349918ee544f7044b6eafcccbfea1ad, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 982299073872257044, guid: 8349918ee544f7044b6eafcccbfea1ad, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 982299073872257044, guid: 8349918ee544f7044b6eafcccbfea1ad, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 1811712653449597873, guid: 8349918ee544f7044b6eafcccbfea1ad, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 1811712653449597873, guid: 8349918ee544f7044b6eafcccbfea1ad, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 1811712653449597873, guid: 8349918ee544f7044b6eafcccbfea1ad, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 3521136160265644238, guid: 8349918ee544f7044b6eafcccbfea1ad, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 3521136160265644238, guid: 8349918ee544f7044b6eafcccbfea1ad, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 3521136160265644238, guid: 8349918ee544f7044b6eafcccbfea1ad, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 4
-      objectReference: {fileID: 0}
     - target: {fileID: 4055104585141388930, guid: 8349918ee544f7044b6eafcccbfea1ad, type: 3}
       propertyPath: m_Name
       value: Fire
@@ -101700,18 +101656,6 @@ PrefabInstance:
     - target: {fileID: 4411856739580619363, guid: 8349918ee544f7044b6eafcccbfea1ad, type: 3}
       propertyPath: sceneViewId
       value: 38
-      objectReference: {fileID: 0}
-    - target: {fileID: 7863272836624340914, guid: 8349918ee544f7044b6eafcccbfea1ad, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 7863272836624340914, guid: 8349918ee544f7044b6eafcccbfea1ad, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 7863272836624340914, guid: 8349918ee544f7044b6eafcccbfea1ad, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 8642893618799503238, guid: 8349918ee544f7044b6eafcccbfea1ad, type: 3}
       propertyPath: m_LocalPosition.x

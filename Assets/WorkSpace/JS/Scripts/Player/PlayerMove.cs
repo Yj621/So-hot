@@ -344,11 +344,26 @@ namespace JS.PlayerMove
             isDie = false;
             isGhost = true;
             CharacterRenderer.material = OverrideMaterial;
-            gameObject.layer = LayerMask.NameToLayer("Ghost");
+            SetLayerUpwards(gameObject, "Ghost");
+            UIManager.Instance.TimerStart();
             yield return new WaitForSeconds(15f);
             CharacterRenderer.material = originalMaterial;
-            gameObject.layer = LayerMask.NameToLayer("Default");
+            SetLayerUpwards(gameObject, "Default");
+            UIManager.Instance.TimerEnd();
             isGhost = false;
+        }
+
+        void SetLayerUpwards(GameObject obj, string layerName)
+        {
+            int layer = LayerMask.NameToLayer(layerName);
+
+            // 현재 오브젝트부터 부모까지 모든 레이어 변경
+            Transform parent = obj.transform;
+            while (parent != null)
+            {
+                parent.gameObject.layer = layer;
+                parent = parent.parent;  // 부모로 이동
+            }
         }
 
         IEnumerator FindInventoryWithDelay()
@@ -381,7 +396,7 @@ namespace JS.PlayerMove
 
         public void UseItem()
         {
-            if (!isDie)
+            if (!isDie || !isGhost)
             {
                 inventory.UseItem();
             }

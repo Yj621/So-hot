@@ -55,10 +55,10 @@ Material:
     m_Ints: []
     m_Floats:
     - _Amplitude: 1
-    - _Depthpower: 1
-    - _Emission: 2
+    - _Depthpower: 1.81
+    - _Emission: 3.37
     - _Frequency: 10
-    - _Opacity: 1
+    - _Opacity: 2.08
     - _QueueControl: 0
     - _QueueOffset: 0
     - _StartFrequency: 2

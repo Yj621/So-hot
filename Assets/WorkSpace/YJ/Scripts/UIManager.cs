@@ -220,7 +220,7 @@ namespace YJ.UIManager
         // 타이머 ON  
         public void TimerStart()
         {
-            dieTimerPanel.SetActive(false);
+            dieTimerPanel.SetActive(true);
             ResetTimer();
         }
         private void ResetTimer()
@@ -255,10 +255,10 @@ namespace YJ.UIManager
             TimerEnd();
         }
 
-        private void TimerEnd()
+        public void TimerEnd()
         {
             //부활시 Die Timer 비활성화
-            dieTimerPanel.SetActive(true);
+            dieTimerPanel.SetActive(false);
             Debug.Log("타이머 끝, 부활");
         }
     }
