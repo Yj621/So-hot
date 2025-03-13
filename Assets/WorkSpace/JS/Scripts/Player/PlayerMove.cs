@@ -343,13 +343,20 @@ namespace JS.PlayerMove
             yield return new WaitForSeconds(2f);
             isDie = false;
             isGhost = true;
+            
             CharacterRenderer.material = OverrideMaterial;
             SetLayerUpwards(gameObject, "Ghost");
-            UIManager.Instance.TimerStart();
+            if (photonView.IsMine)
+            {
+                UIManager.Instance.TimerStart();
+            }
             yield return new WaitForSeconds(15f);
             CharacterRenderer.material = originalMaterial;
             SetLayerUpwards(gameObject, "Default");
-            UIManager.Instance.TimerEnd();
+            if (photonView.IsMine)
+            {
+                UIManager.Instance.TimerEnd();
+            }
             isGhost = false;
         }
 

@@ -1629,7 +1629,9 @@ MonoBehaviour:
   isDie: 0
   isGhost: 0
   CharacterRenderer: {fileID: 7354986699373855016}
-  OverrideMaterial: {fileID: 2100000, guid: e616240333621b546b97ea78a1231a15, type: 2}
+  OverrideMaterial: {fileID: 2100000, guid: a3700889b6176874ba23b59b6cd3d206, type: 2}
+  characterMesh: {fileID: -3355657713455743321, guid: 387c2789a574d4e15afb62c91c98f62f, type: 3}
+  ghostMesh: {fileID: 8083076389491013506, guid: 4052bafe63c4eef489221dc973080238, type: 3}
   effectList:
   - {fileID: 7608125581476547228}
   - {fileID: 4930971725979236973}
