@@ -28,7 +28,6 @@ public class ItemManager : MonoBehaviourPun
         }
     }
 
-    [PunRPC]
     public void GaugeStop(PlayerMove player)
     {
         if (player.gaugeStopCoroutine != null)

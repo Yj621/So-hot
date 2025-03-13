@@ -12,6 +12,8 @@ namespace MJ.Item.ItemBox
 
         private void OnTriggerEnter(Collider other)
         {
+            if (!photonView.IsMine) return;
+
             if (other.CompareTag("Player"))
             {
                 int idx = Random.Range(0, items.Length);
