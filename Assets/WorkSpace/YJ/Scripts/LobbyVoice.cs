@@ -11,16 +11,6 @@ public class LobbyVoice : VoiceManager
 {
     [SerializeField] private Transform playerGroup; // PlayerGroup의 Transform
 
-    public static LobbyVoice Instance { get; private set; } // Singleton 인스턴스
-
-    protected override void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-    }
-
     protected override void LateUpdate()
     {
         UpdateSpeakersList();
@@ -35,7 +25,7 @@ public class LobbyVoice : VoiceManager
 
     public void DestroyVoiceManager()
     {
-        StartCoroutine(DelayDestroy());
+        //StartCoroutine(DelayDestroy());
     }
 
     // 방을 나간 플레이어가 있을 때 호출되는 콜백

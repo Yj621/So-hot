@@ -33,6 +33,14 @@ namespace YJ.Network
         [SerializeField] private GameObject roomListPrefab;
         private List<RoomInfo> cachedRoomList = new List<RoomInfo>(); // 방 목록 캐싱
 
+        private void Awake()
+        {
+            if(VoiceManager.Instance != null)
+            {
+                Destroy(VoiceManager.Instance.gameObject);
+            }
+        }
+
         void Start()
         {
             //포톤 연결 설정
