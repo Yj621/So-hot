@@ -7,6 +7,7 @@ public class Fire : MonoBehaviourPun
     public static Fire Instance;
     public bool isOnFire = true; //불이 켜져 있는지 확인
     public bool isOnGround = false; //불이 바닥에 있는지 여부 확인
+    public bool isFireOnSP; //불이 세이브 포인트 위에 있는지 여부 확인
     public float timer = 5f; // 불이 바닥에서 유지되는 시간
 
 
@@ -68,18 +69,12 @@ public class Fire : MonoBehaviourPun
     private void Update()
     {
         if (!photonView.IsMine) return;
-
-        if (!isOnFire)
-        {
-            GameManager.Instance.isOnFire = false;
-        }
-        if (isOnGround)
+        if (isOnGround && !isFireOnSP)
         {
             timer -= Time.deltaTime;
             if (timer <= 0)
             {
                 photonView.RPC("FireOff", RpcTarget.AllBuffered);
-                photonView.RPC("ResetFire", RpcTarget.AllBuffered);
             }
         }
     }
@@ -89,15 +84,6 @@ public class Fire : MonoBehaviourPun
     {
         isOnGround = state;
         if (state) timer = 5f; // 바닥에 떨어졌으면 타이머 리셋
-    }
-
-    [PunRPC]
-    void ResetFire()
-    {
-        isOnFire = true;
-        isOnGround = false;
-        timer = 5f;
-        gameObject.transform.position = GameManager.Instance.fireSavePoint.position;
     }
 
     [PunRPC]

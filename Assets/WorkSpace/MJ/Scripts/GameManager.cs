@@ -16,7 +16,6 @@ public class GameManager : MonoBehaviourPun
     public bool[] deadPlayers; //플레이어 전원 죽음 상태 기록
     private bool allPlayerDead; //플레이어 전원 사망 여부 체크
     public Transform fireSavePoint; //현재 저장된 fire 세이브 포인트의 위치 정보
-    public bool isOnFire = true; //불 켜짐 여부 확인
 
 
     void Awake()
@@ -34,12 +33,11 @@ public class GameManager : MonoBehaviourPun
 
     public void SetPlayerPhotonView(GameObject newPlayer)
     {
-        player = newPlayer;
-        playerPv = player.GetComponentInChildren<PhotonView>();
-
+        playerPv = newPlayer.GetComponentInChildren<PhotonView>();
+        player = playerPv.gameObject;
         if (PhotonNetwork.IsMasterClient)
         {
-            gmPv.RPC("Init", RpcTarget.All);
+            gmPv.RPC("Init", RpcTarget.AllViaServer);
         }
     }
 
@@ -47,10 +45,11 @@ public class GameManager : MonoBehaviourPun
     [PunRPC]
     void Init()
     {
-        isOnFire = true;
         Fire.Instance.isOnFire = true;
+        Fire.Instance.isOnGround = false;
+        Fire.Instance.timer = 5f;
+        player.transform.position = spawnPoints[playerNumber].position;
         Fire.Instance.gameObject.transform.position = fireSavePoint.position;
-        player.gameObject.transform.position = spawnPoints[playerNumber].position;
     }
 
     [PunRPC]
@@ -67,8 +66,8 @@ public class GameManager : MonoBehaviourPun
             deadPlayers[i] = false;
         }
         allPlayerDead = false;
-        playerPv.RPC("InitInventory", RpcTarget.All);
-        gmPv.RPC("Init", RpcTarget.All);
+        //playerPv.RPC("InitInventory", RpcTarget.All);
+        gmPv.RPC("Init", RpcTarget.AllViaServer);
 
     }
 
@@ -84,7 +83,7 @@ public class GameManager : MonoBehaviourPun
                     AllPlayerRespawn();
                 }
             }
-            if (!isOnFire)
+            if (!Fire.Instance.isOnFire)
             {
                 AllPlayerRespawn();
             }
