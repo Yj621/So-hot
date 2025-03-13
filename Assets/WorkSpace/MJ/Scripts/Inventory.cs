@@ -10,11 +10,20 @@ public class Inventory : MonoBehaviour
     Queue<ItemData> inventory = new Queue<ItemData>(); //인벤토리
     PlayerMove itemUser; //아이템 사용자(=플레이어 자신)
     public int effectNumber; //사용 아이템의 이펙트 인덱스
-    [SerializeField] Image frontInven; //인벤토리 앞칸 UI
-    [SerializeField] Image terminalInven; //인벤토리 뒷칸 UI
-    UIManager uiManager;
+    [SerializeField] Image frontInven; //인벤토리 앞칸 UI 이미지 컴포넌트
+    [SerializeField] Image terminalInven; //인벤토리 뒷칸 UI 이미지 컴포넌트
+    GameObject frontInventoryObj; //인벤토리 앞칸 UI 오브젝트
+    GameObject terminalInventoryObj; //인벤토리 앞칸 UI 오브젝트
+
     private void Start()
     {
+        frontInventoryObj = GameObject.Find("Front");
+        terminalInventoryObj = GameObject.Find("Terminal");
+        frontInven = frontInventoryObj.GetComponent<Image>();
+        terminalInven = terminalInventoryObj.GetComponent<Image>();
+        frontInventoryObj.SetActive(false);
+        terminalInventoryObj.SetActive(false);
+
         StartCoroutine(FindPlayerControllerWithDelay());
     }
 
@@ -24,14 +33,10 @@ public class Inventory : MonoBehaviour
         yield return new WaitForSeconds(5f); // 네트워크 동기화가 완료될 시간을 확보
         itemUser = GetComponent<PlayerMove>();
 
-        GameObject frontInventoryObj = GameObject.Find("Front");
-        GameObject terminalInventoryObj = GameObject.Find("Terminal");
         if (itemUser == null)
         {
             Debug.LogError("PlayerController를 찾을 수 없음!");
         }
-        frontInven = frontInventoryObj.GetComponent<Image>();
-        terminalInven = terminalInventoryObj.GetComponent<Image>();
     }
 
     public void GetItem(ItemData item)
@@ -40,14 +45,14 @@ public class Inventory : MonoBehaviour
         {
             inventory.Enqueue(item);
             frontInven.sprite = item.icon;
-            frontInven.gameObject.SetActive(true);
+            frontInventoryObj.SetActive(true);
         }
 
         else if (inventory.Count == 1)
         {
             inventory.Enqueue(item);
             terminalInven.sprite = item.icon;
-            terminalInven.gameObject.SetActive(true);
+            terminalInventoryObj.SetActive(true);
         }
 
     }
@@ -57,8 +62,8 @@ public class Inventory : MonoBehaviour
         inventory.Clear();
         frontInven.sprite = null;
         terminalInven.sprite = null;
-        frontInven.gameObject.SetActive(false);
-        terminalInven.gameObject.SetActive(false);
+        frontInventoryObj.SetActive(false);
+        terminalInventoryObj.SetActive(false);
 
     }
 
@@ -97,12 +102,12 @@ public class Inventory : MonoBehaviour
         {
             frontInven.sprite = terminalInven.sprite;
             terminalInven.sprite = null;
-            terminalInven.gameObject.SetActive(false);
+            terminalInventoryObj.SetActive(false);
         }
         else
         {
             frontInven.sprite = null;
-            frontInven.gameObject.SetActive(false);
+            frontInventoryObj.SetActive(false);
         }
     }
 }

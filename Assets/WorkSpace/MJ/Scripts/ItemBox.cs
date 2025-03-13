@@ -12,12 +12,14 @@ namespace MJ.Item.ItemBox
 
         private void OnTriggerEnter(Collider other)
         {
-            if (!photonView.IsMine) return;
+            if (!other.CompareTag("Player")) return;
 
-            if (other.CompareTag("Player"))
+            PhotonView playerView = other.GetComponent<PhotonView>();
+            if (playerView != null && playerView.IsMine)
             {
                 int idx = Random.Range(0, items.Length);
                 other.GetComponent<Inventory>().GetItem(items[idx]);
+
                 photonView.RPC("DestroyObject", RpcTarget.All);
             }
         }
