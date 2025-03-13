@@ -9,8 +9,8 @@ public class Trap : MonoBehaviourPunCallbacks
     public Rigidbody[] spikeRigidbodies; // 자식 가시들의 Rigidbody 배열
     public float upwardForce = 10.0f; // 위로 밀어 올리는 힘
     public float moveDownSpeed = 2.0f;  // 다시 내려가는 속도
-    public float triggerDelay = 2.0f; // 트리거 후 가시 발동 대기 시간
-    public float reloadTime = 5.0f; // 트랩이 재사용 가능해지는 시간
+    public float triggerDelay = 0f; // 트리거 후 가시 발동 대기 시간
+    public float reloadTime = 3.0f; // 트랩이 재사용 가능해지는 시간
 
     private Vector3[] originalPositions;
     private bool isActivated = false;
