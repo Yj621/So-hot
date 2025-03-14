@@ -175,6 +175,7 @@ namespace JS.PlayerMove
             if (CatchingFire)
             {
                 UIManager.Instance.IncreaseHeat(HotIncrease);
+                SoundManager.Instance.PlaySound(SoundManager.AudioType.HotGauge);
             }
             else
             {
@@ -198,6 +199,8 @@ namespace JS.PlayerMove
                     Vector3 throwPosition = heldObject.transform.position;
                     Vector3 throwDirection;
                     float throwForce;
+
+                    SoundManager.Instance.PlaySound(SoundManager.AudioType.PlayerHot);
 
                     isThrowing = true;
 
