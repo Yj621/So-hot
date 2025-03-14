@@ -29,14 +29,8 @@ public class Inventory : MonoBehaviour
 
     IEnumerator FindPlayerControllerWithDelay()
     {
-
         yield return new WaitForSeconds(5f); // 네트워크 동기화가 완료될 시간을 확보
         itemUser = GetComponent<PlayerMove>();
-
-        if (itemUser == null)
-        {
-            Debug.LogError("PlayerController를 찾을 수 없음!");
-        }
     }
 
     public void GetItem(ItemData item)
@@ -44,15 +38,16 @@ public class Inventory : MonoBehaviour
         if (inventory.Count == 0)
         {
             inventory.Enqueue(item);
-            frontInven.sprite = item.icon;
             frontInventoryObj.SetActive(true);
+            frontInven.sprite = item.icon;
         }
 
         else if (inventory.Count == 1)
         {
             inventory.Enqueue(item);
-            terminalInven.sprite = item.icon;
             terminalInventoryObj.SetActive(true);
+            terminalInven.sprite = item.icon;
+
         }
 
     }
