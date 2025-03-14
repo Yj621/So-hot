@@ -54,9 +54,8 @@ namespace JS.PlayerMove
 
         public bool isDie = false;
         public bool isGhost = false;
-        public Renderer CharacterRenderer;
-        public Material OverrideMaterial;
-        private Material originalMaterial;
+        public GameObject[] OriginalOb;
+        public GameObject Ghost;
 
         private bool wasOverHeat = false;
 
@@ -77,7 +76,6 @@ namespace JS.PlayerMove
             animator = GetComponent<Animator>();
             photonView = GetComponent<PhotonView>();
             UIManager.Instance.UpdateStaminaUI();
-            originalMaterial = CharacterRenderer.material;
             StartCoroutine(FindInventoryWithDelay());
 
             // 내 캐릭터만 카메라 설정
@@ -91,6 +89,12 @@ namespace JS.PlayerMove
                     camera.LookAt = transform;
                 }
             }
+
+            for (int i = 0; i < OriginalOb.Length; i++)
+            {
+                OriginalOb[i].SetActive(true);
+            }
+            Ghost.SetActive(false);
         }
 
         private void Update()
@@ -343,20 +347,27 @@ namespace JS.PlayerMove
             yield return new WaitForSeconds(2f);
             isDie = false;
             isGhost = true;
-            
-            CharacterRenderer.material = OverrideMaterial;
+            for (int i = 0; i < OriginalOb.Length; i++)
+            {
+                OriginalOb[i].SetActive(false);
+            }
             SetLayerUpwards(gameObject, "Ghost");
+            Ghost.SetActive(true);
             if (photonView.IsMine)
             {
                 UIManager.Instance.TimerStart();
             }
             yield return new WaitForSeconds(15f);
-            CharacterRenderer.material = originalMaterial;
+            for (int i = 0; i < OriginalOb.Length; i++)
+            {
+                OriginalOb[i].SetActive(true);
+            }
             SetLayerUpwards(gameObject, "Default");
             if (photonView.IsMine)
             {
                 UIManager.Instance.TimerEnd();
             }
+            Ghost.SetActive(false);
             isGhost = false;
         }
 
