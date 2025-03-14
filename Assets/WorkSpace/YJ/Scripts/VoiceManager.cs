@@ -105,7 +105,7 @@ public class VoiceManager : MonoBehaviourPunCallbacks
                 }
                 // 로컬 플레이어의 음소거 여부 및 말하는 상태에 따른 이미지 설정
                 img.sprite = selfMuted ? muteImage : (speaker.IsPlaying ? speakImage : defaultImage);
-
+                Debug.Log($"speaker.IsPlaying : {speaker.IsPlaying}");
             }
             else
             {

@@ -8,6 +8,7 @@ public class Cherry : MonoBehaviourPunCallbacks
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
+            SoundManager.Instance.PlaySound(SoundManager.AudioType.FallCherry);
             Debug.Log($"[Cherry] Ground 충돌 감지: {gameObject.name}");
 
             if (photonView.IsMine)

@@ -564,6 +564,8 @@ namespace JS.PlayerMove
             if (isDie) return; // 이미 죽었으면 실행 안 함.
 
             isDie = true;
+            SoundManager.Instance.PlaySound(SoundManager.AudioType.PlayerManDie);
+
             StartCoroutine(DieAndBeGhost());
         }
 
