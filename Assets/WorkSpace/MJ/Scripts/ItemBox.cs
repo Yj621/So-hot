@@ -15,12 +15,17 @@ namespace MJ.Item.ItemBox
             if (!other.CompareTag("Player")) return;
 
             PhotonView playerView = other.GetComponent<PhotonView>();
+            PlayerMove playerMove = other.GetComponent<PlayerMove>();
+
             if (playerView != null && playerView.IsMine)
             {
-                int idx = Random.Range(0, items.Length);
-                other.GetComponent<Inventory>().GetItem(items[idx]);
+                if (!playerMove.isDie && !playerMove.isGhost)
+                {
+                    int idx = Random.Range(0, items.Length);
+                    other.GetComponent<Inventory>().GetItem(items[idx]);
 
-                photonView.RPC("DestroyObject", RpcTarget.All);
+                    photonView.RPC("DestroyObject", RpcTarget.All);
+                }
             }
         }
 
