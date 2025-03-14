@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
+using TMPro;
 using Donghyun.Builder;
 using static TotalMultiManager;
 using Donghyun.Network;
@@ -9,6 +10,8 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using DG.Tweening;
 using System;
+using UnityEngine.EventSystems;
+using UnityEditor.Search;
 
 [Serializable]
 public class AnimationInfo
@@ -26,6 +29,17 @@ public class AnimationInfo
 public class ReadyManager : MonoBehaviourPunCallbacks
 {
     public static ReadyManager Instance { get; private set; }
+
+    [Header("----- 스킬 설명 텍스트 -----")]
+    public TextMeshProUGUI descriptionText;
+    public GameObject descriptionPanel;
+    private string[] skillDescriptions = new string[]
+    {
+        "불씨를 강하게 던질 수 있는 능력",
+        "바닥에 떨어져도 일정 시간 동안 보호되는 능력",
+        "뜨거움 게이지를 줄여주는 능력",
+        "주변 아이템을 탐지하는 능력"
+    };
 
     [Header("----- 이미지들 -----")]
     public Sprite[] characterImages;
@@ -78,6 +92,8 @@ public class ReadyManager : MonoBehaviourPunCallbacks
             int index = i;
             skillList[index].onClick.AddListener(() => OnSkillPick(index));
             skillList[index].onClick.AddListener(ToggleSkillPick);
+
+            AddHoverEvents(skillList[index], index);
         }
 
         for (int i = 0; i < characterList.Count; i++)
@@ -92,6 +108,50 @@ public class ReadyManager : MonoBehaviourPunCallbacks
         resetButton.onClick.AddListener(ResetSelection);
     }
 
+    //마우스 오버 이벤트
+private void AddHoverEvents(Button button, int index)
+{
+    EventTrigger trigger = button.gameObject.AddComponent<EventTrigger>();
+
+    EventTrigger.Entry pointerEnter = new EventTrigger.Entry();
+    pointerEnter.eventID = EventTriggerType.PointerEnter;
+    pointerEnter.callback.AddListener((data) => ShowDescription(index));
+    trigger.triggers.Add(pointerEnter);
+
+    EventTrigger.Entry pointerExit = new EventTrigger.Entry();
+    pointerExit.eventID = EventTriggerType.PointerExit;
+    pointerExit.callback.AddListener((data) => HideDescription());
+    trigger.triggers.Add(pointerExit);
+}
+
+    private void ShowDescription(int index)
+    {
+        descriptionText.text = skillDescriptions[index];
+
+        Vector3 mousePos = Input.mousePosition;
+        Vector3 offset = new Vector3(150f, 0f, 0f);
+
+        RectTransform rectTransform = descriptionPanel.GetComponent<RectTransform>();
+        rectTransform.position = mousePos + offset;
+
+        descriptionPanel.SetActive(true);
+
+        descriptionPanel.GetComponent<Image>().raycastTarget = false;
+    }
+
+    private void HideDescription()
+    {
+        descriptionPanel.SetActive(false);
+    }
+    private void Update()
+    {
+        // 설명 UI가 활성화된 경우 마우스 위치에 따라 위치를 업데이트
+        if (descriptionPanel.activeSelf)
+        {
+            Vector3 mousePosition = Input.mousePosition;
+            descriptionPanel.GetComponent<RectTransform>().position = mousePosition + new Vector3(150f, 0f, 0f);
+        }
+    }
     public void OnCharacterPick(int index)
     {
         curCharacterIndex = index;
@@ -106,7 +166,7 @@ public class ReadyManager : MonoBehaviourPunCallbacks
 
     public void ToggleCharacterPick()
     {
-        if(!openCharacterPick) //열기
+        if (!openCharacterPick) //열기
         {
             characterPick.DOAnchorPosY(characterPickInfo.end, characterPickInfo.duration).SetEase(characterPickInfo.AnimationType);
         }
