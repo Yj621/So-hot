@@ -66,7 +66,7 @@ public class GameManager : MonoBehaviourPun
             deadPlayers[i] = false;
         }
         allPlayerDead = false;
-        //playerPv.RPC("InitInventory", RpcTarget.All);
+        playerPv.RPC("InitInventory", RpcTarget.All);
         gmPv.RPC("Init", RpcTarget.AllViaServer);
 
     }

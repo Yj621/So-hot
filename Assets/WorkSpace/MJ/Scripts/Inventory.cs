@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Photon.Pun;
 using YJ.UIManager;
 
 public class Inventory : MonoBehaviour
@@ -52,6 +53,7 @@ public class Inventory : MonoBehaviour
 
     }
 
+    [PunRPC]
     public void InitInventory()
     {
         inventory.Clear();
@@ -59,7 +61,6 @@ public class Inventory : MonoBehaviour
         terminalInven.sprite = null;
         frontInventoryObj.SetActive(false);
         terminalInventoryObj.SetActive(false);
-
     }
 
 
