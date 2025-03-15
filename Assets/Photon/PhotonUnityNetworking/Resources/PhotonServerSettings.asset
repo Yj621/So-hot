@@ -97,6 +97,9 @@ MonoBehaviour:
   - SetBamBooVelocity
   - RpcSpwanBamBoo
   - SetPlayerParent
+  - SetSmokeEffect
+  - SetBloodEffect
+  - SetRunEffect
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
