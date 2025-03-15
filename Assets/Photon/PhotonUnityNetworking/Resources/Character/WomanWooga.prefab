@@ -124,6 +124,7 @@ MonoBehaviour:
   controller: {fileID: 6957392686559702081}
   animator: {fileID: 8687722071260669276}
   playerLook: {fileID: 3033885118504725439}
+  ptg: {fileID: 0}
   walkSpeed: 15
   runSpeed: 25
   jumpHeight: 10
