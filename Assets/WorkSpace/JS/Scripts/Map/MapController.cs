@@ -14,12 +14,14 @@ public class MapController : MonoBehaviourPunCallbacks
     public BoxCollider[] CherryCollider;
     public GameObject CherryPrefab;
     public float DropInterval = 0.1f;
+    public GameObject CherryHitEffect; // 🍒 체리 피격 이펙트
 
     public BoxCollider[] BamBooCollider;
     public GameObject BamBooPrefab;
     public float ShootInterval = 0.1f;
     public float BamBooSpeed = 5f;
     public float BamBooDuration = 5f;
+    public GameObject HitEffect;  // 피격 이펙트 프리팹
 
     IEnumerator CheckMasterClient()
     {
@@ -121,7 +123,21 @@ public class MapController : MonoBehaviourPunCallbacks
             rb.linearVelocity = direction * BamBooSpeed;
         }
 
+        // 죽창이 플레이어를 맞췄을 때의 처리만 남김
+        BamBooProjectile bamBooScript = bamBoo.AddComponent<BamBooProjectile>();
+        bamBooScript.Setup(this, HitEffect);
+
         StartCoroutine(DestroyAfterTime(bamBoo, BamBooDuration));
+    }
+
+    [PunRPC]
+    void RpcSpwanCherry(Vector3 position, Quaternion rotation)
+    {
+        GameObject cherry = PhotonNetwork.Instantiate(CherryPrefab.name, position, rotation);
+
+        // ✅ 체리에 피격 이펙트 적용
+        CherryProjectile cherryScript = cherry.AddComponent<CherryProjectile>();
+        cherryScript.Setup(this, CherryHitEffect); // 🍒 체리 피격 이펙트 전달
     }
 
 
