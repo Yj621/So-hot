@@ -243,9 +243,8 @@ namespace YJ.UIManager
                 int minutes = Mathf.FloorToInt(time / 60); // 분 계산
                 int seconds = Mathf.FloorToInt(time % 60); // 초 계산
                 timerText.text = $"{minutes:D2}:{seconds:D2}"; // 두 자리 분:초 형식
-
-                yield return new WaitForSeconds(1.0f);
                 time -= 1;
+                yield return new WaitForSeconds(1.0f);
                 if (time < 5)
                 {
                     timerText.color = Color.red;
