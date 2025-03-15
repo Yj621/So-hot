@@ -8,7 +8,9 @@ using Unity.Cinemachine;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
+using YJ.Network;
 using YJ.UIManager;
+using static TotalMultiManager;
 
 namespace JS.PlayerMove
 {
@@ -18,6 +20,8 @@ namespace JS.PlayerMove
         public Animator animator;
         public PlayerLook playerLook;
         private new PhotonView photonView;
+        public PlayerThrowGuide ptg;
+        private int playerNumber;
 
         [Header("이동 설정")]
         public float walkSpeed = 15f;
@@ -31,7 +35,7 @@ namespace JS.PlayerMove
         public float slowJumpPower = 6f;
         public float gravity = -52.3f;
         private bool isSlow = false;
-
+        private Vector2 moveInput = Vector2.zero; // 입력값 저장
         private Vector3 velocity;
         private bool isGrounded;
         private bool isRunning = false;
@@ -45,30 +49,30 @@ namespace JS.PlayerMove
         public float minThrowForce = 3f;
         public float maxThrowForce = 20f;
         public float throwCooldown = 1f;
+        private bool wasOverHeat = false;
 
-        private Vector2 moveInput = Vector2.zero; // 입력값 저장
 
+        [Header("불 관련")]
         private bool CatchingFire = false;
         public float HotIncrease = 2f;
         public float HotDecrease = 1f;
 
+        [Header("죽음, 고스트 관련")]
         public bool isDie = false;
         public bool isGhost = false;
-        public Renderer CharacterRenderer;
-        public Material OverrideMaterial;
-        private Material originalMaterial;
-
-        private bool wasOverHeat = false;
+        public GameObject[] OriginalOb;
+        public GameObject Ghost;
 
         private CinemachineCamera camera;
 
+        [Header("아이템 관련")]
         public Coroutine unlimitRunCoroutine;
         public Coroutine gaugeStopCoroutine;
-
         public List<GameObject> effectList;
         private Inventory inventory;
         public bool saveLife = false;
         private bool invincible = false;
+
         public Transform playerGroup;
 
         private void Awake()
@@ -80,8 +84,8 @@ namespace JS.PlayerMove
         {
             controller = GetComponent<CharacterController>();
             animator = GetComponent<Animator>();
+            ptg = GetComponent<PlayerThrowGuide>();
             UIManager.Instance.UpdateStaminaUI();
-            originalMaterial = CharacterRenderer.material;
             StartCoroutine(FindInventoryWithDelay());
 
             // 내 캐릭터만 카메라 설정
@@ -95,6 +99,14 @@ namespace JS.PlayerMove
                     camera.LookAt = transform;
                 }
             }
+
+            for (int i = 0; i < OriginalOb.Length; i++)
+            {
+                OriginalOb[i].SetActive(true);
+            }
+            Ghost.SetActive(false);
+
+            playerNumber = (int)GetTag(PhotonNetwork.LocalPlayer, "Number");
         }
 
         private void Update()
@@ -292,12 +304,12 @@ namespace JS.PlayerMove
                 if (saveLife)
                 {
                     Debug.Log("죽음 면제 발동! 5초간 무적");
-                    ItemManager.Instance.photonView.RPC("ItemEffectOff", RpcTarget.All, photonView.ViewID, 1);
+                    ItemManager.Instance.photonView.RPC("ItemEffectOff", RpcTarget.AllViaServer, photonView.ViewID, 1);
                     StartCoroutine(InvincibilityTimer()); // 무적 타이머 시작
                     saveLife = false; // 죽음 면제 효과는 1회만 사용
                     return;
                 }
-                photonView.RPC("SetDieState", RpcTarget.AllBuffered);
+                photonView.RPC("SetDieState", RpcTarget.AllViaServer);
             }
 
             if (other.CompareTag("Mud"))
@@ -343,25 +355,35 @@ namespace JS.PlayerMove
 
         IEnumerator DieAndBeGhost()
         {
+            GameManager.Instance.deadPlayers[playerNumber] = true;
             animator.Play("Die");
             yield return new WaitForSeconds(2f);
             isDie = false;
             isGhost = true;
-            
-            CharacterRenderer.material = OverrideMaterial;
+            inventory.InitInventory();
+            for (int i = 0; i < OriginalOb.Length; i++)
+            {
+                OriginalOb[i].SetActive(false);
+            }
             SetLayerUpwards(gameObject, "Ghost");
+            Ghost.SetActive(true);
             if (photonView.IsMine)
             {
                 UIManager.Instance.TimerStart();
             }
             yield return new WaitForSeconds(15f);
-            CharacterRenderer.material = originalMaterial;
+            for (int i = 0; i < OriginalOb.Length; i++)
+            {
+                OriginalOb[i].SetActive(true);
+            }
             SetLayerUpwards(gameObject, "Default");
             if (photonView.IsMine)
             {
                 UIManager.Instance.TimerEnd();
             }
+            Ghost.SetActive(false);
             isGhost = false;
+            GameManager.Instance.deadPlayers[playerNumber] = false;
         }
 
         void SetLayerUpwards(GameObject obj, string layerName)
@@ -429,6 +451,7 @@ namespace JS.PlayerMove
             Debug.Log("StartThrow");
             if (heldObject != null)
             {
+                ptg.DrawThrowGuide();
                 photonView.RPC("PlayThrowReadyAnimation", RpcTarget.AllViaServer);
                 isThrowingReady = true;
             }
@@ -455,7 +478,7 @@ namespace JS.PlayerMove
             if (!photonView.IsMine) return;
             if (wasOverHeat) return;
 
-            photonView.RPC("SetCatchingFire", RpcTarget.AllBuffered, true);
+            photonView.RPC("SetCatchingFire", RpcTarget.AllViaServer, true);
             photonView.RPC("PlayCatchAnimation", RpcTarget.AllViaServer);
 
             PhotonView objPhotonView = obj.GetComponent<PhotonView>();
@@ -471,7 +494,7 @@ namespace JS.PlayerMove
                 rb.isKinematic = true;
             }
             // 오브젝트를 holdPoint의 자식으로 설정
-            objPhotonView.RPC("RPC_SetHeldState", RpcTarget.AllBuffered, photonView.ViewID);
+            objPhotonView.RPC("RPC_SetHeldState", RpcTarget.AllViaServer, photonView.ViewID);
         }
 
         public void ReleaseThrow()
@@ -479,6 +502,7 @@ namespace JS.PlayerMove
             Debug.Log("ReleaseThrow");
             if (isThrowingReady && heldObject != null)
             {
+                ptg.OffThrowGuide();
                 Vector3 throwPosition = heldObject.transform.position; // 던지기 시작 위치
                 Vector3 throwDirection = Camera.main.transform.forward; // 던지는 방향 (플레이어 시점)
                 float throwForce = Mathf.Lerp(minThrowForce, maxThrowForce, UIManager.Instance.currentThrow / UIManager.Instance.maxThrow);
@@ -489,7 +513,7 @@ namespace JS.PlayerMove
                 isThrowingReady = false;
                 isThrowing = true;
                 photonView.RPC("PlayThrowAnimation", RpcTarget.AllViaServer);
-                photonView.RPC("SetCatchingFire", RpcTarget.AllBuffered, false);
+                photonView.RPC("SetCatchingFire", RpcTarget.AllViaServer, false);
             }
         }
 

@@ -31,7 +31,7 @@ public class PlayerThrowGuide : MonoBehaviour
             OffThrowGuide();
     }
 
-    void DrawThrowGuide()
+    public void DrawThrowGuide()
     {
         lineRenderer.enabled = true;
         lineRenderer.positionCount = lineSegmentCount;
@@ -57,7 +57,7 @@ public class PlayerThrowGuide : MonoBehaviour
         lineRenderer.SetPositions(points.ToArray());
     }
 
-    void OffThrowGuide()
+   public void OffThrowGuide()
     { 
        lineRenderer.enabled = false;
     }

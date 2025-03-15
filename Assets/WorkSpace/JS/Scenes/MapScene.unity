@@ -42617,7 +42617,6 @@ MonoBehaviour:
   player: {fileID: 0}
   deadPlayers: 00000000
   fireSavePoint: {fileID: 629093724}
-  isOnFire: 1
 --- !u!4 &734441382
 Transform:
   m_ObjectHideFlags: 0
@@ -124099,13 +124098,33 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 783797056100102147, guid: 8349918ee544f7044b6eafcccbfea1ad, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 3930158536546041949, guid: 8349918ee544f7044b6eafcccbfea1ad, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 4055104585141388930, guid: 8349918ee544f7044b6eafcccbfea1ad, type: 3}
       propertyPath: m_Name
       value: Fire
       objectReference: {fileID: 0}
+    - target: {fileID: 4055104585141388930, guid: 8349918ee544f7044b6eafcccbfea1ad, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 4411856739580619363, guid: 8349918ee544f7044b6eafcccbfea1ad, type: 3}
       propertyPath: sceneViewId
       value: 38
+      objectReference: {fileID: 0}
+    - target: {fileID: 6884205716957992976, guid: 8349918ee544f7044b6eafcccbfea1ad, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 8434448680372987590, guid: 8349918ee544f7044b6eafcccbfea1ad, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 8642893618799503238, guid: 8349918ee544f7044b6eafcccbfea1ad, type: 3}
       propertyPath: m_LocalPosition.x
