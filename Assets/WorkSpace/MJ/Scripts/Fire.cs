@@ -10,7 +10,6 @@ public class Fire : MonoBehaviourPun
     public bool isFireOnSP; //불이 세이브 포인트 위에 있는지 여부 확인
     public float timer = 5f; // 불이 바닥에서 유지되는 시간
 
-
     private void Awake()
     {
         if (Instance == null)
@@ -79,12 +78,24 @@ public class Fire : MonoBehaviourPun
         }
     }
 
+    public void IncreseTimerRPC(float time)
+    {
+        photonView.RPC("IncreseTimer", RpcTarget.AllBuffered, time);
+    }
+
     [PunRPC]
     void SetGroundState(bool state)
     {
         isOnGround = state;
         if (state) timer = 5f; // 바닥에 떨어졌으면 타이머 리셋
     }
+
+    [PunRPC]
+    void IncreseTimer(float time)
+    {
+        timer += time;
+    }
+
 
     [PunRPC]
     void SyncFireState(bool fireState, bool groundState, float fireTimer)

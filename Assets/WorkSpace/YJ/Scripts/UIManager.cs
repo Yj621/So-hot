@@ -210,6 +210,7 @@ namespace YJ.UIManager
         public void ResetThrow()
         {
             currentThrow = 0;
+            maxThrow = 100.0f;
             UpdateThrowUI(); // UI 업데이트
             DeactiveThrow();
         }

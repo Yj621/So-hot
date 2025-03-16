@@ -17189,12 +17189,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   skillImage: {fileID: 216827663}
-  skillName: 
-  abilityName:
-  - Fireball
-  - Shield
-  - HotChill
-  - Detect
   abilityImage:
   - {fileID: 21300000, guid: eecb85004343b0e4d8b78fd7f9877b32, type: 3}
   - {fileID: 21300000, guid: ee40d72ece864764f9d17d015aedb524, type: 3}
@@ -42617,7 +42611,6 @@ MonoBehaviour:
   player: {fileID: 0}
   deadPlayers: 00000000
   fireSavePoint: {fileID: 629093724}
-  isOnFire: 1
 --- !u!4 &734441382
 Transform:
   m_ObjectHideFlags: 0
