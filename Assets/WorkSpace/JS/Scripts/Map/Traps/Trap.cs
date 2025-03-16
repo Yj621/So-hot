@@ -67,6 +67,7 @@ public class Trap : MonoBehaviourPunCallbacks
         // 1. 모든 가시를 위로 밀어 올리기
         foreach (Rigidbody rb in spikeRigidbodies)
         {
+            SoundManager.Instance.PlaySound(SoundManager.AudioType.Spikes);
             rb.isKinematic = false; // 물리 활성화
             rb.AddForce(Vector3.up * upwardForce, ForceMode.Impulse);
         }

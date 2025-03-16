@@ -61,6 +61,7 @@ public class GameManager : MonoBehaviourPun
 
     void AllPlayerRespawn()
     {
+        SoundManager.Instance.PlaySound(SoundManager.AudioType.GameOver);
         for (int i = 0; i < deadPlayers.Length; i++)
         {
             deadPlayers[i] = false;

@@ -39,6 +39,7 @@ namespace JS.PlayerMove
         private Vector3 velocity;
         private bool isGrounded;
         private bool isRunning = false;
+        public GameObject RunObject;
 
         [Header("던지기 설정")]
         public Transform holdPoint;
@@ -56,12 +57,14 @@ namespace JS.PlayerMove
         private bool CatchingFire = false;
         public float HotIncrease = 2f;
         public float HotDecrease = 1f;
+        public GameObject SmokeObject;
 
         [Header("죽음, 고스트 관련")]
         public bool isDie = false;
         public bool isGhost = false;
         public GameObject[] OriginalOb;
         public GameObject Ghost;
+        public GameObject BloodObject;
 
         private CinemachineCamera camera;
 
@@ -105,6 +108,8 @@ namespace JS.PlayerMove
                 OriginalOb[i].SetActive(true);
             }
             Ghost.SetActive(false);
+            SmokeObject.SetActive(false);
+            BloodObject.SetActive(false);
 
             playerNumber = (int)GetTag(PhotonNetwork.LocalPlayer, "Number");
         }
@@ -186,15 +191,20 @@ namespace JS.PlayerMove
             // 과열 시스템 처리
             if (CatchingFire)
             {
+                SoundManager.Instance.PlayLoopSound(SoundManager.AudioType.HotGauge);
                 UIManager.Instance.IncreaseHeat(HotIncrease);
             }
             else
             {
                 UIManager.Instance.DecreaseHeat(HotDecrease);
+                SoundManager.Instance.StopLoopSound(SoundManager.AudioType.HotGauge);
             }
 
             if (isThrowingReady)
             {
+                Vector3 throwDirection = Camera.main.transform.forward;
+                float throwForce = Mathf.Lerp(minThrowForce, maxThrowForce, UIManager.Instance.currentThrow / UIManager.Instance.maxThrow);
+                ptg.DrawThrowGuide(throwDirection, throwForce);
                 UIManager.Instance.IncreaseCharge();
             }
             else
@@ -205,11 +215,14 @@ namespace JS.PlayerMove
             if (UIManager.Instance.IsOverheated() && !wasOverHeat)
             {
                 wasOverHeat = true;
+                photonView.RPC("SetSmokeEffect", RpcTarget.AllViaServer, true);
                 if (heldObject != null)  // 손에 불이 있을 때만 처리
                 {
                     Vector3 throwPosition = heldObject.transform.position;
                     Vector3 throwDirection;
                     float throwForce;
+
+                    SoundManager.Instance.PlaySound(SoundManager.AudioType.PlayerHot);
 
                     isThrowing = true;
 
@@ -241,6 +254,7 @@ namespace JS.PlayerMove
                     yield return null;
                 }
                 wasOverHeat = false;
+                photonView.RPC("SetSmokeEffect", RpcTarget.AllViaServer, false);
             }
 
 
@@ -357,7 +371,9 @@ namespace JS.PlayerMove
         {
             GameManager.Instance.deadPlayers[playerNumber] = true;
             animator.Play("Die");
+            photonView.RPC("SetBloodEffect", RpcTarget.AllViaServer, true);
             yield return new WaitForSeconds(2f);
+            photonView.RPC("SetBloodEffect", RpcTarget.AllViaServer, false);
             isDie = false;
             isGhost = true;
             inventory.InitInventory();
@@ -439,11 +455,13 @@ namespace JS.PlayerMove
         {
             if (!isGrounded || isGhost) return;
             isRunning = true;
+            photonView.RPC("SetRunEffect", RpcTarget.AllViaServer, true);
         }
 
         public void StopRunning()
         {
             isRunning = false;
+            photonView.RPC("SetRunEffect", RpcTarget.AllViaServer, false);
         }
 
         public void StartThrow()
@@ -451,7 +469,6 @@ namespace JS.PlayerMove
             Debug.Log("StartThrow");
             if (heldObject != null)
             {
-                ptg.DrawThrowGuide();
                 photonView.RPC("PlayThrowReadyAnimation", RpcTarget.AllViaServer);
                 isThrowingReady = true;
             }
@@ -506,6 +523,8 @@ namespace JS.PlayerMove
                 Vector3 throwPosition = heldObject.transform.position; // 던지기 시작 위치
                 Vector3 throwDirection = Camera.main.transform.forward; // 던지는 방향 (플레이어 시점)
                 float throwForce = Mathf.Lerp(minThrowForce, maxThrowForce, UIManager.Instance.currentThrow / UIManager.Instance.maxThrow);
+
+                SoundManager.Instance.PlaySound(SoundManager.AudioType.PlayerThrow);
 
                 int heldObjectViewID = heldObject.GetComponent<PhotonView>().ViewID;
                 photonView.RPC("ThrowObjectRPC", RpcTarget.AllViaServer, heldObjectViewID, throwPosition, throwDirection, throwForce);
@@ -585,6 +604,8 @@ namespace JS.PlayerMove
             if (isDie) return; // 이미 죽었으면 실행 안 함.
 
             isDie = true;
+            SoundManager.Instance.PlaySound(SoundManager.AudioType.PlayerManDie);
+
             StartCoroutine(DieAndBeGhost());
         }
 
@@ -603,6 +624,24 @@ namespace JS.PlayerMove
         void SetCatchingFire(bool state)
         {
             CatchingFire = state;
+        }
+
+        [PunRPC]
+        void SetSmokeEffect(bool isActive)
+        {
+            SmokeObject.SetActive(isActive);
+        }
+
+        [PunRPC]
+        void SetBloodEffect(bool isActive)
+        {
+            BloodObject.SetActive(isActive);
+        }
+
+        [PunRPC]
+        void SetRunEffect(bool isActive)
+        {
+            RunObject.SetActive(isActive);
         }
     }
 }

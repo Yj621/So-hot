@@ -6,15 +6,16 @@ public class SoundManager : MonoBehaviour
     // 재생 가능한 오디오 타입 열거형 정의
     public enum AudioType
     {
-        PlayerWalk, PlayerSprint, PlayerThrow, PlayerDie,
-        PlayerHot, PlayerUsedItem, PlayerUsedSkill, 
-        Spear, FallRocks, Spikes, FallCherry, Bouncing, Water,
+        PlayerWalk, PlayerJump, PlayerSprint, PlayerThrow, PlayerManDie, PlayerWomanDie,
+        PlayerHot, PlayerGetItem, PlayerUsedItem, PlayerUsedSkill, 
+        HotGauge,
+        Spear, FallRocks, Spikes, FallCherry, Water, FallPlatform,
         SavePoint, GameOver, GameClear
     }
     // 버튼 클릭 및 마우스 오버 사운드
     public AudioSource uIClick;
-    public AudioSource BackClick;
-    public AudioSource ForwardClick;
+    public AudioSource openUI;
+    public AudioSource closedUI;
     public AudioSource overSound;
 
 
@@ -61,13 +62,22 @@ public class SoundManager : MonoBehaviour
     public void ButtonSound()
     {
         uIClick.Play();
-        Debug.Log("버튼 클릭음 재생");
     }
 
     // 버튼 마우스 오버 사운드 재생
     public void ButtonOverSound()
     {
         overSound.Play();
+    }
+
+    public void OpenUISound()
+    {
+        openUI.Play();
+    }
+
+    public void ClosedUISound()
+    {
+        closedUI.Play();
     }
 
     // 특정 오디오 타입의 사운드 재생

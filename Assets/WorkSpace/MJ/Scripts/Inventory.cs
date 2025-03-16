@@ -70,6 +70,8 @@ public class Inventory : MonoBehaviour
         {
             ItemData targetItem = inventory.Dequeue();
             effectNumber = targetItem.effectNum;
+
+            SoundManager.Instance.PlaySound(SoundManager.AudioType.PlayerUsedItem);
             switch (targetItem.itemType)
             {
                 case ITEMTYPE.GaugeStop:

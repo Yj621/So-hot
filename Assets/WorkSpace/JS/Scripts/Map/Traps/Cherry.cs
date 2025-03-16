@@ -4,10 +4,16 @@ using System.Collections;
 
 public class Cherry : MonoBehaviourPunCallbacks
 {
+    private void Start()
+    {
+        GetComponent<AudioSource>().Play();
+    }
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
+            GetComponent<AudioSource>().Play();
+            Debug.Log("CherrySoundPlay@@@@@@");
             Debug.Log($"[Cherry] Ground 충돌 감지: {gameObject.name}");
 
             if (photonView.IsMine)
