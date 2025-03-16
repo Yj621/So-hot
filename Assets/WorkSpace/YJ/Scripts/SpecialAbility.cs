@@ -1,10 +1,11 @@
-using System;
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.Playables;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEngine.Rendering.DebugUI;
+using static TotalMultiManager;
 
 namespace YJ.Ability
 {
@@ -16,18 +17,12 @@ namespace YJ.Ability
         Detect
     }
 
-
-    public class SpecialAbility : MonoBehaviour
+    public abstract class SpecialAbility : MonoBehaviour
     {
         //실제 스킬 이미지
         [SerializeField] private Image skillImage;
-        //스킬 이름만 표시해주는 역할
-        [SerializeField] private string skillName;
 
-        [SerializeField] private string[] abilityName = new string[4] { "Fireball", "Shield", "HotChill", "Detect" };
         [SerializeField] private Sprite[] abilityImage;
-
-        private Dictionary<string, Sprite> skill = new Dictionary<string, Sprite>();
 
         //쿨타임
         [SerializeField] private float coolTime = 30f;
@@ -41,21 +36,8 @@ namespace YJ.Ability
 
         void Start()
         {
-            // 스킬 이름과 이미지를 딕셔너리에 매핑
-            if (abilityName.Length == abilityImage.Length)
-            {
-                for (int i = 0; i < abilityName.Length; i++)
-                {
-                    skill.Add(abilityName[i], abilityImage[i]);
-                }
-                // 게임 시작 시 랜덤 능력 부여
-                AssignRandomAbility();
-            }
-            else
-            {
-                // 스킬 이름과 이미지 배열의 길이가 다를 경우 경고 메시지 출력
-                Debug.Log("뭔가 잘못됨");
-            }
+            SkillUpdate();
+
             skillCoolTimeImage.fillAmount = 0f;
         }
 
@@ -65,21 +47,26 @@ namespace YJ.Ability
             if (Input.GetKeyDown(KeyCode.E) && !isCooldownActive)
             {
                 StartCoroutine(CoolTime());
-                skillCoolTimeImage.fillAmount = 1f;
             }
         }
+
+        public abstract void ExcuteSkill();
 
         // 쿨타임 로직을 처리하는 코루틴
         IEnumerator CoolTime()
         {
             isCooldownActive = true; // 쿨타임 시작 플래그 설정
 
+            skillCoolTimeImage.fillAmount = 1f;
+
+            ExcuteSkill();
+
             while (coolTime > 0)
             {
                 coolTime -= Time.deltaTime;
 
                 // 스킬 쿨타임 UI 업데이트 (Fill Amount를 비율로 설정)
-                skillCoolTimeImage.fillAmount = coolTime / maxCoolTime; 
+                skillCoolTimeImage.fillAmount = coolTime / maxCoolTime;
 
                 // 2초 이상일 때는 정수, 2초 이하일 때는 소수점 1자리로 표시
                 if (coolTime > 2f)
@@ -102,29 +89,11 @@ namespace YJ.Ability
         }
 
         // 랜덤으로 능력을 부여하는 메서드
-        private void AssignRandomAbility()
+        private void SkillUpdate()
         {
             // 랜덤으로 능력 이름 선택
-            int randomIndex = UnityEngine.Random.Range(0, abilityName.Length);
-            string randomAbility = abilityName[randomIndex];
-
-            // 선택한 능력으로 스킬 이미지 업데이트
-            SkillUpdate(randomAbility);
-        }
-
-        // 특수 능력에 따라 스킬 이미지를 업데이트하는 메서드
-        private void SkillUpdate(string ability)
-        {
-            if(skill.ContainsKey(ability))
-            {
-                skillImage.sprite = skill[ability];
-
-                skillName = ability;
-            }
-            else
-            {
-                Debug.LogWarning($"'{ability}'는 유효한 능력 이름이 아닙니다.");
-            }
+            int index = (int)GetTag(PhotonNetwork.LocalPlayer, "Skill");
+            skillImage.sprite = abilityImage[index];
         }
     }
 }
