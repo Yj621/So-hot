@@ -99,6 +99,9 @@ MonoBehaviour:
   - SetPlayerParent
   - RpcShowHitEffect
   - RpcSpwanCherry
+  - SetBloodEffect
+  - SetRunEffect
+  - SetSmokeEffect
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
