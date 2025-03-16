@@ -192,6 +192,7 @@ namespace JS.PlayerMove
             if (CatchingFire)
             {
                 UIManager.Instance.IncreaseHeat(HotIncrease);
+                SoundManager.Instance.PlaySound(SoundManager.AudioType.HotGauge);
             }
             else
             {
@@ -219,6 +220,8 @@ namespace JS.PlayerMove
                     Vector3 throwPosition = heldObject.transform.position;
                     Vector3 throwDirection;
                     float throwForce;
+
+                    SoundManager.Instance.PlaySound(SoundManager.AudioType.PlayerHot);
 
                     isThrowing = true;
 
@@ -598,6 +601,8 @@ namespace JS.PlayerMove
             if (isDie) return; // 이미 죽었으면 실행 안 함.
 
             isDie = true;
+            SoundManager.Instance.PlaySound(SoundManager.AudioType.PlayerManDie);
+
             StartCoroutine(DieAndBeGhost());
         }
 

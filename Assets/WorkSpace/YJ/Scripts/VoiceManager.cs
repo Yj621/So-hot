@@ -1,35 +1,33 @@
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice.Unity;
-using System;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static TotalMultiManager;
 using System.Collections;
-using ExitGames.Client.Photon;
 
-public abstract class VoiceManager : MonoBehaviourPunCallbacks
+public class VoiceManager : MonoBehaviourPunCallbacks
 {
     public static VoiceManager Instance { get; private set; } // Singleton 인스턴스
+    
+    [SerializeField] private Transform playerGroup; // PlayerGroup의 Transform
 
-    public GameObject[] players;  // 각 플레이어 GameObject
-    public TextMeshProUGUI[] playerTexts;  // 각 플레이어의 TextMeshProUGUI 배열
+    [SerializeField] private GameObject[] players;  // 각 플레이어 GameObject
+    [SerializeField] private TextMeshProUGUI[] playerTexts;  // 각 플레이어의 TextMeshProUGUI 배열
 
-    public Sprite speakImage;  // 말하는 이미지
-    public Sprite defaultImage;  // 기본 이미지
-    public Sprite muteImage;  // 기본 이미지
+    [SerializeField] private Sprite speakImage;  // 말하는 이미지
+    [SerializeField] private Sprite defaultImage;  // 기본 이미지
+    [SerializeField] private Sprite muteImage;  // 기본 이미지
 
     [SerializeField] private GameObject speakerPanel;
 
-    protected Speaker[] speakers;  // Speaker 컴포넌트를 담을 배열
-    protected bool[] isMuted = new bool[4];  // 각 플레이어의 음소거 상태
+    private Speaker[] speakers;  // Speaker 컴포넌트를 담을 배열
+    private bool[] isMuted = new bool[4];  // 각 플레이어의 음소거 상태
 
-    protected Recorder recorder;
+    private Recorder recorder;
     // 로컬 플레이어의 자체 음소거 상태 변수
-    protected bool selfMuted = false;
+    private bool selfMuted = false;
 
     private void Awake()
     {
@@ -44,7 +42,7 @@ public abstract class VoiceManager : MonoBehaviourPunCallbacks
         }
     }
 
-    protected virtual void Start()
+    private void Start()
     {
         UpdateSpeakersList();
         StartCoroutine(UpdatePlayerTextsBasedOnSpeaker());
@@ -54,13 +52,17 @@ public abstract class VoiceManager : MonoBehaviourPunCallbacks
     /// 매 프레임의 후반부에 호출되는 함수
     /// 스피커 목록을 최신 상태로 유지하기 위해 업데이트 호출
     /// </summary>
-    protected virtual void LateUpdate()
+    private void LateUpdate()
     {
         UpdateSpeakersList();
+        CheckIsPlaying();
     }
 
     // 모든 Speaker 컴포넌트를 가져와 speakers 배열 업데이트
-    protected abstract void UpdateSpeakersList();
+    private void UpdateSpeakersList()
+    {
+        speakers = playerGroup.GetComponentsInChildren<Speaker>(true);
+    }
 
     public void OnClickSpeakerPanel()
     {
@@ -70,7 +72,7 @@ public abstract class VoiceManager : MonoBehaviourPunCallbacks
     /// <summary>
     /// 각 스피커의 재생 상태에 따라 플레이어 UI를 업데이트하는 함수
     /// </summary>
-    protected void CheckIsPlaying()
+    private void CheckIsPlaying()
     {
         // 모든 플레이어 UI를 비활성화
         for (int i = 0; i < players.Length; i++)
@@ -103,7 +105,7 @@ public abstract class VoiceManager : MonoBehaviourPunCallbacks
                 }
                 // 로컬 플레이어의 음소거 여부 및 말하는 상태에 따른 이미지 설정
                 img.sprite = selfMuted ? muteImage : (speaker.IsPlaying ? speakImage : defaultImage);
-
+                Debug.Log($"speaker.IsPlaying : {speaker.IsPlaying}");
             }
             else
             {

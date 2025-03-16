@@ -21,6 +21,7 @@ public class PlayerInput : MonoBehaviour
         // InputValue에서 Vector2 값을 읽어서 Move() 호출
         Vector2 movementInput = value.Get<Vector2>();
         movement.Move(movementInput);
+        SoundManager.Instance.PlaySound(SoundManager.AudioType.PlayerWalk);
     }
 
     public void OnJump(InputValue value)
@@ -28,6 +29,7 @@ public class PlayerInput : MonoBehaviour
         if (value.isPressed)
         {
             movement.Jump();
+            SoundManager.Instance.PlaySound(SoundManager.AudioType.PlayerJump);
         }
     }
 
@@ -36,10 +38,12 @@ public class PlayerInput : MonoBehaviour
         if (value.isPressed)
         {
             movement.SetRunning();
+            SoundManager.Instance.PlaySound(SoundManager.AudioType.PlayerSprint);
         }
         else 
         {
             movement.StopRunning();
+            SoundManager.Instance.PlaySound(SoundManager.AudioType.PlayerWalk);
         }
     }
 
@@ -53,6 +57,7 @@ public class PlayerInput : MonoBehaviour
         else
         {
             movement.ReleaseThrow();
+            SoundManager.Instance.PlaySound(SoundManager.AudioType.PlayerThrow);
         }
     }
 
@@ -61,6 +66,7 @@ public class PlayerInput : MonoBehaviour
         if (value.isPressed)
         {
             movement.UseItem();
+            SoundManager.Instance.PlaySound(SoundManager.AudioType.PlayerUsedItem);
         }
     }
 }
