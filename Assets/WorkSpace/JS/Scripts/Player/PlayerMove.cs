@@ -191,12 +191,13 @@ namespace JS.PlayerMove
             // 과열 시스템 처리
             if (CatchingFire)
             {
+                SoundManager.Instance.PlayLoopSound(SoundManager.AudioType.HotGauge);
                 UIManager.Instance.IncreaseHeat(HotIncrease);
-                SoundManager.Instance.PlaySound(SoundManager.AudioType.HotGauge);
             }
             else
             {
                 UIManager.Instance.DecreaseHeat(HotDecrease);
+                SoundManager.Instance.StopLoopSound(SoundManager.AudioType.HotGauge);
             }
 
             if (isThrowingReady)
@@ -522,6 +523,8 @@ namespace JS.PlayerMove
                 Vector3 throwPosition = heldObject.transform.position; // 던지기 시작 위치
                 Vector3 throwDirection = Camera.main.transform.forward; // 던지는 방향 (플레이어 시점)
                 float throwForce = Mathf.Lerp(minThrowForce, maxThrowForce, UIManager.Instance.currentThrow / UIManager.Instance.maxThrow);
+
+                SoundManager.Instance.PlaySound(SoundManager.AudioType.PlayerThrow);
 
                 int heldObjectViewID = heldObject.GetComponent<PhotonView>().ViewID;
                 photonView.RPC("ThrowObjectRPC", RpcTarget.AllViaServer, heldObjectViewID, throwPosition, throwDirection, throwForce);

@@ -138,7 +138,7 @@ public class ChattingManager : MonoBehaviourPunCallbacks
     }
 
     // 메시지 전송 함수
-    void OnSubmit(string s)
+    public void OnSubmit(string s)
     {
         // 입력이 비어 있거나 공백만 있는 경우 메시지 전송하지 않음
         if (string.IsNullOrWhiteSpace(chatInput.text))

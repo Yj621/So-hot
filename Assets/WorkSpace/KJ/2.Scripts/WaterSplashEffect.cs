@@ -11,6 +11,7 @@ public class WaterSplashEffect : MonoBehaviour
         {
             // 이펙트 실행
             PlaySplashEffect(other.transform.position);
+            SoundManager.Instance.PlaySound(SoundManager.AudioType.Water);
         }
     }
 

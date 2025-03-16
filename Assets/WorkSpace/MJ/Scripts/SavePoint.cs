@@ -16,6 +16,8 @@ public class SavePoint : MonoBehaviour
             GameManager.Instance.spawnPoints = spawnPoints;
             GameManager.Instance.fireSavePoint = firePoint;
             Fire.Instance.isFireOnSP = true;
+
+            SoundManager.Instance.PlaySound(SoundManager.AudioType.SavePoint);
         }
     }
 

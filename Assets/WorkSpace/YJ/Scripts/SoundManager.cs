@@ -14,8 +14,8 @@ public class SoundManager : MonoBehaviour
     }
     // 버튼 클릭 및 마우스 오버 사운드
     public AudioSource uIClick;
-    public AudioSource BackClick;
-    public AudioSource ForwardClick;
+    public AudioSource openUI;
+    public AudioSource closedUI;
     public AudioSource overSound;
 
 
@@ -68,6 +68,16 @@ public class SoundManager : MonoBehaviour
     public void ButtonOverSound()
     {
         overSound.Play();
+    }
+
+    public void OpenUISound()
+    {
+        openUI.Play();
+    }
+
+    public void ClosedUISound()
+    {
+        closedUI.Play();
     }
 
     // 특정 오디오 타입의 사운드 재생

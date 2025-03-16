@@ -109,20 +109,20 @@ public class ReadyManager : MonoBehaviourPunCallbacks
     }
 
     //마우스 오버 이벤트
-private void AddHoverEvents(Button button, int index)
-{
-    EventTrigger trigger = button.gameObject.AddComponent<EventTrigger>();
+    private void AddHoverEvents(Button button, int index)
+    {
+        EventTrigger trigger = button.gameObject.AddComponent<EventTrigger>();
 
-    EventTrigger.Entry pointerEnter = new EventTrigger.Entry();
-    pointerEnter.eventID = EventTriggerType.PointerEnter;
-    pointerEnter.callback.AddListener((data) => ShowDescription(index));
-    trigger.triggers.Add(pointerEnter);
+        EventTrigger.Entry pointerEnter = new EventTrigger.Entry();
+        pointerEnter.eventID = EventTriggerType.PointerEnter;
+        pointerEnter.callback.AddListener((data) => ShowDescription(index));
+        trigger.triggers.Add(pointerEnter);
 
-    EventTrigger.Entry pointerExit = new EventTrigger.Entry();
-    pointerExit.eventID = EventTriggerType.PointerExit;
-    pointerExit.callback.AddListener((data) => HideDescription());
-    trigger.triggers.Add(pointerExit);
-}
+        EventTrigger.Entry pointerExit = new EventTrigger.Entry();
+        pointerExit.eventID = EventTriggerType.PointerExit;
+        pointerExit.callback.AddListener((data) => HideDescription());
+        trigger.triggers.Add(pointerExit);
+    }
 
     private void ShowDescription(int index)
     {
@@ -169,10 +169,12 @@ private void AddHoverEvents(Button button, int index)
         if (!openCharacterPick) //열기
         {
             characterPick.DOAnchorPosY(characterPickInfo.end, characterPickInfo.duration).SetEase(characterPickInfo.AnimationType);
+            SoundManager.Instance.OpenUISound();
         }
         else //닫기
         {
             characterPick.DOAnchorPosY(characterPickInfo.start, characterPickInfo.duration).SetEase(characterPickInfo.AnimationType);
+            SoundManager.Instance.ClosedUISound();
         }
         openCharacterPick = !openCharacterPick;
     }
@@ -182,10 +184,12 @@ private void AddHoverEvents(Button button, int index)
         if (!openSkillPick) //열기
         {
             skillPick.DOAnchorPosY(skillPickInfo.end, skillPickInfo.duration).SetEase(skillPickInfo.AnimationType);
+            SoundManager.Instance.OpenUISound();
         }
         else //닫기
         {
             skillPick.DOAnchorPosY(skillPickInfo.start, skillPickInfo.duration).SetEase(skillPickInfo.AnimationType);
+            SoundManager.Instance.ClosedUISound();
         }
         openSkillPick = !openSkillPick;
     }

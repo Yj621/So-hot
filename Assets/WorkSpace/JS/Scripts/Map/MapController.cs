@@ -79,6 +79,7 @@ public class MapController : MonoBehaviourPunCallbacks
         {
             GameObject rock = PhotonNetwork.Instantiate(RockPrefab.name, point.position, Quaternion.identity);
             Rigidbody rb = rock.GetComponent<Rigidbody>();
+            rock.GetComponent<AudioSource>().Play();
 
             if (rb != null)
             {

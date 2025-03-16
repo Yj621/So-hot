@@ -10,7 +10,9 @@ using System.Collections;
 public class VoiceManager : MonoBehaviourPunCallbacks
 {
     public static VoiceManager Instance { get; private set; } // Singleton 인스턴스
-    
+
+    [SerializeField] private AudioSource uIClick;
+
     [SerializeField] private Transform playerGroup; // PlayerGroup의 Transform
 
     [SerializeField] private GameObject[] players;  // 각 플레이어 GameObject
@@ -57,6 +59,13 @@ public class VoiceManager : MonoBehaviourPunCallbacks
         UpdateSpeakersList();
         CheckIsPlaying();
     }
+
+    // 버튼 클릭 사운드 재생
+    public void ButtonSound()
+    {
+        uIClick.Play();
+    }
+
 
     // 모든 Speaker 컴포넌트를 가져와 speakers 배열 업데이트
     private void UpdateSpeakersList()
@@ -105,7 +114,6 @@ public class VoiceManager : MonoBehaviourPunCallbacks
                 }
                 // 로컬 플레이어의 음소거 여부 및 말하는 상태에 따른 이미지 설정
                 img.sprite = selfMuted ? muteImage : (speaker.IsPlaying ? speakImage : defaultImage);
-                Debug.Log($"speaker.IsPlaying : {speaker.IsPlaying}");
             }
             else
             {
