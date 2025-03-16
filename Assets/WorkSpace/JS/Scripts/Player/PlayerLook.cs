@@ -1,4 +1,8 @@
 using UnityEngine;
+using UnityEngine.UIElements;
+using UnityEngine.EventSystems;
+using Cursor = UnityEngine.Cursor;
+
 
 public class PlayerLook : MonoBehaviour
 {
@@ -11,6 +15,8 @@ public class PlayerLook : MonoBehaviour
 
     public GameObject playerCameraRoot;
 
+    public GameObject[] uiPanels;
+
     private void Awake()
     {
         camera = Camera.main;
@@ -18,6 +24,8 @@ public class PlayerLook : MonoBehaviour
 
     public void Rotate()
     {
+        if (Cursor.visible) return;
+
         // 대상이 될 카메라의 y축 각도
         float targetRotation = camera.transform.eulerAngles.y;
         // 현재 캐릭터의 y축 각도를 SmoothDampAngle로 대상 각도로 회전시켜준다.

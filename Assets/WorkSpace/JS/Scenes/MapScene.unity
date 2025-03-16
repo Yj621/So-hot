@@ -2223,7 +2223,6 @@ GameObject:
   - component: {fileID: 41109359}
   - component: {fileID: 41109358}
   - component: {fileID: 41109357}
-  - component: {fileID: 41109356}
   - component: {fileID: 41109361}
   m_Layer: 0
   m_Name: Main Camera
@@ -2232,23 +2231,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &41109356
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 41109355}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d3a2b27c2c177f14cac3f72a2c5cefcc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerBody: {fileID: 0}
-  offset: {x: 0, y: 2, z: -10}
-  followSpeed: 10
-  mouseSensitivity: 3.5
-  moveSpeed: 6.5
 --- !u!114 &41109357
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -74038,8 +74020,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 400, y: 0, z: 400.00006}
-  m_Center: {x: 200, y: 0, z: 200.00003}
+  m_Size: {x: 400, y: 35.98043, z: 400.00006}
+  m_Center: {x: 200, y: -17.990215, z: 200.00003}
 --- !u!114 &1275134707
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -114873,6 +114855,7 @@ MonoBehaviour:
   - {fileID: 358792376}
   CherryPrefab: {fileID: 129877247698336699, guid: e2570bbcb9949c743826bc7913aa21ce, type: 3}
   DropInterval: 0.3
+  CherryHitEffect: {fileID: 0}
   BamBooCollider:
   - {fileID: 2014258187}
   - {fileID: 418188918}
@@ -114880,6 +114863,7 @@ MonoBehaviour:
   ShootInterval: 1
   BamBooSpeed: 100
   BamBooDuration: 2
+  HitEffect: {fileID: 0}
 --- !u!4 &1955206487
 Transform:
   m_ObjectHideFlags: 0

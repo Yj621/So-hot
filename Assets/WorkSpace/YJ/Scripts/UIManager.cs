@@ -38,6 +38,8 @@ namespace YJ.UIManager
         public float ThrowIncreaseGauge;
 
 
+        public GameObject[] uiPanels;
+
         public static UIManager Instance { get; private set; }
 
         void Awake()
@@ -53,8 +55,6 @@ namespace YJ.UIManager
 
             currentStamina = maxStamina;
         }
-
-
         //뜨거움 게이지 관련 함수
 
         // 실제 뜨거움 게이지 업데이트 함수
@@ -261,6 +261,5 @@ namespace YJ.UIManager
             Debug.Log("타이머 끝, 부활");
         }
     }
-    
 }
 
