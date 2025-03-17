@@ -20,7 +20,6 @@ public class Inventory : MonoBehaviour
     {
         frontInventoryObj = GameManager.Instance.frontInventoryObj;
         terminalInventoryObj = GameManager.Instance.terminalInventoryObj;
-        terminalInventoryObj = GameObject.Find("Terminal");
         Debug.Log(frontInventoryObj);
         Debug.Log(terminalInventoryObj);
         frontInven = frontInventoryObj.GetComponent<Image>();
