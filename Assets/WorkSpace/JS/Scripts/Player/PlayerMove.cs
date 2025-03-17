@@ -88,7 +88,7 @@ namespace JS.PlayerMove
         {
             controller = GetComponent<CharacterController>();
             animator = GetComponent<Animator>();
-            ptg = GetComponent<PlayerThrowGuide>();
+           
             UIManager.Instance.UpdateStaminaUI();
             StartCoroutine(FindInventoryWithDelay());
 
@@ -203,7 +203,7 @@ namespace JS.PlayerMove
 
             if (isThrowingReady)
             {
-                Vector3 throwDirection = Camera.main.transform.forward;
+                Vector3 throwDirection = Camera.main.transform.forward + Camera.main.transform.up * 0.3f;
                 float throwForce = Mathf.Lerp(minThrowForce, maxThrowForce, UIManager.Instance.currentThrow / UIManager.Instance.maxThrow);
                 ptg.DrawThrowGuide(throwDirection, throwForce);
                 UIManager.Instance.IncreaseCharge();
@@ -229,8 +229,9 @@ namespace JS.PlayerMove
 
                     if (isThrowingReady) // 차징 중이었으면 던지기
                     {
+                        ptg.OffThrowGuide();
                         photonView.RPC("PlayThrowAnimation", RpcTarget.AllViaServer);
-                        throwDirection = Camera.main.transform.forward;
+                        throwDirection = Camera.main.transform.forward + Camera.main.transform.up * 0.3f;
                         throwForce = Mathf.Lerp(minThrowForce, maxThrowForce, UIManager.Instance.currentThrow / UIManager.Instance.maxThrow);
                     }
                     else // 차징 안 했으면 바닥에 떨어뜨리기
@@ -532,7 +533,7 @@ namespace JS.PlayerMove
             {
                 ptg.OffThrowGuide();
                 Vector3 throwPosition = heldObject.transform.position; // 던지기 시작 위치
-                Vector3 throwDirection = Camera.main.transform.forward; // 던지는 방향 (플레이어 시점)
+                Vector3 throwDirection = Camera.main.transform.forward + Camera.main.transform.up * 0.3f;
                 float throwForce = Mathf.Lerp(minThrowForce, maxThrowForce, UIManager.Instance.currentThrow / UIManager.Instance.maxThrow);
 
                 SoundManager.Instance.PlaySound(SoundManager.AudioType.PlayerThrow);
