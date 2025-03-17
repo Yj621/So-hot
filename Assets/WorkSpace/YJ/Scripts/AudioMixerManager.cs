@@ -12,6 +12,9 @@ public class AudioMixerManager : MonoBehaviour
     [SerializeField] private Slider bgmVolumeSlider;    // 배경음 볼륨 슬라이더
     [SerializeField] private Slider sfxVolumeSlider;    // 효과음 볼륨 슬라이더
 
+    // 토글 (사운드 온/오프)
+    [SerializeField] private Toggle muteToggle;
+
     public static AudioMixerManager instance { get; private set; } // 싱글톤 패턴을 위한 인스턴스
 
     private void Awake()
@@ -41,7 +44,12 @@ public class AudioMixerManager : MonoBehaviour
         audioMixer.GetFloat("BGMVolume", out float bgmDb);
         bgmVolumeSlider.value = Mathf.Pow(10, bgmDb / 20);
         audioMixer.GetFloat("SFXVolume", out float sfxDb);
+
         sfxVolumeSlider.value = Mathf.Pow(10, sfxDb / 20);
+        // 토글 초기화
+        bool isMuted = PlayerPrefs.GetInt("MasterMute", 1) == 0;
+        muteToggle.isOn = isMuted;
+
 
         // 슬라이더 값 변경 시 호출될 이벤트 리스너를 등록
         masterVolumeSlider.onValueChanged.AddListener((value) => {
@@ -53,6 +61,11 @@ public class AudioMixerManager : MonoBehaviour
         sfxVolumeSlider.onValueChanged.AddListener((value) => {
             SetSFXVolume(value);
         });
+
+
+        // 토글 이벤트 등록
+        muteToggle.onValueChanged.AddListener(SetMasterMute);
+
 
         // 초기 볼륨 설정
         SetMasterVolume(masterVolumeSlider.value);
@@ -77,6 +90,9 @@ public class AudioMixerManager : MonoBehaviour
     // 배경음 볼륨 설정
     public void SetBGMVolume(float volume)
     {
+        if (!muteToggle.isOn)
+            return; // 음소거 상태에서는 볼륨을 변경하지 않음
+
         float dbVolume = (volume > 0.0001f) ? Mathf.Log10(volume) * 20 : -80f;
         audioMixer.SetFloat("BGMVolume", dbVolume);
         PlayerPrefs.SetFloat("BGMVolume", volume);
@@ -94,5 +110,21 @@ public class AudioMixerManager : MonoBehaviour
         PlayerPrefs.Save();
         audioMixer.GetFloat("SFXVolume", out float newDbVolume);
         sfxVolumeSlider.value = Mathf.Pow(10, newDbVolume / 20);
+    }
+
+    public void SetMasterMute(bool isMuted)
+    {
+        if (!isMuted)
+        {
+            audioMixer.SetFloat("MasterVolume", -80f); // 음소거
+        }
+        else
+        {
+            float volume = masterVolumeSlider.value;
+            SetMasterVolume(volume); // 슬라이더 값을 기준으로 볼륨 설정
+        }
+
+        PlayerPrefs.SetInt("MasterMute", isMuted ? 1 : 0);
+        PlayerPrefs.Save();
     }
 }

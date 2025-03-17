@@ -37,9 +37,6 @@ public class PlayerInput : MonoBehaviour
         if (value.isPressed)
         {
             movement.Jump();
-            SoundManager.Instance.PlaySound(SoundManager.AudioType.PlayerJump);
-            SoundManager.Instance.StopLoopSound(SoundManager.AudioType.PlayerWalk);
-            SoundManager.Instance.StopLoopSound(SoundManager.AudioType.PlayerSprint);
         }
     }
 
@@ -48,14 +45,10 @@ public class PlayerInput : MonoBehaviour
         if (value.isPressed)
         {
             movement.SetRunning();
-            SoundManager.Instance.PlayLoopSound(SoundManager.AudioType.PlayerSprint);
-            SoundManager.Instance.StopLoopSound(SoundManager.AudioType.PlayerWalk);
         }
         else 
         {
             movement.StopRunning();
-            SoundManager.Instance.StopLoopSound(SoundManager.AudioType.PlayerSprint);
-            SoundManager.Instance.PlayLoopSound(SoundManager.AudioType.PlayerWalk);
             Debug.Log("뛰는 소리 멈춤");
         }
     }
