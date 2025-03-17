@@ -18435,7 +18435,6 @@ GameObject:
   - component: {fileID: 321914350}
   - component: {fileID: 321914353}
   - component: {fileID: 321914352}
-  - component: {fileID: 321914351}
   m_Layer: 5
   m_Name: Skill_Panel
   m_TagString: Untagged
@@ -18465,18 +18464,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 130, y: 130}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &321914351
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 321914349}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30eef404cf27c564693f16018b7064d2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &321914352
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -39235,6 +39222,7 @@ GameObject:
   - component: {fileID: 728130059}
   - component: {fileID: 728130058}
   - component: {fileID: 728130057}
+  - component: {fileID: 728130061}
   m_Layer: 5
   m_Name: Game_Canvas
   m_TagString: Untagged
@@ -39327,6 +39315,28 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &728130061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 728130056}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47f3cc2ac9e666941ba33803c83c7d6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skillImage: {fileID: 216827663}
+  abilityImage:
+  - {fileID: 21300000, guid: 300abdf8cbdd5c742a05b6506767fd64, type: 3}
+  - {fileID: 21300000, guid: f6b8b85cbdc82ce439a41ae3d56d57ee, type: 3}
+  - {fileID: 21300000, guid: bb67b03c2969d104caba950c446f8c8d, type: 3}
+  - {fileID: 21300000, guid: 37de44bcb59b8174497def1957cc490b, type: 3}
+  coolTime: 30
+  maxCoolTime: 30
+  timerText: {fileID: 1289010399}
+  skillCoolTimeImage: {fileID: 1302083760}
 --- !u!1001 &729738641
 PrefabInstance:
   m_ObjectHideFlags: 0
