@@ -2422,7 +2422,6 @@ GameObject:
   - component: {fileID: 41109359}
   - component: {fileID: 41109358}
   - component: {fileID: 41109357}
-  - component: {fileID: 41109356}
   - component: {fileID: 41109361}
   - component: {fileID: 41109362}
   m_Layer: 0
@@ -2432,23 +2431,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &41109356
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 41109355}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d3a2b27c2c177f14cac3f72a2c5cefcc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerBody: {fileID: 0}
-  offset: {x: 0, y: 2, z: -10}
-  followSpeed: 10
-  mouseSensitivity: 3.5
-  moveSpeed: 6.5
 --- !u!114 &41109357
 MonoBehaviour:
   m_ObjectHideFlags: 0

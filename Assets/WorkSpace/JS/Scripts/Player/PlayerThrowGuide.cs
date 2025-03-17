@@ -6,8 +6,8 @@ using JS.PlayerMove;
 public class PlayerThrowGuide : MonoBehaviour
 {
     public LineRenderer lineRenderer;
-    public int lineSegmentCount = 30;  // 궤적을 구성할 점 개수
-    public float simulationTimeStep = 0.05f; // 시뮬레이션 간격
+    public int lineSegmentCount = 100;  // 궤적을 구성할 점 개수
+    public float simulationTimeStep = 0.08f; // 시뮬레이션 간격
 
     public Transform throwOrigin;  // 불이 던져질 시작 위치
     private Camera mainCamera;

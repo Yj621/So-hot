@@ -1,4 +1,3 @@
-using ParrelSync;
 using System.Collections;
 using TMPro;
 using Unity.VisualScripting;

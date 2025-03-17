@@ -97,8 +97,8 @@ namespace JS.PlayerMove
 
                 if (camera != null)
                 {
-                    camera.Follow = transform;
-                    camera.LookAt = transform;
+                        camera.Follow = transform;
+                        camera.LookAt = transform;
                 }
             }
 
@@ -115,6 +115,11 @@ namespace JS.PlayerMove
 
         private void Update()
         {
+            if (transform.position.y < -100)
+            {
+                GameManager.Instance.PlayerRespawn(playerNumber);
+            }
+
             if (!photonView.IsMine) return;
             
             if (isDie)
@@ -129,7 +134,11 @@ namespace JS.PlayerMove
                 return;
             }
 
-            playerLook.Rotate();
+
+            if (!Cursor.visible)
+            {
+                playerLook.Rotate();
+            }
             float rotationY = transform.rotation.eulerAngles.y;
 
             // 중력 적용
@@ -513,6 +522,7 @@ namespace JS.PlayerMove
         {
             if (!photonView.IsMine) return;
             if (wasOverHeat) return;
+            if (isGhost) return;
 
             photonView.RPC("SetCatchingFire", RpcTarget.AllViaServer, true);
             photonView.RPC("PlayCatchAnimation", RpcTarget.AllViaServer);
