@@ -140,8 +140,6 @@ MonoBehaviour:
   minThrowForce: 10
   maxThrowForce: 30
   throwCooldown: 1
-  HotIncrease: 0.4
-  HotDecrease: 0.2
   SmokeObject: {fileID: 1145650323168778258}
   isDie: 0
   isGhost: 0
@@ -423,8 +421,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   effectNumber: 0
-  frontInven: {fileID: 0}
-  terminalInven: {fileID: 0}
 --- !u!1 &213017815148455436
 GameObject:
   m_ObjectHideFlags: 0

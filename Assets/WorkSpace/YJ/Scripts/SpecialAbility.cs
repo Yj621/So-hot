@@ -49,6 +49,7 @@ namespace YJ.Ability
             if (Input.GetKeyDown(KeyCode.E) && !isCooldownActive)
             {
                 StartCoroutine(CoolTime());
+                SoundManager.Instance.PlaySound(SoundManager.AudioType.PlayerUsedSkill);
             }
         }
 
