@@ -23,20 +23,24 @@ namespace Donghyun.Ability
         public TextMeshProUGUI timerText;
         public Image skillCoolTimeImage;
 
+        public TMP_Text skillText;
+        public string[] skillTextList;
+
         public SkillType SkillType { get; private set; }
         void Awake()
         {
             Instance = this;
 
             SkillType = (SkillType)GetTag(PhotonNetwork.LocalPlayer, "Skill");
+            skillText.gameObject.SetActive(false);
 
             switch (SkillType)
             {
                 case SkillType.Fireball:
                     gameObject.AddComponent<ThrowFireSkill>();
                     break;
-                case SkillType.Detect:
-
+                case SkillType.CreateItem:
+                    gameObject.AddComponent<CreateItemSkill>();
                     break;
                 case SkillType.Shield:
                     gameObject.AddComponent<ProtectFireSkill>();
@@ -45,6 +49,8 @@ namespace Donghyun.Ability
                     gameObject.AddComponent<DecreaseFireGaugeSkill>();
                     break;
             }
+
+            skillText.text = "기술 : " + skillTextList[(int)SkillType];
         }
     }
 

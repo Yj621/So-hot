@@ -1,3 +1,4 @@
+using Donghyun.Builder;
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
@@ -74,8 +75,6 @@ namespace JS.PlayerMove
         private Inventory inventory;
         public bool saveLife = false;
         private bool invincible = false;
-
-        public Transform playerGroup;
 
         private void Awake()
         {
@@ -641,13 +640,13 @@ namespace JS.PlayerMove
 
         public void SetPlayerParentRPC()
         {
-            photonView.RPC("SetPlayerParent", RpcTarget.AllViaServer);
+            photonView.RPC("SetPlayerParent", RpcTarget.AllBufferedViaServer);
         }
 
         [PunRPC]
         private void SetPlayerParent()
         {
-            transform.parent.SetParent(playerGroup);
+            transform.parent.SetParent(SpawnManager.Instance.playerGroup);
         }
 
         [PunRPC]

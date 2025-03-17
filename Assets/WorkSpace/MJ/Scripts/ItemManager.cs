@@ -15,6 +15,7 @@ public enum ITEMTYPE
 public class ItemManager : MonoBehaviourPun
 {
     public static ItemManager Instance;
+    public ItemData[] itemDatas;
 
     private void Awake()
     {
