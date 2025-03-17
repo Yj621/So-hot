@@ -16259,7 +16259,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1100206552}
         m_TargetAssemblyTypeName: VoiceManager, Assembly-CSharp
         m_MethodName: ToggleSpeaker
         m_Mode: 3
@@ -24053,7 +24053,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1100206552}
         m_TargetAssemblyTypeName: VoiceManager, Assembly-CSharp
         m_MethodName: ToggleSpeaker
         m_Mode: 3
@@ -32779,7 +32779,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1100206552}
         m_TargetAssemblyTypeName: VoiceManager, Assembly-CSharp
         m_MethodName: ToggleSpeaker
         m_Mode: 3
@@ -35539,7 +35539,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1100206552}
         m_TargetAssemblyTypeName: VoiceManager, Assembly-CSharp
         m_MethodName: ToggleSpeaker
         m_Mode: 3

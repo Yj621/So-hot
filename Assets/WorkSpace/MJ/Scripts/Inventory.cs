@@ -37,6 +37,8 @@ public class Inventory : MonoBehaviour
 
     public void GetItem(ItemData item)
     {
+    
+        SoundManager.Instance.PlaySound(SoundManager.AudioType.PlayerGetItem);
         if (inventory.Count == 0)
         {
             inventory.Enqueue(item);
