@@ -1,4 +1,5 @@
 using Donghyun.Ability;
+using JS.PlayerMove;
 using Photon.Pun;
 using System;
 using System.Collections;
@@ -14,7 +15,7 @@ namespace YJ.Ability
         Fireball,
         Shield,
         HotChill,
-        Detect
+        CreateItem
     }
 
     public abstract class SpecialAbility : MonoBehaviour
@@ -29,14 +30,24 @@ namespace YJ.Ability
         //스킬 매니저 캐싱
         protected SkillManager skillManager;
 
+
+        private PlayerMove playerMove;
         private SkillType skillType;
 
         void Awake()
         {
+            StartCoroutine(InitSettingRoutine());
+        }
+
+        IEnumerator InitSettingRoutine()
+        {
+            while (!AllhasTag("loadPlayer")) yield return null;
+
             skillManager = SkillManager.Instance;
             coolTime = skillManager.coolTime;
             maxCoolTime = skillManager.maxCoolTime;
             skillType = skillManager.SkillType;
+            playerMove = GameManager.Instance.player.GetComponentInChildren<PlayerMove>();
 
             SkillUpdate();
 
@@ -48,6 +59,9 @@ namespace YJ.Ability
             // E 키를 눌렀고, 쿨타임이 진행 중이 아닐 때만 실행
             if (Input.GetKeyDown(KeyCode.E) && !isCooldownActive)
             {
+                //플레이어 사망 시에는 스킬 사용 불가
+                if (playerMove.isDie) return;
+
                 StartCoroutine(CoolTime());
                 SoundManager.Instance.PlaySound(SoundManager.AudioType.PlayerUsedSkill);
             }
@@ -70,6 +84,7 @@ namespace YJ.Ability
             skillManager.skillCoolTimeImage.fillAmount = 1f;
 
             ExcuteSkill();
+            skillManager.skillText.gameObject.SetActive(true);
 
             while (coolTime > 0)
             {

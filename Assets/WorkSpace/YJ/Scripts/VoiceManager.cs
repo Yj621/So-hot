@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using static TotalMultiManager;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class VoiceManager : MonoBehaviourPunCallbacks
 {
@@ -31,6 +32,7 @@ public class VoiceManager : MonoBehaviourPunCallbacks
     // 로컬 플레이어의 자체 음소거 상태 변수
     private bool selfMuted = false;
 
+    private bool endLoading = false;
     private void Awake()
     {
         if (Instance == null)
@@ -46,7 +48,6 @@ public class VoiceManager : MonoBehaviourPunCallbacks
 
     private void Start()
     {
-        UpdateSpeakersList();
         StartCoroutine(UpdatePlayerTextsBasedOnSpeaker());
     }
 
@@ -56,8 +57,11 @@ public class VoiceManager : MonoBehaviourPunCallbacks
     /// </summary>
     private void LateUpdate()
     {
-        UpdateSpeakersList();
-        CheckIsPlaying();
+        if(endLoading)
+        {
+            UpdateSpeakersList();
+            CheckIsPlaying();
+        }
     }
 
     // 버튼 클릭 사운드 재생
@@ -132,10 +136,18 @@ public class VoiceManager : MonoBehaviourPunCallbacks
     /// </summary>
     private IEnumerator UpdatePlayerTextsBasedOnSpeaker()
     {
-        while (!AllhasTag("HasInfo"))
+        if (SceneManager.GetActiveScene().name.Equals("MapScene"))
         {
-            yield return null; // 모든 플레이어의 CustomProperties가 준비될 때까지 대기
+            Debug.Log("맵씬에서 실행");
+            while (!AllhasTag("setPlayerGroup"))
+            {
+                yield return null; // 모든 플레이어의 CustomProperties가 준비될 때까지 대기
+            }
         }
+
+        endLoading = true;
+
+        UpdateSpeakersList();
 
         foreach (var speaker in speakers)
         {

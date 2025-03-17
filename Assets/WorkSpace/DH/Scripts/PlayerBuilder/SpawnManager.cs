@@ -11,7 +11,9 @@ namespace Donghyun.Builder
 {
     public class SpawnManager : MonoBehaviour
     {
-        [SerializeField] private Transform playerGroup;
+        public static SpawnManager Instance { get; private set; }
+
+        public Transform playerGroup;
 
         private PlayerSetting playerSetting;
 
@@ -20,6 +22,7 @@ namespace Donghyun.Builder
         private GameObject player;
         private void Awake()
         {
+            Instance = this;
             pv = GetComponent<PhotonView>();
             gm = GameManager.Instance;
             StartCoroutine(StartGame());
@@ -37,7 +40,6 @@ namespace Donghyun.Builder
             //해당 정보 저장
             playerSetting = new PlayerSetting(playerNumber, characterType);
 
-            if (gm == null) Debug.Log("null이네");
             // 모두 씬에 있어야 생성할 수 있음, 에디터와 클라는 에디터가 마스터
             player = PhotonNetwork.Instantiate("Character/"+playerSetting.type.ToString(), gm.spawnPoints[playerSetting.playerNumber].position, Quaternion.identity);
 
@@ -48,16 +50,18 @@ namespace Donghyun.Builder
 
             //나머지 파츠들을 합침
             //pv.RPC("AddParts", RpcTarget.AllViaServer, gm.player.GetComponent<PhotonView>().ViewID, playerSetting.type);
-
-            while (AllhasTag("loadPlayer")) yield return null;
+            SetTag("loadPlayer", true);
+            while (!AllhasTag("loadPlayer")) yield return null;
         }
 
         private IEnumerator StartGame()
         {
             yield return Loading();
 
-            player.GetComponentInChildren<PlayerMove>().playerGroup = playerGroup;
             player.GetComponentInChildren<PlayerMove>().SetPlayerParentRPC();
+
+            SetTag("setPlayerGroup", true);
+            while (!AllhasTag("setPlayerGroup")) yield return null;
 
             if (master())
             {
