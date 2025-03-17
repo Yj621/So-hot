@@ -9,6 +9,7 @@ using System;
 using static TotalMultiManager;
 using System.Collections;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
+using YJ.Ability;
 
 
 namespace Donghyun.Network
