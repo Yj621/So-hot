@@ -10,7 +10,7 @@ namespace Donghyun.Ability
     {
         public override void ExcuteSkill()
         {
-            UIManager.Instance.DecreaseHeat(30.0f);
+            UIManager.Instance.DecreaseHeat();
         }
     }
 }
