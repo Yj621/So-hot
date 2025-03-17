@@ -221,7 +221,6 @@ namespace YJ.UIManager
         // 타이머 ON  
         public void TimerStart()
         {
-            dieTimerPanel.SetActive(true);
             ResetTimer();
         }
         private void ResetTimer()
@@ -229,30 +228,36 @@ namespace YJ.UIManager
             StopAllCoroutines(); // 현재 실행 중인 코루틴 중지
             time = initialTime; // 시간을 초기값으로 설정
             timerText.color = new Color32(0x5A, 0x58, 0x55, 0xFF);
-            StartTimer(); // 타이머 다시 시작
-        }
 
-        private void StartTimer()
-        {
+            dieTimerPanel.SetActive(true);
+            UpdateTimerText(); // 타이머 텍스트를 즉시 갱신
             StartCoroutine(Countdown());
         }
+
 
         private IEnumerator Countdown()
         {
             while (time > 0)
             {
-                int minutes = Mathf.FloorToInt(time / 60); // 분 계산
-                int seconds = Mathf.FloorToInt(time % 60); // 초 계산
-                timerText.text = $"{minutes:D2}:{seconds:D2}"; // 두 자리 분:초 형식
-                time -= 1;
+                UpdateTimerText(); // 코루틴 시작 시 즉시 타이머 텍스트 갱신
                 yield return new WaitForSeconds(1.0f);
+                time -= 1;
+
                 if (time < 5)
                 {
                     timerText.color = Color.red;
                 }
             }
+
             timerText.text = "00:00";
             TimerEnd();
+        }
+
+        private void UpdateTimerText()
+        {
+            int minutes = Mathf.FloorToInt(time / 60); // 분 계산
+            int seconds = Mathf.FloorToInt(time % 60); // 초 계산
+            timerText.text = $"{minutes:D2}:{seconds:D2}"; // 두 자리 분:초 형식
         }
 
         public void TimerEnd()

@@ -198,6 +198,7 @@ MonoBehaviour:
   rotationSmoothTime: 0
   rotationVelocity: 0
   playerCameraRoot: {fileID: 80331836405658412}
+  uiPanels: []
 --- !u!65 &7327025210925662923
 BoxCollider:
   m_ObjectHideFlags: 0
