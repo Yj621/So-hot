@@ -434,7 +434,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71d5ef973bff23d46ad4ff119cf55604, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hitEffect: {fileID: 1845955007268882, guid: 67a684e320da6e7439421a07e3fa265c, type: 3}
+  hitEffect: {fileID: 0}
 --- !u!96 &-5268074371367824137
 TrailRenderer:
   serializedVersion: 3
