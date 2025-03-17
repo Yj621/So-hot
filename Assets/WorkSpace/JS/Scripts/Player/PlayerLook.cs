@@ -15,8 +15,6 @@ public class PlayerLook : MonoBehaviour
 
     public GameObject playerCameraRoot;
 
-    public GameObject[] uiPanels;
-
     private void Awake()
     {
         camera = Camera.main;

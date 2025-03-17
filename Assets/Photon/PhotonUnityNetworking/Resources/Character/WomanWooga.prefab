@@ -53,6 +53,7 @@ GameObject:
   - component: {fileID: 5929105811304696797}
   - component: {fileID: 2770190189494946821}
   - component: {fileID: 6376941184633243372}
+  - component: {fileID: 4035500164870925998}
   m_Layer: 0
   m_Name: WomanWooga
   m_TagString: Player
@@ -140,8 +141,6 @@ MonoBehaviour:
   minThrowForce: 10
   maxThrowForce: 30
   throwCooldown: 1
-  HotIncrease: 0.4
-  HotDecrease: 0.2
   SmokeObject: {fileID: 1145650323168778258}
   isDie: 0
   isGhost: 0
@@ -197,7 +196,6 @@ MonoBehaviour:
   rotationSmoothTime: 0
   rotationVelocity: 0
   playerCameraRoot: {fileID: 80331836405658412}
-  uiPanels: []
 --- !u!65 &7327025210925662923
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -279,7 +277,8 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   observableSearch: 2
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: 4035500164870925998}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -425,6 +424,59 @@ MonoBehaviour:
   effectNumber: 0
   frontInven: {fileID: 0}
   terminalInven: {fileID: 0}
+--- !u!114 &4035500164870925998
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 80331836405658412}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b8c4a61274f60b4ea5fb4299cfdbf14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowLayerWeightsInspector: 1
+  ShowParameterInspector: 1
+  m_SynchronizeParameters:
+  - Type: 4
+    SynchronizeType: 2
+    Name: isRunning
+  - Type: 4
+    SynchronizeType: 2
+    Name: isGrounded
+  - Type: 4
+    SynchronizeType: 2
+    Name: isFalling
+  - Type: 9
+    SynchronizeType: 2
+    Name: Jump
+  - Type: 9
+    SynchronizeType: 2
+    Name: Throw
+  - Type: 9
+    SynchronizeType: 2
+    Name: Any
+  - Type: 9
+    SynchronizeType: 2
+    Name: Catch
+  - Type: 4
+    SynchronizeType: 2
+    Name: isGhost
+  - Type: 9
+    SynchronizeType: 2
+    Name: Die
+  - Type: 4
+    SynchronizeType: 2
+    Name: isMoving
+  - Type: 4
+    SynchronizeType: 2
+    Name: ThrowReady
+  m_SynchronizeLayers:
+  - SynchronizeType: 2
+    LayerIndex: 0
+  - SynchronizeType: 2
+    LayerIndex: 1
 --- !u!1 &213017815148455436
 GameObject:
   m_ObjectHideFlags: 0
@@ -1380,7 +1432,7 @@ Transform:
   m_GameObject: {fileID: 2235186993800827773}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.9, z: 0.6}
+  m_LocalPosition: {x: 0, y: 2, z: 0.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3727,6 +3779,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 597724804988839012}
     m_Modifications:
+    - target: {fileID: 5446477390752579096, guid: b713585f24f940f4eadb10319818ef40, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 5446477390807014368, guid: b713585f24f940f4eadb10319818ef40, type: 3}
       propertyPath: m_LocalScale.x
       value: 2
@@ -3781,15 +3837,71 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5446477390807014372, guid: b713585f24f940f4eadb10319818ef40, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5446477390807014373, guid: b713585f24f940f4eadb10319818ef40, type: 3}
       propertyPath: m_Name
       value: LittleGhost_LP (5)
       objectReference: {fileID: 0}
     - target: {fileID: 5446477390807014373, guid: b713585f24f940f4eadb10319818ef40, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5446477390807014373, guid: b713585f24f940f4eadb10319818ef40, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5446477390807014375, guid: b713585f24f940f4eadb10319818ef40, type: 3}
+      propertyPath: m_Constraints
+      value: 126
+      objectReference: {fileID: 0}
+    - target: {fileID: 5446477390958229031, guid: b713585f24f940f4eadb10319818ef40, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5446477391167398892, guid: b713585f24f940f4eadb10319818ef40, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5446477391288023244, guid: b713585f24f940f4eadb10319818ef40, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5446477391331334299, guid: b713585f24f940f4eadb10319818ef40, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5446477391790268703, guid: b713585f24f940f4eadb10319818ef40, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5446477392050281242, guid: b713585f24f940f4eadb10319818ef40, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5446477392088519883, guid: b713585f24f940f4eadb10319818ef40, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5446477392291710646, guid: b713585f24f940f4eadb10319818ef40, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5446477392374889844, guid: b713585f24f940f4eadb10319818ef40, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5446477392451633663, guid: b713585f24f940f4eadb10319818ef40, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5446477392503089859, guid: b713585f24f940f4eadb10319818ef40, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5446477392704212336, guid: b713585f24f940f4eadb10319818ef40, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

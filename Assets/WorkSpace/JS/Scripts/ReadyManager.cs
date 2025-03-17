@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using System;
 using UnityEngine.EventSystems;
-using UnityEditor.Search;
+
 
 [Serializable]
 public class AnimationInfo
