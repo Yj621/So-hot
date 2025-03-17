@@ -36,6 +36,7 @@ namespace YJ.UIManager
         public float currentThrow = 0f;
         public float maxThrow = 100f;
         public float ThrowIncreaseGauge;
+        [SerializeField] private float chargeDuration = 2f;
 
 
         public GameObject[] uiPanels;
@@ -200,7 +201,7 @@ namespace YJ.UIManager
             if (currentThrow < maxThrow)
             {
                 ActiveThrow();
-                currentThrow += ThrowIncreaseGauge * Time.deltaTime;
+                currentThrow += (maxThrow / chargeDuration) * Time.deltaTime;
                 currentThrow = Mathf.Clamp(currentThrow, 0, maxThrow);
                 //Debug.Log("던짐 게이지 차는중");
             }

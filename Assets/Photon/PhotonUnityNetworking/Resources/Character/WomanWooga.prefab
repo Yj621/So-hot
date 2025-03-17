@@ -48,7 +48,6 @@ GameObject:
   - component: {fileID: 7327025210925662923}
   - component: {fileID: 1394268758397644107}
   - component: {fileID: 7070180740194487678}
-  - component: {fileID: 2672899304264300316}
   - component: {fileID: 9195866803431999634}
   - component: {fileID: 3719356113215625590}
   - component: {fileID: 5929105811304696797}
@@ -82,12 +81,12 @@ Transform:
   - {fileID: 1262137770015959416}
   - {fileID: 8642668397757409052}
   - {fileID: 2373559870982534717}
-  - {fileID: 1107739000451520496}
   - {fileID: 4576466100950500275}
   - {fileID: 7204905211666733284}
   - {fileID: 4149937500522097632}
   - {fileID: 4231306248176673922}
   - {fileID: 543047386168156807}
+  - {fileID: 3880119590550724278}
   m_Father: {fileID: 686129109239536469}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &8687722071260669276
@@ -127,7 +126,7 @@ MonoBehaviour:
   controller: {fileID: 6957392686559702081}
   animator: {fileID: 8687722071260669276}
   playerLook: {fileID: 3033885118504725439}
-  ptg: {fileID: 2672899304264300316}
+  ptg: {fileID: 3158776176834444048}
   walkSpeed: 20
   runSpeed: 30
   jumpHeight: 10
@@ -198,6 +197,7 @@ MonoBehaviour:
   rotationSmoothTime: 0
   rotationVelocity: 0
   playerCameraRoot: {fileID: 80331836405658412}
+  uiPanels: []
 --- !u!65 &7327025210925662923
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -261,22 +261,6 @@ MonoBehaviour:
   m_DefaultActionMap: PlayerActions
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &2672899304264300316
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 80331836405658412}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ab0f510c342ea454da02f786f1078aa9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  lineRenderer: {fileID: 3157022380664624239}
-  lineSegmentCount: 30
-  simulationTimeStep: 0.05
-  throwOrigin: {fileID: 2373559870982534717}
 --- !u!114 &9195866803431999634
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -605,7 +589,7 @@ Transform:
   - {fileID: 7083222078443693126}
   m_Father: {fileID: 1655563025480512844}
   m_LocalEulerAnglesHint: {x: -15.329826, y: -5.235727, z: -6.3512535}
---- !u!1 &944621848505088062
+--- !u!1 &1012121664208977075
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -613,22 +597,23 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1107739000451520496}
-  - component: {fileID: 3157022380664624239}
+  - component: {fileID: 3880119590550724278}
+  - component: {fileID: 7543229700296742000}
+  - component: {fileID: 3158776176834444048}
   m_Layer: 0
-  m_Name: Line
+  m_Name: ThrowGuideLine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1107739000451520496
+--- !u!4 &3880119590550724278
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 944621848505088062}
+  m_GameObject: {fileID: 1012121664208977075}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -637,14 +622,14 @@ Transform:
   m_Children: []
   m_Father: {fileID: 597724804988839012}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!120 &3157022380664624239
+--- !u!120 &7543229700296742000
 LineRenderer:
   serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 944621848505088062}
+  m_GameObject: {fileID: 1012121664208977075}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -661,7 +646,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e823cd5b5d27c0f4b8256e7c12ee3e6d, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -687,7 +672,7 @@ LineRenderer:
   - {x: 0, y: 0, z: 1}
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.1
+    widthMultiplier: 1
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -705,7 +690,7 @@ LineRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 0, g: 0, b: 0, a: 1}
+      key0: {r: 1, g: 1, b: 1, a: 1}
       key1: {r: 1, g: 1, b: 1, a: 1}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
@@ -713,7 +698,7 @@ LineRenderer:
       key5: {r: 0, g: 0, b: 0, a: 0}
       key6: {r: 0, g: 0, b: 0, a: 0}
       key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 64764
+      ctime0: 0
       ctime1: 65535
       ctime2: 0
       ctime3: 0
@@ -730,7 +715,7 @@ LineRenderer:
       atime6: 0
       atime7: 0
       m_Mode: 0
-      m_ColorSpace: 0
+      m_ColorSpace: -1
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     numCornerVertices: 0
@@ -741,9 +726,25 @@ LineRenderer:
     shadowBias: 0.5
     generateLightingData: 0
   m_MaskInteraction: 0
-  m_UseWorldSpace: 0
+  m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!114 &3158776176834444048
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1012121664208977075}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab0f510c342ea454da02f786f1078aa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lineRenderer: {fileID: 7543229700296742000}
+  lineSegmentCount: 30
+  simulationTimeStep: 0.05
+  throwOrigin: {fileID: 2373559870982534717}
 --- !u!1 &1030476275183307007
 GameObject:
   m_ObjectHideFlags: 0
@@ -1379,7 +1380,7 @@ Transform:
   m_GameObject: {fileID: 2235186993800827773}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.9, z: 0.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -35,10 +35,12 @@ public class PlayerThrowGuide : MonoBehaviour
         }
 
         lineRenderer.SetPositions(points.ToArray());
+        Debug.DrawRay(throwOrigin.position, throwDirection * 5f, Color.red);
     }
 
     public void OffThrowGuide()
     {
         lineRenderer.enabled = false;
+        lineRenderer.positionCount = 0;
     }
 }
