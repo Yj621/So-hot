@@ -18,19 +18,18 @@ public class Inventory : MonoBehaviour
 
     private void Start()
     {
+        StartCoroutine(FindPlayerControllerWithDelay());
+    }
+
+    IEnumerator FindPlayerControllerWithDelay()
+    {
+        yield return new WaitForSeconds(4f); // 네트워크 동기화가 완료될 시간을 확보
         frontInventoryObj = GameObject.Find("Front");
         terminalInventoryObj = GameObject.Find("Terminal");
         frontInven = frontInventoryObj.GetComponent<Image>();
         terminalInven = terminalInventoryObj.GetComponent<Image>();
         frontInventoryObj.SetActive(false);
         terminalInventoryObj.SetActive(false);
-
-        StartCoroutine(FindPlayerControllerWithDelay());
-    }
-
-    IEnumerator FindPlayerControllerWithDelay()
-    {
-        yield return new WaitForSeconds(5f); // 네트워크 동기화가 완료될 시간을 확보
         itemUser = GetComponent<PlayerMove>();
     }
 
