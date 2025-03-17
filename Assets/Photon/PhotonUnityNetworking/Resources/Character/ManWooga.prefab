@@ -1841,7 +1841,6 @@ MonoBehaviour:
   rotationSmoothTime: 0
   rotationVelocity: 0
   playerCameraRoot: {fileID: 4976602224307630705}
-  uiPanels: []
 --- !u!65 &8958056718412222064
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2068,8 +2067,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   effectNumber: 0
-  frontInven: {fileID: 0}
-  terminalInven: {fileID: 0}
 --- !u!114 &9148589654438932478
 MonoBehaviour:
   m_ObjectHideFlags: 0

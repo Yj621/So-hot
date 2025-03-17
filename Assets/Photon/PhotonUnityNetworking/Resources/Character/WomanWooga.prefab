@@ -422,8 +422,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   effectNumber: 0
-  frontInven: {fileID: 0}
-  terminalInven: {fileID: 0}
 --- !u!114 &4035500164870925998
 MonoBehaviour:
   m_ObjectHideFlags: 0

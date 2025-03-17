@@ -3,7 +3,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-
 namespace YJ.UIManager
 {
     public class UIManager : MonoBehaviour
@@ -15,6 +14,7 @@ namespace YJ.UIManager
         public float heatIncreaseRate = 10f; // 불을 들고 있을 때 초당 증가량
         public float heatDecreaseRate = 5f;  // 불이 없을 때 초당 감소량
         [SerializeField] private float FirechargeDuration = 3f;
+        public Image[] FireImage;
 
         [Header("Slider 설정")]
         [SerializeField] private Slider hotSlider;
@@ -39,8 +39,9 @@ namespace YJ.UIManager
         public float ThrowIncreaseGauge;
         [SerializeField] private float chargeDuration = 2f;
 
+        public Image[] GhostImage;
+        public GameObject GhostPanel;
 
-        public GameObject[] uiPanels;
 
         public static UIManager Instance { get; private set; }
 
@@ -56,6 +57,18 @@ namespace YJ.UIManager
             ResetHeatOnDeath(); // 게임 시작 시 게이지 초기화
 
             currentStamina = maxStamina;
+
+            for (int i = 0; i < FireImage.Length; i++)
+            {
+                Color c = FireImage[i].color;
+                c.a = 0f; // 완전 투명하게 시작
+                FireImage[i].color = c;
+            }
+
+            for (int i = 0; i < GhostImage.Length; i++)
+            {
+                GhostImage[i].gameObject.SetActive(false);
+            }
         }
         //뜨거움 게이지 관련 함수
 
@@ -86,6 +99,14 @@ namespace YJ.UIManager
             heatGauge += (maxHeat / FirechargeDuration) * Time.deltaTime;
             heatGauge = Mathf.Clamp(heatGauge, 0, maxHeat); // 최대치를 넘지 않도록 제한
 
+            float gaugePercent = heatGauge / maxHeat;
+
+            for (int i = 0; i  < FireImage.Length; i++)
+            {
+                Color c = FireImage[i].color;
+                c.a = Mathf.Lerp(0f, 0.8f, gaugePercent);
+                FireImage[i].color = c;
+            }
             //Debug.Log($"현재 뜨거움 게이지: {heatGauge}");
             UpdateHotUI(); // UI 갱신
         }
@@ -96,6 +117,14 @@ namespace YJ.UIManager
             heatGauge -= (maxHeat / FirechargeDuration) * Time.deltaTime;
             heatGauge = Mathf.Clamp(heatGauge, 0, maxHeat); // 최소 0 이하로 내려가지 않도록 제한
 
+            float gaugePercent = heatGauge / maxHeat;
+
+            for (int i = 0; i < FireImage.Length; i++)
+            {
+                Color c = FireImage[i].color;
+                c.a = Mathf.Lerp(0f, 0.8f, gaugePercent);
+                FireImage[i].color = c;
+            }
             //Debug.Log($"현재 뜨거움 게이지: {heatGauge}");
             UpdateHotUI(); // UI 갱신
         }
@@ -267,6 +296,24 @@ namespace YJ.UIManager
             //부활시 Die Timer 비활성화
             dieTimerPanel.SetActive(false);
             Debug.Log("타이머 끝, 부활");
+        }
+
+        public void ActivateGhost()
+        {
+            for (int i = 0; i < GhostImage.Length; i++)
+            {
+                GhostImage[i].gameObject.SetActive(true);
+            }
+            GhostPanel.SetActive(true);
+        }
+
+        public void DeActivateGhost()
+        {
+            for (int i = 0; i < GhostImage.Length; i++)
+            {
+                GhostImage[i].gameObject.SetActive(false);
+            }
+            GhostPanel.SetActive(false);
         }
     }
 }

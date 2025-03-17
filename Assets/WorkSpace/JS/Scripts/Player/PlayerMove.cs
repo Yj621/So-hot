@@ -405,7 +405,7 @@ namespace JS.PlayerMove
             }
             SetLayerUpwards(gameObject, "Ghost");
             photonView.RPC("SetGhostEffect", RpcTarget.AllViaServer, true);
-
+            UIManager.Instance.ActivateGhost();
             yield return new WaitForSeconds(15f);
             for (int i = 0; i < OriginalOb.Length; i++)
             {
@@ -417,6 +417,7 @@ namespace JS.PlayerMove
                 UIManager.Instance.TimerEnd();
             }
             photonView.RPC("SetGhostEffect", RpcTarget.AllViaServer, false);
+            UIManager.Instance.DeActivateGhost();
             isGhost = false;
             GameManager.Instance.deadPlayers[playerNumber] = false;
         }
