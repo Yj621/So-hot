@@ -1,16 +1,16 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using Photon.Pun;
-using Photon.Realtime;
 
 public class Trap : MonoBehaviourPunCallbacks
 {
-    public Rigidbody[] spikeRigidbodies; // 자식 가시들의 Rigidbody 배열
-    public float upwardForce = 10.0f; // 위로 밀어 올리는 힘
-    public float moveDownSpeed = 2.0f;  // 다시 내려가는 속도
+    public Rigidbody[] spikeRigidbodies; // 가시의 Rigidbody 배열
+    public Collider trapCollider; // 트랩 감지용 콜라이더
+    public float upwardForce = 20.0f; // 🔴 가시 속도 증가 (기존 20 → 30)
+    public float moveDownSpeed = 5.0f;  // 🔴 더 빠르게 내려가도록 설정
     public float triggerDelay = 0f; // 트리거 후 가시 발동 대기 시간
-    public float reloadTime = 3.0f; // 트랩이 재사용 가능해지는 시간
+    public float reloadTime = 1.5f; // 🔴 트랩 재사용 시간을 줄여 반응 속도 개선
+    public float spikeDelay = 0.005f; // 🔴 가시가 올라오기 전 딜레이 최소화
 
     private Vector3[] originalPositions;
     private bool isActivated = false;
@@ -23,13 +23,19 @@ public class Trap : MonoBehaviourPunCallbacks
             Debug.LogError("PhotonView가 없습니다! Trap 오브젝트에 PhotonView 컴포넌트를 추가하세요.");
         }
 
-        // 모든 가시의 원래 위치 저장
+        // 원래 위치 저장
         originalPositions = new Vector3[spikeRigidbodies.Length];
         for (int i = 0; i < spikeRigidbodies.Length; i++)
         {
             originalPositions[i] = spikeRigidbodies[i].transform.localPosition;
-            spikeRigidbodies[i].useGravity = true;   // 중력 사용
-            spikeRigidbodies[i].isKinematic = true;  // 기본적으로 정지 상태 유지
+            spikeRigidbodies[i].useGravity = false;
+            spikeRigidbodies[i].isKinematic = true;
+
+            // 🔴 Trap의 콜라이더와 가시 간 충돌 방지
+            if (trapCollider != null)
+            {
+                Physics.IgnoreCollision(trapCollider, spikeRigidbodies[i].GetComponent<Collider>());
+            }
         }
     }
 
@@ -37,19 +43,34 @@ public class Trap : MonoBehaviourPunCallbacks
     {
         if (other.CompareTag("Player"))
         {
-            playerInside = true; // 플레이어가 범위 내에 있음을 기록
-            if (!isActivated && PhotonNetwork.IsMasterClient)
+            playerInside = true;
+
+            if (!isActivated)
             {
-                photonView.RPC("StartActivateTrap", RpcTarget.All);
+                isActivated = true;
+
+                // 🔥 즉시 가시를 올림 (물리 엔진의 영향을 최소화)
+                foreach (Rigidbody rb in spikeRigidbodies)
+                {
+                    rb.isKinematic = false; // 🔴 물리 적용 활성화
+                    rb.useGravity = false; // 🔴 중력 영향 제거
+                    rb.linearVelocity = Vector3.up * 8.0f; // 🔴 즉각적인 상승
+                    rb.transform.position += new Vector3(0, 0.5f, 0); // 🔴 즉시 위로 이동
+                }
+
+                // 🔴 코루틴으로 원래대로 돌아가게 함
+                StartCoroutine(ActivateTrap());
+                photonView.RPC("StartActivateTrap", RpcTarget.Others);
             }
         }
     }
+
 
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            playerInside = false; // 플레이어가 범위에서 나감
+            playerInside = false;
         }
     }
 
@@ -64,33 +85,34 @@ public class Trap : MonoBehaviourPunCallbacks
         isActivated = true;
         yield return new WaitForSeconds(triggerDelay);
 
-        // 1. 모든 가시를 위로 밀어 올리기
+        // 🔥 가시를 즉시 위로 올리기
         foreach (Rigidbody rb in spikeRigidbodies)
         {
             SoundManager.Instance.PlaySound(SoundManager.AudioType.Spikes);
-            rb.isKinematic = false; // 물리 활성화
-            rb.AddForce(Vector3.up * upwardForce, ForceMode.Impulse);
+            rb.isKinematic = false;
+            rb.useGravity = false;
+            rb.linearVelocity = Vector3.up * 30.0f; // 🔴 즉시 속도 부여
         }
 
-        // 2. 일정 시간 후 부드럽게 내려가기
-        yield return new WaitForSeconds(0.5f); // 살짝 떠오른 후 내려가기 시작
+        yield return new WaitForSeconds(0.2f); // 🔴 가시가 올라온 후 유지 시간
+
         StartCoroutine(SmoothlyMoveSpikesDown());
 
-        // 3. 5초 후 다시 활성화 가능
         yield return new WaitForSeconds(reloadTime);
         isActivated = false;
 
-        // 4. 플레이어가 아직 트랩 범위 내에 있으면 다시 발동
         if (playerInside)
         {
-            photonView.RPC("StartActivateTrap", RpcTarget.All);
+            StartCoroutine(ActivateTrap());
         }
     }
+
+
 
     private IEnumerator SmoothlyMoveSpikesDown()
     {
         float elapsedTime = 0f;
-        float duration = 1.5f / moveDownSpeed; // 부드럽게 내려오는 시간 조절
+        float duration = 0.7f / moveDownSpeed; // 🔴 더 빠르게 내려오도록 조정
 
         Vector3[] startPositions = new Vector3[spikeRigidbodies.Length];
         for (int i = 0; i < spikeRigidbodies.Length; i++)
@@ -111,11 +133,11 @@ public class Trap : MonoBehaviourPunCallbacks
             yield return null;
         }
 
-        // 최종적으로 위치를 정확히 원래 위치로 설정
+        // 원래 위치로 복구 및 물리 비활성화
         for (int i = 0; i < spikeRigidbodies.Length; i++)
         {
             spikeRigidbodies[i].transform.localPosition = originalPositions[i];
-            spikeRigidbodies[i].isKinematic = true; // 다시 정지
+            spikeRigidbodies[i].isKinematic = true;
         }
     }
 }
