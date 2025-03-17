@@ -54,8 +54,8 @@ public class Trap : MonoBehaviourPunCallbacks
                 {
                     rb.isKinematic = false; // 🔴 물리 적용 활성화
                     rb.useGravity = false; // 🔴 중력 영향 제거
-                    rb.linearVelocity = Vector3.up * 8.0f; // 🔴 즉각적인 상승
-                    rb.transform.position += new Vector3(0, 0.5f, 0); // 🔴 즉시 위로 이동
+                    rb.linearVelocity = Vector3.up * 5.0f; // 🔴 즉각적인 상승
+                    rb.transform.position += new Vector3(0, 0.01f, 0); // 🔴 즉시 위로 이동
                 }
 
                 // 🔴 코루틴으로 원래대로 돌아가게 함
