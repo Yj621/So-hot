@@ -44864,6 +44864,8 @@ MonoBehaviour:
   player: {fileID: 0}
   deadPlayers: 00000000
   fireSavePoint: {fileID: 629093724}
+  frontInventoryObj: {fileID: 330481660}
+  terminalInventoryObj: {fileID: 438430532}
 --- !u!4 &734441382
 Transform:
   m_ObjectHideFlags: 0
@@ -50183,6 +50185,7 @@ MonoBehaviour:
   maxHeat: 100
   heatIncreaseRate: 10
   heatDecreaseRate: 5
+  FirechargeDuration: 3
   hotSlider: {fileID: 808186012}
   staminaSlider: {fileID: 858068252}
   ThrowSlider: {fileID: 89171132}
@@ -50196,6 +50199,7 @@ MonoBehaviour:
   currentThrow: 0
   maxThrow: 10
   ThrowIncreaseGauge: 10
+  chargeDuration: 2
   uiPanels: []
 --- !u!4 &858188933
 Transform:

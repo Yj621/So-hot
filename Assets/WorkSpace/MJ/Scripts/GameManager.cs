@@ -16,7 +16,8 @@ public class GameManager : MonoBehaviourPun
     public bool[] deadPlayers; //플레이어 전원 죽음 상태 기록
     private bool allPlayerDead; //플레이어 전원 사망 여부 체크
     public Transform fireSavePoint; //현재 저장된 fire 세이브 포인트의 위치 정보
-
+    public GameObject frontInventoryObj; //인벤토리 앞칸 UI 오브젝트
+    public GameObject terminalInventoryObj; //인벤토리 앞칸 UI 오브젝트
 
     void Awake()
     {

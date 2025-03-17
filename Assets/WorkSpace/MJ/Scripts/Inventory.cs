@@ -11,25 +11,28 @@ public class Inventory : MonoBehaviour
     Queue<ItemData> inventory = new Queue<ItemData>(); //인벤토리
     PlayerMove itemUser; //아이템 사용자(=플레이어 자신)
     public int effectNumber; //사용 아이템의 이펙트 인덱스
-    [SerializeField] Image frontInven; //인벤토리 앞칸 UI 이미지 컴포넌트
-    [SerializeField] Image terminalInven; //인벤토리 뒷칸 UI 이미지 컴포넌트
+    Image frontInven; //인벤토리 앞칸 UI 이미지 컴포넌트
+    Image terminalInven; //인벤토리 뒷칸 UI 이미지 컴포넌트
     GameObject frontInventoryObj; //인벤토리 앞칸 UI 오브젝트
     GameObject terminalInventoryObj; //인벤토리 앞칸 UI 오브젝트
 
     private void Start()
     {
+        frontInventoryObj = GameManager.Instance.frontInventoryObj;
+        terminalInventoryObj = GameManager.Instance.terminalInventoryObj;
+        terminalInventoryObj = GameObject.Find("Terminal");
+        Debug.Log(frontInventoryObj);
+        Debug.Log(terminalInventoryObj);
+        frontInven = frontInventoryObj.GetComponent<Image>();
+        terminalInven = terminalInventoryObj.GetComponent<Image>();
+        frontInventoryObj.SetActive(false);
+        terminalInventoryObj.SetActive(false);
         StartCoroutine(FindPlayerControllerWithDelay());
     }
 
     IEnumerator FindPlayerControllerWithDelay()
     {
         yield return new WaitForSeconds(4f); // 네트워크 동기화가 완료될 시간을 확보
-        frontInventoryObj = GameObject.Find("Front");
-        terminalInventoryObj = GameObject.Find("Terminal");
-        frontInven = frontInventoryObj.GetComponent<Image>();
-        terminalInven = terminalInventoryObj.GetComponent<Image>();
-        frontInventoryObj.SetActive(false);
-        terminalInventoryObj.SetActive(false);
         itemUser = GetComponent<PlayerMove>();
     }
 
