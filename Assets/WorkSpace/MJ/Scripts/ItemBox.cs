@@ -1,9 +1,6 @@
-using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEditor.Progress;
 using Photon.Pun;
 using JS.PlayerMove;
-using Photon.Realtime;
 namespace MJ.Item.ItemBox
 {
     public class ItemBox : MonoBehaviourPun
