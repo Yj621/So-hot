@@ -162,11 +162,12 @@ namespace JS.PlayerMove
                     throwCooldownTimer = 0f;
                 }
             }
-
             // 스테미너 시스템 처리
             if (isRunning)
             {
                 UIManager.Instance.ActiveStamina();
+                SoundManager.Instance.PlayLoopSound(SoundManager.AudioType.PlayerSprint);
+                SoundManager.Instance.StopLoopSound(SoundManager.AudioType.PlayerWalk);
                 if (!UIManager.Instance.runLimit)
                 {
 
@@ -186,6 +187,8 @@ namespace JS.PlayerMove
             if (!isRunning)
             {
                 UIManager.Instance.RecoverStamina();
+                SoundManager.Instance.StopLoopSound(SoundManager.AudioType.PlayerSprint);
+                SoundManager.Instance.PlayLoopSound(SoundManager.AudioType.PlayerWalk);
             }
 
             // 과열 시스템 처리
@@ -448,7 +451,12 @@ namespace JS.PlayerMove
             {
                 velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
                 if (!isGhost)
+                {
                     animator.SetTrigger("Jump");
+                    SoundManager.Instance.PlaySound(SoundManager.AudioType.PlayerJump);
+                    SoundManager.Instance.StopLoopSound(SoundManager.AudioType.PlayerWalk);
+                    SoundManager.Instance.StopLoopSound(SoundManager.AudioType.PlayerSprint);
+                }
             }
         }
 
