@@ -6,7 +6,6 @@ using Donghyun.Builder;
 using static TotalMultiManager;
 using Donghyun.Network;
 using YJ.Ability;
-using NUnit.Framework;
 using System.Collections.Generic;
 using DG.Tweening;
 using System;
@@ -215,7 +214,7 @@ public class ReadyManager : MonoBehaviourPunCallbacks
     [PunRPC]
     private void SetPlayerInfo()
     {
-        SkillType seledtedSkill = (SkillType)curCharacterIndex;
+        SkillType seledtedSkill = (SkillType)curSkillIndex;
         CharacterType selectedCharacter = (CharacterType)curCharacterIndex;
 
         SetTag("Skill", seledtedSkill, PhotonNetwork.LocalPlayer);
