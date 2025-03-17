@@ -49426,6 +49426,7 @@ MonoBehaviour:
   currentThrow: 0
   maxThrow: 10
   ThrowIncreaseGauge: 10
+  uiPanels: []
 --- !u!4 &858188933
 Transform:
   m_ObjectHideFlags: 0

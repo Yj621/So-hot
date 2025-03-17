@@ -56,7 +56,6 @@ namespace YJ.UI
         {
             if (soundUI.activeSelf) soundUI.SetActive(false);
             if (quitUI.activeSelf) quitUI.SetActive(false);
-            if (startUI.activeSelf) startUI.SetActive(false);
         }
 
 

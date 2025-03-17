@@ -378,6 +378,10 @@ namespace JS.PlayerMove
             GameManager.Instance.deadPlayers[playerNumber] = true;
             animator.Play("Die");
             photonView.RPC("SetBloodEffect", RpcTarget.AllViaServer, true);
+            if (photonView.IsMine)
+            {
+                UIManager.Instance.TimerStart();
+            }
             yield return new WaitForSeconds(2f);
             photonView.RPC("SetBloodEffect", RpcTarget.AllViaServer, false);
             isDie = false;
@@ -389,10 +393,7 @@ namespace JS.PlayerMove
             }
             SetLayerUpwards(gameObject, "Ghost");
             Ghost.SetActive(true);
-            if (photonView.IsMine)
-            {
-                UIManager.Instance.TimerStart();
-            }
+
             yield return new WaitForSeconds(15f);
             for (int i = 0; i < OriginalOb.Length; i++)
             {
