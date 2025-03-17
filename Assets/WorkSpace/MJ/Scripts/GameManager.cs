@@ -2,6 +2,7 @@ using UnityEngine;
 using Photon.Pun;
 using System.Collections.Generic;
 using static TotalMultiManager;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviourPun
 {
@@ -16,7 +17,8 @@ public class GameManager : MonoBehaviourPun
     public bool[] deadPlayers; //플레이어 전원 죽음 상태 기록
     private bool allPlayerDead; //플레이어 전원 사망 여부 체크
     public Transform fireSavePoint; //현재 저장된 fire 세이브 포인트의 위치 정보
-
+    private float elapsedTime = 0f;
+    private bool isRunning = false;
 
     void Awake()
     {
@@ -29,6 +31,10 @@ public class GameManager : MonoBehaviourPun
             Destroy(gameObject);
         }
         gmPv = GetComponent<PhotonView>();
+    }
+    void Start()
+    {
+        StartTimer();
     }
 
     public void SetPlayerPhotonView(GameObject newPlayer)
@@ -57,6 +63,8 @@ public class GameManager : MonoBehaviourPun
     public void GameClear()
     {
         //TO-DO: 게임 클리어 연출이 명확해지면 수정
+        StopTimer();
+        SceneManager.LoadScene("EndingScene");
         Debug.Log("게임 클리어");
     }
 
@@ -99,7 +107,32 @@ public class GameManager : MonoBehaviourPun
             }
         }
         else return;
+
+        if (isRunning)
+        {
+            elapsedTime += Time.deltaTime;
+        }
     }
 
+    public void StartTimer()
+    {
+        elapsedTime = 0f;
+        isRunning = true;
+    }
 
+    public void StopTimer()
+    {
+        isRunning = false;
+    }
+
+    public float GetElapsedTime()
+    {
+        return elapsedTime;
+    }
+
+    public void ResetTimer()
+    {
+        elapsedTime = 0f;
+        isRunning = false;
+    }
 }
