@@ -56,8 +56,6 @@ namespace JS.PlayerMove
 
         [Header("불 관련")]
         private bool CatchingFire = false;
-        public float HotIncrease = 2f;
-        public float HotDecrease = 1f;
         public GameObject SmokeObject;
 
         [Header("죽음, 고스트 관련")]
@@ -164,11 +162,12 @@ namespace JS.PlayerMove
                     throwCooldownTimer = 0f;
                 }
             }
-
             // 스테미너 시스템 처리
             if (isRunning)
             {
                 UIManager.Instance.ActiveStamina();
+                SoundManager.Instance.PlayLoopSound(SoundManager.AudioType.PlayerSprint);
+                SoundManager.Instance.StopLoopSound(SoundManager.AudioType.PlayerWalk);
                 if (!UIManager.Instance.runLimit)
                 {
 
@@ -181,23 +180,26 @@ namespace JS.PlayerMove
                 if (UIManager.Instance.currentStamina == 0)
                 {
                     isRunning = false;
+                    photonView.RPC("SetRunEffect", RpcTarget.AllViaServer, false);
                 }
             }
 
             if (!isRunning)
             {
                 UIManager.Instance.RecoverStamina();
+                SoundManager.Instance.StopLoopSound(SoundManager.AudioType.PlayerSprint);
+                SoundManager.Instance.PlayLoopSound(SoundManager.AudioType.PlayerWalk);
             }
 
             // 과열 시스템 처리
             if (CatchingFire)
             {
                 SoundManager.Instance.PlayLoopSound(SoundManager.AudioType.HotGauge);
-                UIManager.Instance.IncreaseHeat(HotIncrease);
+                UIManager.Instance.IncreaseHeat();
             }
             else
             {
-                UIManager.Instance.DecreaseHeat(HotDecrease);
+                UIManager.Instance.DecreaseHeat();
                 SoundManager.Instance.StopLoopSound(SoundManager.AudioType.HotGauge);
             }
 
@@ -393,7 +395,7 @@ namespace JS.PlayerMove
                 OriginalOb[i].SetActive(false);
             }
             SetLayerUpwards(gameObject, "Ghost");
-            Ghost.SetActive(true);
+            photonView.RPC("SetGhostEffect", RpcTarget.AllViaServer, true);
 
             yield return new WaitForSeconds(15f);
             for (int i = 0; i < OriginalOb.Length; i++)
@@ -405,7 +407,7 @@ namespace JS.PlayerMove
             {
                 UIManager.Instance.TimerEnd();
             }
-            Ghost.SetActive(false);
+            photonView.RPC("SetGhostEffect", RpcTarget.AllViaServer, false);
             isGhost = false;
             GameManager.Instance.deadPlayers[playerNumber] = false;
         }
@@ -449,7 +451,12 @@ namespace JS.PlayerMove
             {
                 velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
                 if (!isGhost)
+                {
                     animator.SetTrigger("Jump");
+                    SoundManager.Instance.PlaySound(SoundManager.AudioType.PlayerJump);
+                    SoundManager.Instance.StopLoopSound(SoundManager.AudioType.PlayerWalk);
+                    SoundManager.Instance.StopLoopSound(SoundManager.AudioType.PlayerSprint);
+                }
             }
         }
 
@@ -654,6 +661,12 @@ namespace JS.PlayerMove
         void SetRunEffect(bool isActive)
         {
             RunObject.SetActive(isActive);
+        }
+
+        [PunRPC]
+        void SetGhostEffect(bool isActive)
+        {
+            Ghost.SetActive(isActive);
         }
     }
 }

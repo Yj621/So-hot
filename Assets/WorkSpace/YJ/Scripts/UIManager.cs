@@ -14,6 +14,7 @@ namespace YJ.UIManager
         public float maxHeat = 100f; // 최대 뜨거움 게이지 값
         public float heatIncreaseRate = 10f; // 불을 들고 있을 때 초당 증가량
         public float heatDecreaseRate = 5f;  // 불이 없을 때 초당 감소량
+        [SerializeField] private float FirechargeDuration = 3f;
 
         [Header("Slider 설정")]
         [SerializeField] private Slider hotSlider;
@@ -77,12 +78,12 @@ namespace YJ.UIManager
 
 
         //뜨거움 게이지 증가 (최대값을 초과하지 않도록 제한)
-        public void IncreaseHeat(float amount)
+        public void IncreaseHeat()
         {
             if (gaugePause) return;
             //if (!playerState.hasFire) return; // 불을 들고 있지 않으면 증가하지 않음
 
-            heatGauge += amount;
+            heatGauge += (maxHeat / FirechargeDuration) * Time.deltaTime;
             heatGauge = Mathf.Clamp(heatGauge, 0, maxHeat); // 최대치를 넘지 않도록 제한
 
             //Debug.Log($"현재 뜨거움 게이지: {heatGauge}");
@@ -90,9 +91,9 @@ namespace YJ.UIManager
         }
 
         //뜨거움 게이지 감소 (최소값을 아래로 내려가지 않도록 제한)
-        public void DecreaseHeat(float amount)
+        public void DecreaseHeat()
         {
-            heatGauge -= amount;
+            heatGauge -= (maxHeat / FirechargeDuration) * Time.deltaTime;
             heatGauge = Mathf.Clamp(heatGauge, 0, maxHeat); // 최소 0 이하로 내려가지 않도록 제한
 
             //Debug.Log($"현재 뜨거움 게이지: {heatGauge}");
