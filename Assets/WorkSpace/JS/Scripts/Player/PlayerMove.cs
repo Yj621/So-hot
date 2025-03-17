@@ -11,6 +11,7 @@ using UnityEngine.UIElements;
 using YJ.Network;
 using YJ.UIManager;
 using static TotalMultiManager;
+using Cursor = UnityEngine.Cursor;
 
 namespace JS.PlayerMove
 {
@@ -117,7 +118,7 @@ namespace JS.PlayerMove
         private void Update()
         {
             if (!photonView.IsMine) return;
-
+            
             if (isDie)
             {
                 moveInput = Vector2.zero;
@@ -331,6 +332,11 @@ namespace JS.PlayerMove
                 SetSlow(true, slowSpeed, slowRun, slowJumpPower);
             }
 
+            if (other.CompareTag("Water"))
+            {
+                GameManager.Instance.PlayerRespawn(playerNumber);
+            }
+
         }
 
         private void OnTriggerExit(Collider other)
@@ -428,12 +434,14 @@ namespace JS.PlayerMove
 
         public void Move(Vector2 input)
         {
+            if (Cursor.visible) return;
             if (isDie) return;
             moveInput = input;
         }
 
         public void Jump()
         {
+            if (Cursor.visible) return;
             if (isDie) return;
             if (isGrounded)
             {
@@ -445,6 +453,7 @@ namespace JS.PlayerMove
 
         public void UseItem()
         {
+            if (Cursor.visible) return;
             if (!isDie || !isGhost)
             {
                 inventory.UseItem();
@@ -453,6 +462,7 @@ namespace JS.PlayerMove
 
         public void SetRunning()
         {
+            if (Cursor.visible) return;
             if (!isGrounded || isGhost) return;
             isRunning = true;
             photonView.RPC("SetRunEffect", RpcTarget.AllViaServer, true);

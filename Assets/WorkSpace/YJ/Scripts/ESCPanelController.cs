@@ -27,17 +27,38 @@ namespace YJ.UI
                 Destroy(gameObject);
             }
         }
+
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-                Cursor.visible = true;
                 if (escUI != null)
                 {
-                    escUI.SetActive(!escUI.activeSelf); // 현재 상태의 반대로 설정
+                    bool isActive = !escUI.activeSelf;
+                    escUI.SetActive(isActive); // 패널 상태 반전
+
+                    if (isActive) // 패널이 활성화되었을 때
+                    {
+                        Cursor.lockState = CursorLockMode.None;
+                        Cursor.visible = true;
+                    }
+                    else // 패널이 비활성화되었을 때
+                    {
+                        CloseAllSubPanels();
+                        Cursor.lockState = CursorLockMode.Locked;
+                        Cursor.visible = false;
+                    }
                 }
             }
         }
+
+        private void CloseAllSubPanels()
+        {
+            if (soundUI.activeSelf) soundUI.SetActive(false);
+            if (quitUI.activeSelf) quitUI.SetActive(false);
+            if (startUI.activeSelf) startUI.SetActive(false);
+        }
+
 
         public void OnClickStart()
         {

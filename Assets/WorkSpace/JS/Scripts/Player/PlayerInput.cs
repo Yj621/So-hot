@@ -14,6 +14,7 @@ public class PlayerInput : MonoBehaviour
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked; // 마우스 고정
+        Cursor.visible = false;
     }
 
     public void OnMove(InputValue value)

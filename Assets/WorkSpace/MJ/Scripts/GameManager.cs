@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviourPun
 
 
     [PunRPC]
-    void Init()
+    public void Init()
     {
         Fire.Instance.isOnFire = true;
         Fire.Instance.isOnGround = false;
@@ -51,6 +51,7 @@ public class GameManager : MonoBehaviourPun
         player.transform.position = spawnPoints[playerNumber].position;
         Fire.Instance.gameObject.transform.position = fireSavePoint.position;
     }
+
 
     [PunRPC]
     public void GameClear()
@@ -67,6 +68,14 @@ public class GameManager : MonoBehaviourPun
             deadPlayers[i] = false;
         }
         allPlayerDead = false;
+        playerPv.RPC("InitInventory", RpcTarget.All);
+        gmPv.RPC("Init", RpcTarget.AllViaServer);
+
+    }
+
+    public void PlayerRespawn(int i)
+    {
+        deadPlayers[i] = false;
         playerPv.RPC("InitInventory", RpcTarget.All);
         gmPv.RPC("Init", RpcTarget.AllViaServer);
 

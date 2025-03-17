@@ -128,13 +128,13 @@ MonoBehaviour:
   animator: {fileID: 8687722071260669276}
   playerLook: {fileID: 3033885118504725439}
   ptg: {fileID: 2672899304264300316}
-  walkSpeed: 17
-  runSpeed: 27
+  walkSpeed: 20
+  runSpeed: 30
   jumpHeight: 10
   slowSpeed: 7
   slowRun: 15
   slowJumpPower: 6
-  gravity: -52.3
+  gravity: -60
   RunObject: {fileID: 541323938828592853}
   holdPoint: {fileID: 8642668397757409052}
   isThrowingReady: 0
@@ -3570,7 +3570,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6810709059391405990, guid: 3b7f2c753d435d647a80f1f047a113e3, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -0.205
       objectReference: {fileID: 0}
     - target: {fileID: 6810709059391405990, guid: 3b7f2c753d435d647a80f1f047a113e3, type: 3}
       propertyPath: m_LocalRotation.w
