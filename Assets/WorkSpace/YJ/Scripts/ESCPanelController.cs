@@ -1,5 +1,6 @@
 using Photon.Pun;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using YJ.Network;
 
 namespace YJ.UI
@@ -32,6 +33,10 @@ namespace YJ.UI
         {
             if (Input.GetKeyDown(KeyCode.Escape))
             {
+                if (SceneManager.GetActiveScene().name == "StartScene")
+                {
+                    return;
+                }
                 if (escUI != null)
                 {
                     bool isActive = !escUI.activeSelf;
@@ -44,9 +49,7 @@ namespace YJ.UI
                     }
                     else // 패널이 비활성화되었을 때
                     {
-                        CloseAllSubPanels();
-                        Cursor.lockState = CursorLockMode.Locked;
-                        Cursor.visible = false;
+                        CloseESCPanel();
                     }
                 }
             }
@@ -56,6 +59,18 @@ namespace YJ.UI
         {
             if (soundUI.activeSelf) soundUI.SetActive(false);
             if (quitUI.activeSelf) quitUI.SetActive(false);
+        }
+
+        public void CloseESCPanel()
+        {
+            if (!(SceneManager.GetActiveScene().name == "StartScene"))
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+              
+            }
+            escUI.SetActive(false);
+            CloseAllSubPanels();
         }
 
 
