@@ -50,7 +50,6 @@ namespace Donghyun.Builder
 
             //나머지 파츠들을 합침
             //pv.RPC("AddParts", RpcTarget.AllViaServer, gm.player.GetComponent<PhotonView>().ViewID, playerSetting.type);
-            SetTag("loadPlayer", true);
             while (!AllhasTag("loadPlayer")) yield return null;
         }
 
