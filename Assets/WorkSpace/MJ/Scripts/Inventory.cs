@@ -87,7 +87,7 @@ public class Inventory : MonoBehaviour
 
             SoundManager.Instance.PlaySound(SoundManager.AudioType.PlayerUsedItem);
 
-            SkillManager.Instance.skillText.text = "아이템 사용 : " + SkillManager.Instance.skillTextList[(int)targetItem.itemType];
+            SkillManager.Instance.skillText.text = "아이템 사용 : " + SkillManager.Instance.itemTextList[(int)targetItem.itemType];
             SkillManager.Instance.skillText.gameObject.SetActive(true);
 
             switch (targetItem.itemType)
