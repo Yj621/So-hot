@@ -470,7 +470,7 @@ namespace JS.PlayerMove
             {
                 yield return null;
             }
-            inventory = FindAnyObjectByType<Inventory>();
+            inventory = GetComponent<Inventory>();
 
             if (inventory == null)
             {
@@ -504,6 +504,7 @@ namespace JS.PlayerMove
 
         public void UseItem()
         {
+            Debug.Log($"Use Item in {Cursor.visible}, {isDie}, {isGhost}");
             if (Cursor.visible) return;
             if (!isDie && !isGhost)
             {

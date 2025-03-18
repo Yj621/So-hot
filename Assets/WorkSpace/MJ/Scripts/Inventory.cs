@@ -7,6 +7,8 @@ using Photon.Pun;
 using YJ.UIManager;
 using Donghyun.Builder;
 using Donghyun.Ability;
+using Unity.VisualScripting;
+using UnityEngine.PlayerLoop;
 
 public class Inventory : MonoBehaviour
 {
@@ -17,6 +19,7 @@ public class Inventory : MonoBehaviour
     Image terminalInven; //인벤토리 뒷칸 UI 이미지 컴포넌트
     GameObject frontInventoryObj; //인벤토리 앞칸 UI 오브젝트
     GameObject terminalInventoryObj; //인벤토리 앞칸 UI 오브젝트
+    public int n;
 
     private void Start()
     {
@@ -28,6 +31,12 @@ public class Inventory : MonoBehaviour
         terminalInventoryObj.SetActive(false);
         StartCoroutine(FindPlayerControllerWithDelay());
     }
+
+    private void Update()
+    {
+        n = inventory.Count;
+    }
+    
 
     IEnumerator FindPlayerControllerWithDelay()
     {
@@ -70,6 +79,7 @@ public class Inventory : MonoBehaviour
 
     public void UseItem()
     {
+        Debug.Log($"inventory {inventory.Count}");
         if (inventory.Count > 0)
         {
             ItemData targetItem = inventory.Dequeue();
