@@ -50,12 +50,14 @@ public class GameManager : MonoBehaviourPun
 
     IEnumerator GetInvenRoutine()
     {
-        while(!AllhasTag("hasInventory"))
+        inven = player.GetComponent<Inventory>();
+
+        while (!AllhasTag("hasInventory"))
         {
             yield return null;
         }
 
-        inven = player.GetComponent<Inventory>();
+
         if (PhotonNetwork.IsMasterClient)
         {
             gmPv.RPC("Init", RpcTarget.AllViaServer);
