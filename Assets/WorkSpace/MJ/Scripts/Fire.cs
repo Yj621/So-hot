@@ -9,6 +9,7 @@ public class Fire : MonoBehaviourPun
     public bool isOnGround = false; //불이 바닥에 있는지 여부 확인
     public bool isFireOnSP; //불이 세이브 포인트 위에 있는지 여부 확인
     public float timer = 5f; // 불이 바닥에서 유지되는 시간
+    public bool isHeld = false;
 
     private void Awake()
     {
