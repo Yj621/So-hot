@@ -7,12 +7,19 @@ public class NickNamePanel : MonoBehaviourPunCallbacks
     private TextMeshProUGUI nickNameText;
     private void Start()
     {
-        nickNameText = GetComponentInChildren<TextMeshProUGUI>();        
-        // 이 PhotonView가 본인 소유일 때만 닉네임을 업데이트합니다.
-        if (photonView.IsMine)
+        nickNameText = GetComponentInChildren<TextMeshProUGUI>();
+        PhotonView pv = transform.parent.GetComponent<PhotonView>();
+        Debug.Log($"pv : {pv}");
+        // 이 PhotonView가 본인 소유일 때만 닉네임을 업데이트
+        if (pv.IsMine)
         {
-            nickNameText.text = PhotonNetwork.LocalPlayer.NickName;
+            pv.RPC("SetNickNameRPC", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer.NickName);
         }
+    }
+    [PunRPC]
+    public void SetNickNameRPC(string nickName)
+    {
+        nickNameText.text = nickName;
     }
 
     void Update()
