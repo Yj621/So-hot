@@ -15,6 +15,11 @@ public class SavePoint : MonoBehaviour
         {
             GameManager.Instance.spawnPoints = spawnPoints;
             GameManager.Instance.fireSavePoint = firePoint;
+            Vector3 pos = Fire.Instance.gameObject.transform.position;
+            pos.x = firePoint.position.x;
+            pos.z = firePoint.position.z;
+            Fire.Instance.gameObject.transform.position = pos;
+
             Fire.Instance.isFireOnSP = true;
 
             SoundManager.Instance.PlaySound(SoundManager.AudioType.SavePoint);
