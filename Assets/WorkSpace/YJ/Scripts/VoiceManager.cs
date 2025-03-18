@@ -165,19 +165,10 @@ public class VoiceManager : MonoBehaviourPunCallbacks
 
     /// <summary>
     /// 방에 입장했을 때 호출되는 콜백 함수
-    /// 로컬 플레이어의 CustomProperties에 "HasInfo"를 설정
     /// </summary>
     public override void OnJoinedRoom()
     {
         base.OnJoinedRoom();
-
-        // 로컬 플레이어의 정보가 준비되었음을 표시하는 프로퍼티 설정
-        ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
-        {
-            { "HasInfo", true }
-        };
-
-        PhotonNetwork.LocalPlayer.SetCustomProperties(props);
     }
 
     // 방에 들어왔을때

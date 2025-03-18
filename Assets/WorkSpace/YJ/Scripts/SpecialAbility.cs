@@ -60,7 +60,7 @@ namespace YJ.Ability
             if (Input.GetKeyDown(KeyCode.E) && !isCooldownActive)
             {
                 //플레이어 사망 시에는 스킬 사용 불가
-                if (playerMove.isDie) return;
+                if (playerMove.isGhost) return;
 
                 StartCoroutine(CoolTime());
                 SoundManager.Instance.PlaySound(SoundManager.AudioType.PlayerUsedSkill);
