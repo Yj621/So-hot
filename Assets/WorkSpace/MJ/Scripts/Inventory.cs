@@ -24,7 +24,6 @@ public class Inventory : MonoBehaviour
 
     private void Start()
     {
-        SetTag("hasInventory", true);
         frontInventoryObj = GameManager.Instance.frontInventoryObj;
         terminalInventoryObj = GameManager.Instance.terminalInventoryObj;
         frontInven = frontInventoryObj.GetComponent<Image>();
@@ -44,6 +43,7 @@ public class Inventory : MonoBehaviour
     {
         yield return new WaitForSeconds(4f); // 네트워크 동기화가 완료될 시간을 확보
         itemUser = GetComponent<PlayerMove>();
+        SetTag("hasInventory", true);
     }
 
     public void GetItem(ItemData item)
