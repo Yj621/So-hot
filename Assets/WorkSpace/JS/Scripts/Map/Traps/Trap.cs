@@ -49,21 +49,24 @@ public class Trap : MonoBehaviourPunCallbacks
             {
                 isActivated = true;
 
-                // 🔥 즉시 가시를 올림 (물리 엔진의 영향을 최소화)
                 foreach (Rigidbody rb in spikeRigidbodies)
                 {
-                    rb.isKinematic = false; // 🔴 물리 적용 활성화
-                    rb.useGravity = false; // 🔴 중력 영향 제거
-                    rb.linearVelocity = Vector3.up * 5.0f; // 🔴 즉각적인 상승
-                    rb.transform.position += new Vector3(0, 0.01f, 0); // 🔴 즉시 위로 이동
+                    rb.isKinematic = false;
+                    rb.useGravity = false;
+
+                    // 🔴 속도를 낮추고, 너무 높이 올라가는 것을 방지
+                    rb.linearVelocity = Vector3.up * 2f; // 기존 8.0f → 5.0f로 조정
+
+                    // 🔴 너무 높이 올라가는 것 방지 (최대 높이 강제 제한)
+                    StartCoroutine(LimitSpikeHeight(rb));
                 }
 
-                // 🔴 코루틴으로 원래대로 돌아가게 함
                 StartCoroutine(ActivateTrap());
                 photonView.RPC("StartActivateTrap", RpcTarget.Others);
             }
         }
     }
+
 
 
     private void OnTriggerExit(Collider other)
@@ -91,10 +94,10 @@ public class Trap : MonoBehaviourPunCallbacks
             SoundManager.Instance.PlaySound(SoundManager.AudioType.Spikes);
             rb.isKinematic = false;
             rb.useGravity = false;
-            rb.linearVelocity = Vector3.up * 30.0f; // 🔴 즉시 속도 부여
+            rb.linearVelocity = Vector3.up * 100.0f; // 🔴 즉시 속도 부여
         }
 
-        yield return new WaitForSeconds(0.2f); // 🔴 가시가 올라온 후 유지 시간
+        yield return new WaitForSeconds(0.05f); // 🔴 가시가 올라온 후 유지 시간
 
         StartCoroutine(SmoothlyMoveSpikesDown());
 
@@ -140,4 +143,19 @@ public class Trap : MonoBehaviourPunCallbacks
             spikeRigidbodies[i].isKinematic = true;
         }
     }
+
+    private IEnumerator LimitSpikeHeight(Rigidbody rb)
+    {
+        float maxHeight = originalPositions[0].y + 0.05f; // 🔴 최대 높이 제한 (원래 위치 + 0.5)
+
+        while (rb.transform.position.y < maxHeight)
+        {
+            yield return null; // 매 프레임 체크
+        }
+
+        // 🔴 최대 높이에 도달하면 속도 멈추기
+        rb.linearVelocity = Vector3.zero;
+        rb.transform.position = new Vector3(rb.transform.position.x, maxHeight, rb.transform.position.z);
+    }
+
 }
