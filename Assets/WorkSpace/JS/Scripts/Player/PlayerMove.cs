@@ -116,7 +116,9 @@ namespace JS.PlayerMove
         {
             if (transform.position.y < -100)
             {
-                GameManager.Instance.PlayerRespawn(playerNumber);
+                GameManager.Instance.deadPlayers[playerNumber] = false;
+                gameObject.transform.position = GameManager.Instance.spawnPoints[playerNumber].position;
+                inventory.InitInventory();
             }
 
             if (!photonView.IsMine) return;
@@ -345,7 +347,9 @@ namespace JS.PlayerMove
 
             if (other.CompareTag("Water"))
             {
-                GameManager.Instance.PlayerRespawn(playerNumber);
+                GameManager.Instance.deadPlayers[playerNumber] = false;
+                gameObject.transform.position = GameManager.Instance.spawnPoints[playerNumber].position;
+                inventory.InitInventory();
             }
 
         }
@@ -472,7 +476,7 @@ namespace JS.PlayerMove
         public void UseItem()
         {
             if (Cursor.visible) return;
-            if (!isDie || !isGhost)
+            if (!isDie && !isGhost)
             {
                 inventory.UseItem();
             }
