@@ -7773,6 +7773,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CircleTransition
       objectReference: {fileID: 0}
+    - target: {fileID: 4290611648457820153, guid: 536b430262fde3b40a0d7f51733dc343, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8213347378865166981, guid: 536b430262fde3b40a0d7f51733dc343, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

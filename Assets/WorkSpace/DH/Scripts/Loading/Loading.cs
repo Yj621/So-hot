@@ -29,8 +29,8 @@ public class Loading : MonoBehaviour
             else
             {
                 loadingText.text += ".";
-                count = (count + 1) % 4;
             }
+            count = (count + 1) % 4;
             yield return new WaitForSeconds(0.1f);
         }
 
@@ -44,8 +44,8 @@ public class Loading : MonoBehaviour
             else
             {
                 loadingText.text += ".";
-                count = (count + 1) % 4;
             }
+            count = (count + 1) % 4;
             totalLoadingCount++;
             yield return new WaitForSeconds(0.1f);
         }
