@@ -2,6 +2,8 @@ using JS.PlayerMove;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Photon.Pun;
+using System.Collections;
+using static TotalMultiManager;
 
 public class PlayerInput : MonoBehaviourPun
 {
@@ -14,10 +16,19 @@ public class PlayerInput : MonoBehaviourPun
 
     private void Start()
     {
+       StartCoroutine(InitSettingRoutine());
+    }
+
+    IEnumerator InitSettingRoutine()
+    {
+        while (!AllhasTag("loadPlayer"))
+        { 
+            yield return null;
+        }
+
         if (!photonView.IsMine)
         {
             this.enabled = false;
-            return;
         }
         Cursor.lockState = CursorLockMode.Locked; // 마우스 고정
         Cursor.visible = false;
@@ -84,8 +95,6 @@ public class PlayerInput : MonoBehaviourPun
 
     public void OnUseItem(InputValue value)
     {
-        if (!photonView.IsMine) return;
-
         if (value.isPressed)
         {
             movement.UseItem();

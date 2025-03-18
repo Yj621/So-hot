@@ -340,6 +340,7 @@ namespace JS.PlayerMove
                     return;
                 }
                 photonView.RPC("SetDieState", RpcTarget.AllViaServer);
+                inventory.InitInventory();
             }
 
             if (other.CompareTag("Mud"))
@@ -401,12 +402,10 @@ namespace JS.PlayerMove
             {
                 UIManager.Instance.TimerStart();
             }
-
             yield return new WaitForSeconds(2f);
             photonView.RPC("SetBloodEffect", RpcTarget.AllViaServer, false);
             isDie = false;
             isGhost = true;
-            inventory.InitInventory();
             for (int i = 0; i < OriginalOb.Length; i++)
             {
                 OriginalOb[i].SetActive(false);
