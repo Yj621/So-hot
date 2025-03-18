@@ -34,6 +34,23 @@ public class Loading : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
         }
 
+        int totalLoadingCount = 0; 
+        while (totalLoadingCount < 50)
+        {
+            if (count == 0)
+            {
+                loadingText.text = "기다리는 중";
+            }
+            else
+            {
+                loadingText.text += ".";
+                count = (count + 1) % 4;
+            }
+            totalLoadingCount++;
+            yield return new WaitForSeconds(0.1f);
+        }
+
+
         LoadingPanel.SetActive(false);
 
         yield return new WaitForSeconds(0.5f);
