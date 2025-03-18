@@ -1,8 +1,9 @@
 using JS.PlayerMove;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Photon.Pun;
 
-public class PlayerInput : MonoBehaviour
+public class PlayerInput : MonoBehaviourPun
 {
     private PlayerMove movement;
 
@@ -13,12 +14,19 @@ public class PlayerInput : MonoBehaviour
 
     private void Start()
     {
+        if (!photonView.IsMine)
+        {
+            this.enabled = false;
+            return;
+        }
         Cursor.lockState = CursorLockMode.Locked; // 마우스 고정
         Cursor.visible = false;
     }
 
     public void OnMove(InputValue value)
     {
+        if (!photonView.IsMine) return;
+
         // InputValue에서 Vector2 값을 읽어서 Move() 호출
         Vector2 movementInput = value.Get<Vector2>();
         movement.Move(movementInput);
@@ -34,6 +42,8 @@ public class PlayerInput : MonoBehaviour
 
     public void OnJump(InputValue value)
     {
+        if (!photonView.IsMine) return;
+
         if (value.isPressed)
         {
             movement.Jump();
@@ -42,6 +52,8 @@ public class PlayerInput : MonoBehaviour
 
     public void OnRun(InputValue value)
     {
+        if (!photonView.IsMine) return;
+
         if (value.isPressed)
         {
             movement.SetRunning();
@@ -56,6 +68,8 @@ public class PlayerInput : MonoBehaviour
 
     public void OnThrow(InputValue value)
     {
+        if (!photonView.IsMine) return;
+
         if (value.isPressed)
         {
             movement.StartThrow();
@@ -70,6 +84,8 @@ public class PlayerInput : MonoBehaviour
 
     public void OnUseItem(InputValue value)
     {
+        if (!photonView.IsMine) return;
+
         if (value.isPressed)
         {
             movement.UseItem();
