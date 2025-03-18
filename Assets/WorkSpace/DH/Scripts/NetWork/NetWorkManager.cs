@@ -340,7 +340,7 @@ namespace Donghyun.Network
                 }
             }
 
-            startButton.interactable = (count >= 1);
+            startButton.interactable = (count >= 4);
         }
     }
 }
