@@ -107,6 +107,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pepper
       objectReference: {fileID: 0}
+    - target: {fileID: 1399567718674903674, guid: 6887084a4d02b064fbd55a21a809634f, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1940281421854633640, guid: 6887084a4d02b064fbd55a21a809634f, type: 3}
       propertyPath: m_LocalScale.x
       value: 10

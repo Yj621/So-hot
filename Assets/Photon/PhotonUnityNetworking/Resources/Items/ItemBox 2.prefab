@@ -103,6 +103,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1405733499545605144}
     m_Modifications:
+    - target: {fileID: -4140309125399911461, guid: e532945e283cca7478582f8a1880fdc7, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5071555915851589694, guid: e532945e283cca7478582f8a1880fdc7, type: 3}
       propertyPath: m_Name
       value: Pumpkin
