@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,25 +16,27 @@ public class CircleTransition : MonoBehaviour
     //밝아지는거
     public void FadeIn()
     {
-        float curCircleSize = 0.0f;
+        Vector2 curCircleSize = Vector2.zero;
+        Vector2 endCircleSize = new Vector2(2.5f, 2.0f);
 
         DOTween.To(() => curCircleSize, x =>
         {
             curCircleSize = x;
-            material.SetFloat("_Circle_Size", curCircleSize);
-        }, 2.0f, duration).SetEase(type).OnComplete(() => { gameObject.SetActive(false); });
+            material.SetVector("_Circle_Size", curCircleSize);
+        }, endCircleSize, duration).SetEase(type).OnComplete(() => { gameObject.SetActive(false); });
     }
 
     //어두워지는거
-    public void FadeOut()
+    public void FadeOut(Action action)
     {
-        float curCircleSize = 2.0f;
+        Vector2 curCircleSize = new Vector2(2.5f, 2.0f);
+        Vector2 endCircleSize = Vector2.zero;
 
         //어두워질때는 씬 이동이라 SetActive안하는게 맞음
         DOTween.To(() => curCircleSize, x =>
         {
             curCircleSize = x;
-            material.SetFloat("_Circle_Size", curCircleSize);
-        }, 0.0f, duration).SetEase(type);
+            material.SetVector("_Circle_Size", curCircleSize);
+        }, endCircleSize, duration).SetEase(type).OnComplete(() => { action.Invoke(); });
     }
 }
