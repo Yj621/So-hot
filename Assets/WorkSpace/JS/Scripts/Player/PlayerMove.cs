@@ -466,7 +466,10 @@ namespace JS.PlayerMove
 
         IEnumerator FindInventoryWithDelay()
         {
-            yield return new WaitForSeconds(5f); // 0.5초 정도 기다리기 (네트워크 동기화 시간 확보)
+            while (!AllhasTag("loadPlayer"))
+            {
+                yield return null;
+            }
             inventory = FindAnyObjectByType<Inventory>();
 
             if (inventory == null)
