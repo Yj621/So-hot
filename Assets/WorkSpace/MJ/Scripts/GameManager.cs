@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviourPun
     public GameObject terminalInventoryObj; //인벤토리 앞칸 UI 오브젝트
     private float elapsedTime = 0f;
     private bool isRunning = false;
+    Inventory inven;
 
     void Awake()
     {
@@ -43,6 +44,7 @@ public class GameManager : MonoBehaviourPun
     {
         playerPv = newPlayer.GetComponentInChildren<PhotonView>();
         player = playerPv.gameObject;
+        inven = player.GetComponent<Inventory>();
         if (PhotonNetwork.IsMasterClient)
         {
             gmPv.RPC("Init", RpcTarget.AllViaServer);
@@ -57,7 +59,6 @@ public class GameManager : MonoBehaviourPun
         Fire.Instance.isOnGround = false;
         Fire.Instance.timer = 5f;
         player.transform.position = spawnPoints[playerNumber].position;
-        Inventory inven = player.GetComponent<Inventory>();
         inven.InitInventory();
         Fire.Instance.gameObject.transform.position = fireSavePoint.position;
     }
