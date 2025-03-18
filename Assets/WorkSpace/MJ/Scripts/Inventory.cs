@@ -22,8 +22,6 @@ public class Inventory : MonoBehaviour
     {
         frontInventoryObj = GameManager.Instance.frontInventoryObj;
         terminalInventoryObj = GameManager.Instance.terminalInventoryObj;
-        Debug.Log(frontInventoryObj);
-        Debug.Log(terminalInventoryObj);
         frontInven = frontInventoryObj.GetComponent<Image>();
         terminalInven = terminalInventoryObj.GetComponent<Image>();
         frontInventoryObj.SetActive(false);
@@ -55,7 +53,7 @@ public class Inventory : MonoBehaviour
             terminalInven.sprite = item.icon;
 
         }
-
+        Debug.Log($"현재 인벤토리에 존재하는 아이템의 개수는{inventory.Count}");
     }
 
     [PunRPC]
@@ -66,6 +64,7 @@ public class Inventory : MonoBehaviour
         terminalInven.sprite = null;
         frontInventoryObj.SetActive(false);
         terminalInventoryObj.SetActive(false);
+        Debug.Log($"인벤토리 초기화, 아이템의 개수는{inventory.Count}");
     }
 
 
@@ -84,16 +83,19 @@ public class Inventory : MonoBehaviour
             switch (targetItem.itemType)
             {
                 case ITEMTYPE.GaugeStop:
+                    Debug.Log("GaugeStop 아이템 사용");
                     ItemManager.Instance.GaugeStop(itemUser);
                     IconUpdate();
                     break;
 
                 case ITEMTYPE.NoDie:
+                    Debug.Log("NoDie 아이템 사용");
                     ItemManager.Instance.NoDie(itemUser);
                     IconUpdate();
                     break;
 
                 case ITEMTYPE.UnlimitRun:
+                    Debug.Log("UnlimitRun 아이템 사용");
                     ItemManager.Instance.UnlimitRun(itemUser);
                     IconUpdate();
                     break;
@@ -110,11 +112,13 @@ public class Inventory : MonoBehaviour
             frontInven.sprite = terminalInven.sprite;
             terminalInven.sprite = null;
             terminalInventoryObj.SetActive(false);
+            Debug.Log("아이템 개수 1개, 아이콘 업데이트 완료");
         }
         else
         {
             frontInven.sprite = null;
             frontInventoryObj.SetActive(false);
+            Debug.Log("아이템 개수 0 혹은 2개, 아이콘 업데이트 완료");
         }
     }
 }

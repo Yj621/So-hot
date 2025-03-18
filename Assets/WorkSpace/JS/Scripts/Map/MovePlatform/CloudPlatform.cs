@@ -42,5 +42,23 @@ namespace JW.PlatformSystem
                 yield return null;
             }
         }
+
+        // ✅ 플레이어나 불(Fire)이 올라오면 발판의 자식으로 설정
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.CompareTag("Player") || other.CompareTag("Fire"))
+            {
+                other.transform.SetParent(transform);
+            }
+        }
+
+        // ✅ 플레이어나 불(Fire)이 떠나면 부모 해제
+        private void OnTriggerExit(Collider other)
+        {
+            if (other.CompareTag("Player") || other.CompareTag("Fire"))
+            {
+                other.transform.SetParent(null);
+            }
+        }
     }
 }

@@ -75,6 +75,7 @@ namespace JS.PlayerMove
         private Inventory inventory;
         public bool saveLife = false;
         private bool invincible = false;
+        private bool dieHandled = false;
 
         private void Awake()
         {
@@ -123,7 +124,7 @@ namespace JS.PlayerMove
 
             if (!photonView.IsMine) return;
             
-            if (isDie)
+            if (isDie && !dieHandled)
             {
                 moveInput = Vector2.zero;
                 velocity = Vector3.zero;
@@ -132,7 +133,8 @@ namespace JS.PlayerMove
                 animator.SetBool("isRunning", false);
 
                 StartCoroutine(DieAndBeGhost());
-                return;
+                
+                dieHandled = true;
             }
 
 
@@ -225,7 +227,7 @@ namespace JS.PlayerMove
                 UIManager.Instance.ResetThrow();
             }
 
-            if (UIManager.Instance.IsOverheated() && !wasOverHeat)
+            if ((UIManager.Instance.IsOverheated() && !wasOverHeat) || isDie)
             {
                 wasOverHeat = true;
                 photonView.RPC("SetSmokeEffect", RpcTarget.AllViaServer, true);
@@ -256,7 +258,7 @@ namespace JS.PlayerMove
                     photonView.RPC("ThrowObjectRPC", RpcTarget.AllViaServer, heldObjectViewID, throwPosition, throwDirection, throwForce);
                     isThrowingReady = false;
                 }
-
+                Fire.Instance.isHeld = false;
                 StartCoroutine(WaitForHeatGaugeReset());
             }
 
@@ -409,7 +411,6 @@ namespace JS.PlayerMove
             {
                 OriginalOb[i].SetActive(false);
             }
-            SetLayerUpwards(gameObject, "Ghost");
             photonView.RPC("SetGhostEffect", RpcTarget.AllViaServer, true);
 
             //고스트 패널 활성화
@@ -417,7 +418,7 @@ namespace JS.PlayerMove
             {
                 UIManager.Instance.ActivateGhost();
             }
-
+            SetLayerUpwards(gameObject, "Ghost");
             yield return new WaitForSeconds(15f);
             for (int i = 0; i < OriginalOb.Length; i++)
             {
@@ -437,9 +438,9 @@ namespace JS.PlayerMove
             {
                 UIManager.Instance.DeActivateGhost();
             }
-
             isGhost = false;
             GameManager.Instance.deadPlayers[playerNumber] = false;
+            dieHandled = false;
         }
 
         void SetLayerUpwards(GameObject obj, string layerName)
@@ -447,11 +448,20 @@ namespace JS.PlayerMove
             int layer = LayerMask.NameToLayer(layerName);
 
             // 현재 오브젝트부터 부모까지 모든 레이어 변경
-            Transform parent = obj.transform;
-            while (parent != null)
+            Transform parent = obj.transform.parent;
+            if (parent != null)
             {
-                parent.gameObject.layer = layer;
-                parent = parent.parent;  // 부모로 이동
+                // 2. 부모 포함 + 자식들까지 몽땅 가져오기
+                Transform[] targets = parent.GetComponentsInChildren<Transform>();
+
+                foreach (Transform t in targets)
+                {
+                    t.gameObject.layer = layer;
+                }
+            }
+            else
+            {
+                obj.layer = layer; // 부모 없으면 자기 자신만
             }
         }
 
@@ -545,6 +555,8 @@ namespace JS.PlayerMove
             if (wasOverHeat) return;
             if (isGhost) return;
 
+            if (Fire.Instance != null && Fire.Instance.isHeld) return;
+            Fire.Instance.isHeld = true;
             photonView.RPC("SetCatchingFire", RpcTarget.AllViaServer, true);
             photonView.RPC("PlayCatchAnimation", RpcTarget.AllViaServer);
 
@@ -583,6 +595,8 @@ namespace JS.PlayerMove
                 isThrowing = true;
                 photonView.RPC("PlayThrowAnimation", RpcTarget.AllViaServer);
                 photonView.RPC("SetCatchingFire", RpcTarget.AllViaServer, false);
+                photonView.RPC("ResetCatchAnimation", RpcTarget.AllViaServer);
+                Fire.Instance.isHeld = false;
             }
         }
 
@@ -698,6 +712,13 @@ namespace JS.PlayerMove
         void SetGhostEffect(bool isActive)
         {
             Ghost.SetActive(isActive);
+        }
+
+        [PunRPC]
+        void ResetCatchAnimation()
+        {
+            animator.ResetTrigger("Catch");
+            animator.SetBool("ThrowReady", false);
         }
     }
 }

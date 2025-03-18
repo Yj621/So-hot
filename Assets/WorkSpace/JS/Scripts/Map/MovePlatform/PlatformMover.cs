@@ -38,7 +38,8 @@ public class PlatformMover : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        // 플레이어나 불(Fire)이 발판에 올라오면 부모로 설정
+        if (other.CompareTag("Player") || other.CompareTag("Fire"))
         {
             other.transform.SetParent(transform);
         }
@@ -46,7 +47,8 @@ public class PlatformMover : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player"))
+        // 플레이어나 불(Fire)이 발판에서 내려가면 부모 해제
+        if (other.CompareTag("Player") || other.CompareTag("Fire"))
         {
             other.transform.SetParent(null);
         }
