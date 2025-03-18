@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 using YJ.UIManager;
+using Donghyun.Builder;
+using Donghyun.Ability;
 
 public class Inventory : MonoBehaviour
 {
@@ -75,6 +77,10 @@ public class Inventory : MonoBehaviour
             effectNumber = targetItem.effectNum;
 
             SoundManager.Instance.PlaySound(SoundManager.AudioType.PlayerUsedItem);
+
+            SkillManager.Instance.skillText.text = "아이템 사용 : " + SkillManager.Instance.skillTextList[(int)targetItem.itemType];
+            SkillManager.Instance.skillText.gameObject.SetActive(true);
+
             switch (targetItem.itemType)
             {
                 case ITEMTYPE.GaugeStop:

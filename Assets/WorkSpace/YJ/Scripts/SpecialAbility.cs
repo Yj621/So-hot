@@ -84,6 +84,7 @@ namespace YJ.Ability
             skillManager.skillCoolTimeImage.fillAmount = 1f;
 
             ExcuteSkill();
+            skillManager.skillText.text = "스킬 사용 : " + skillManager.skillTextList[(int)skillType];
             skillManager.skillText.gameObject.SetActive(true);
 
             while (coolTime > 0)
