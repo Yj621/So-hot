@@ -104,6 +104,7 @@ MonoBehaviour:
   - SetSmokeEffect
   - IncreseTimer
   - SetGhostEffect
+  - LoadEndingScene
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
