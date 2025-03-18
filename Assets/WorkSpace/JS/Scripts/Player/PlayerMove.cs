@@ -80,6 +80,7 @@ namespace JS.PlayerMove
         private void Awake()
         {
             photonView = GetComponent<PhotonView>();
+            SetTag("loadPlayer", true);
         }
 
         private void Start()

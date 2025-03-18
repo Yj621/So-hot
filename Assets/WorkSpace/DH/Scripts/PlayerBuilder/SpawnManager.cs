@@ -43,15 +43,13 @@ namespace Donghyun.Builder
             // 모두 씬에 있어야 생성할 수 있음, 에디터와 클라는 에디터가 마스터
             player = PhotonNetwork.Instantiate("Character/"+playerSetting.type.ToString(), gm.spawnPoints[playerSetting.playerNumber].position, Quaternion.identity);
 
+            //나머지 파츠들을 합침
+            //pv.RPC("AddParts", RpcTarget.AllViaServer, gm.player.GetComponent<PhotonView>().ViewID, playerSetting.type);
+            while (!AllhasTag("loadPlayer")) yield return null;
+
             //게임 매니저에 해당 플레이어를 넘겨준다
             gm.SetPlayerPhotonView(player);
             gm.playerNumber = playerNumber;
-
-
-            //나머지 파츠들을 합침
-            //pv.RPC("AddParts", RpcTarget.AllViaServer, gm.player.GetComponent<PhotonView>().ViewID, playerSetting.type);
-            SetTag("loadPlayer", true);
-            while (!AllhasTag("loadPlayer")) yield return null;
         }
 
         private IEnumerator StartGame()

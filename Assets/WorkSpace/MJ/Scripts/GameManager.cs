@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviourPun
     public void SetPlayerPhotonView(GameObject newPlayer)
     {
         playerPv = newPlayer.GetComponentInChildren<PhotonView>();
-        player = playerPv.gameObject;
+        player = newPlayer;
         inven = player.GetComponent<Inventory>();
         if (PhotonNetwork.IsMasterClient)
         {

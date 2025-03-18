@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace JW.PlatformSystem
 {
@@ -9,6 +10,7 @@ namespace JW.PlatformSystem
         [SerializeField] private float moveSpeed = 1f; // 움직이는 속도
         [SerializeField] private float waitTime = 1f; // 위에서 머무는 시간
         private Vector3 originalPosition;
+        private HashSet<Transform> fireObjects = new HashSet<Transform>(); // Fire 오브젝트 관리
 
         private void Start()
         {
@@ -38,26 +40,43 @@ namespace JW.PlatformSystem
         {
             while (Vector3.Distance(transform.position, targetPosition) > 0.01f)
             {
+                Vector3 prevPosition = transform.position; // 이전 위치 저장
                 transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
+                Vector3 moveDelta = transform.position - prevPosition; // 이동한 거리 계산
+
+                // Fire 오브젝트만 직접 이동
+                foreach (var fire in fireObjects)
+                {
+                    fire.position += moveDelta;
+                }
+
                 yield return null;
             }
         }
 
-        // ✅ 플레이어나 불(Fire)이 올라오면 발판의 자식으로 설정
+        // ✅ 플레이어는 부모 설정
         private void OnTriggerEnter(Collider other)
         {
-            if (other.CompareTag("Player") || other.CompareTag("Fire"))
+            if (other.CompareTag("Player"))
             {
                 other.transform.SetParent(transform);
             }
+            else if (other.CompareTag("Fire"))
+            {
+                fireObjects.Add(other.transform); // Fire는 직접 이동 처리
+            }
         }
 
-        // ✅ 플레이어나 불(Fire)이 떠나면 부모 해제
+        // ✅ 플레이어는 부모 해제, Fire는 리스트에서 제거
         private void OnTriggerExit(Collider other)
         {
-            if (other.CompareTag("Player") || other.CompareTag("Fire"))
+            if (other.CompareTag("Player"))
             {
                 other.transform.SetParent(null);
+            }
+            else if (other.CompareTag("Fire"))
+            {
+                fireObjects.Remove(other.transform);
             }
         }
     }
