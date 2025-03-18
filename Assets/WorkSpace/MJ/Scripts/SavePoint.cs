@@ -13,16 +13,20 @@ public class SavePoint : MonoBehaviour
     {
         if (other.CompareTag("Fire"))
         {
-            GameManager.Instance.spawnPoints = spawnPoints;
-            GameManager.Instance.fireSavePoint = firePoint;
-            Vector3 pos = Fire.Instance.gameObject.transform.position;
-            pos.x = firePoint.position.x;
-            pos.z = firePoint.position.z;
-            Fire.Instance.gameObject.transform.position = pos;
+            if (!Fire.Instance.isFireOnSP) // Fire가 SavePoint에 닿아있지 않은 경우에만 실행
+            {
+                GameManager.Instance.spawnPoints = spawnPoints;
+                GameManager.Instance.fireSavePoint = firePoint;
 
-            Fire.Instance.isFireOnSP = true;
+                Vector3 pos = Fire.Instance.gameObject.transform.position;
+                pos.x = firePoint.position.x;
+                pos.z = firePoint.position.z;
+                Fire.Instance.gameObject.transform.position = pos;
 
-            SoundManager.Instance.PlaySound(SoundManager.AudioType.SavePoint);
+                Fire.Instance.isFireOnSP = true;
+
+                SoundManager.Instance.PlaySound(SoundManager.AudioType.SavePoint);
+            }
         }
     }
 

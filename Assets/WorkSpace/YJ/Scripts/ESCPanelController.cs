@@ -1,6 +1,7 @@
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 using YJ.Network;
 
 namespace YJ.UI
@@ -15,6 +16,15 @@ namespace YJ.UI
 
 
         public static ESCPanelController Instance { get; private set; }
+
+        // 커서를 비활성화 할 씬의 해시셋
+        private static readonly HashSet<string> DisableCursorScenes = new HashSet<string>
+        {
+            "StartScene",
+            "LobbyScene",
+            "EndingScene",
+        };
+
 
         void Awake()
         {
@@ -33,7 +43,7 @@ namespace YJ.UI
         {
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-                if (SceneManager.GetActiveScene().name == "StartScene" && SceneManager.GetActiveScene().name == "LobbyScene")
+                if (DisableCursorScenes.Contains(SceneManager.GetActiveScene().name))
                 {
                     return;
                 }
@@ -67,7 +77,7 @@ namespace YJ.UI
             {
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
-              
+
             }
             escUI.SetActive(false);
             CloseAllSubPanels();
