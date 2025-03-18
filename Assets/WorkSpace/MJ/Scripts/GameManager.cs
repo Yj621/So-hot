@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviourPun
     public void SetPlayerPhotonView(GameObject newPlayer)
     {
         playerPv = newPlayer.GetComponentInChildren<PhotonView>();
-        player = newPlayer;
+        player = playerPv.gameObject;
         StartCoroutine(GetInvenRoutine());
     }
 
