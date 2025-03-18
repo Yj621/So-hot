@@ -41,7 +41,7 @@ namespace YJ.Ability
 
         IEnumerator InitSettingRoutine()
         {
-            while (!AllhasTag("loadPlayer")) yield return null;
+            while (!AllhasTag("setPlayerGroup")) yield return null;
 
             skillManager = SkillManager.Instance;
             coolTime = skillManager.coolTime;
