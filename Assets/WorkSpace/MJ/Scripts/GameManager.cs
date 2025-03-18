@@ -59,8 +59,8 @@ public class GameManager : MonoBehaviourPun
         Fire.Instance.isOnGround = false;
         Fire.Instance.timer = 5f;
         player.transform.position = spawnPoints[playerNumber].position;
-        inven.InitInventory();
         Fire.Instance.gameObject.transform.position = fireSavePoint.position;
+        inven.InitInventory();
     }
 
 
