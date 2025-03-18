@@ -50,13 +50,12 @@ public class GameManager : MonoBehaviourPun
 
     IEnumerator GetInvenRoutine()
     {
-        inven = player.GetComponent<Inventory>();
-
         while (!AllhasTag("hasInventory"))
         {
             yield return null;
         }
 
+        inven = player.GetComponent<Inventory>();
 
         if (PhotonNetwork.IsMasterClient)
         {
