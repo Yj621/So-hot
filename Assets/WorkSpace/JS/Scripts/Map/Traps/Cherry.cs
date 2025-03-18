@@ -13,17 +13,13 @@ public class Cherry : MonoBehaviourPunCallbacks
         if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
             GetComponent<AudioSource>().Play();
-            Debug.Log("CherrySoundPlay@@@@@@");
-            Debug.Log($"[Cherry] Ground 충돌 감지: {gameObject.name}");
 
             if (photonView.IsMine)
             {
-                Debug.Log($"[Cherry] PhotonNetwork.Destroy 호출: {gameObject.name}");
                 PhotonNetwork.Destroy(gameObject);
             }
             else
             {
-                Debug.Log($"[Cherry] 소유권 없음, 소유권 요청 중...: {gameObject.name}");
                 photonView.RequestOwnership(); // 💡 소유권 요청
                 StartCoroutine(DestroyAfterOwnership());
             }
@@ -41,7 +37,6 @@ public class Cherry : MonoBehaviourPunCallbacks
 
         if (photonView.IsMine)
         {
-            Debug.Log($"[Cherry] 소유권 변경 완료, 삭제 진행: {gameObject.name}");
             PhotonNetwork.Destroy(gameObject);
         }
         else
