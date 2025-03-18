@@ -23,7 +23,7 @@ public class CircleTransition : MonoBehaviour
         {
             curCircleSize = x;
             material.SetVector("_Circle_Size", curCircleSize);
-        }, endCircleSize, duration).SetEase(type).OnComplete(() => { gameObject.SetActive(false); });
+        }, endCircleSize, duration).SetEase(type).OnComplete(() => { material.SetVector("_Circle_Size", Vector2.zero); gameObject.SetActive(false); });
     }
 
     //어두워지는거
