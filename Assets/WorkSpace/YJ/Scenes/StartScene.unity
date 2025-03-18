@@ -9492,7 +9492,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80edb56cf71d8094f96d1deb3a7f1b44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uIClick: {fileID: 563984162}
+  clickSound: {fileID: 563984162}
   openUI: {fileID: 2104685535}
   closedUI: {fileID: 973657367}
   overSound: {fileID: 982442043}

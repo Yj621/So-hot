@@ -13,7 +13,7 @@ public class SoundManager : MonoBehaviour
         SavePoint, GameOver, GameClear
     }
     // 버튼 클릭 및 마우스 오버 사운드
-    public AudioSource uIClick;
+    public AudioSource clickSound;
     public AudioSource openUI;
     public AudioSource closedUI;
     public AudioSource overSound;
@@ -61,7 +61,7 @@ public class SoundManager : MonoBehaviour
     // 버튼 클릭 사운드 재생
     public void ButtonSound()
     {
-        uIClick.Play();
+        clickSound.Play();
     }
 
     // 버튼 마우스 오버 사운드 재생

@@ -76,6 +76,13 @@ public class AudioMixerManager : MonoBehaviour
     // 전체 볼륨 설정
     public void SetMasterVolume(float volume)
     {
+        // 음소거 상태이면 슬라이더 변경을 무시하고 항상 -80 dB로 유지
+        if (!muteToggle.isOn)
+        {
+            audioMixer.SetFloat("MasterVolume", -80f);
+            return;
+        }
+
         // 슬라이더 값을 데시벨 값으로 변환
         float dbVolume = (volume > 0.0001f) ? Mathf.Log10(volume) * 20 : -80f;
         audioMixer.SetFloat("MasterVolume", dbVolume); // AudioMixer에 설정
