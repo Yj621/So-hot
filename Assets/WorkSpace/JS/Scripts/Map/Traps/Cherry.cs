@@ -6,7 +6,6 @@ public class Cherry : MonoBehaviourPunCallbacks
 {
     private void Start()
     {
-        GetComponent<AudioSource>().Play();
     }
     private void OnCollisionEnter(Collision collision)
     {
