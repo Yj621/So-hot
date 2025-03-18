@@ -8,8 +8,7 @@ public class NickNamePanel : MonoBehaviourPunCallbacks
     private void Start()
     {
         nickNameText = GetComponentInChildren<TextMeshProUGUI>();
-        PhotonView pv = transform.parent.GetComponent<PhotonView>();
-        Debug.Log($"pv : {pv}");
+        PhotonView pv = GetComponent<PhotonView>();
         // 이 PhotonView가 본인 소유일 때만 닉네임을 업데이트
         if (pv.IsMine)
         {
