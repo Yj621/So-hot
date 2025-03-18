@@ -6,11 +6,11 @@ public class Trap : MonoBehaviourPunCallbacks
 {
     public Rigidbody[] spikeRigidbodies; // 가시의 Rigidbody 배열
     public Collider trapCollider; // 트랩 감지용 콜라이더
-    public float upwardForce = 20.0f; // 🔴 가시 속도 증가 (기존 20 → 30)
-    public float moveDownSpeed = 5.0f;  // 🔴 더 빠르게 내려가도록 설정
+    public float upwardForce = 30.0f; // 🔴 가시 속도 증가
+    public float moveDownSpeed = 5.0f; // 🔴 내려가는 속도 조정
     public float triggerDelay = 0f; // 트리거 후 가시 발동 대기 시간
-    public float reloadTime = 1.5f; // 🔴 트랩 재사용 시간을 줄여 반응 속도 개선
-    public float spikeDelay = 0.005f; // 🔴 가시가 올라오기 전 딜레이 최소화
+    public float reloadTime = 1.2f; // 🔴 트랩 재사용 시간 단축
+    public float spikeDelay = 0.002f; // 🔴 가시가 올라오기 전 딜레이 최소화
 
     private Vector3[] originalPositions;
     private bool isActivated = false;
@@ -54,10 +54,10 @@ public class Trap : MonoBehaviourPunCallbacks
                     rb.isKinematic = false;
                     rb.useGravity = false;
 
-                    // 🔴 속도를 낮추고, 너무 높이 올라가는 것을 방지
-                    rb.linearVelocity = Vector3.up * 2f; // 기존 8.0f → 5.0f로 조정
+                    // 🔴 속도를 조정하여 즉시 반응 + 너무 높이 올라가지 않도록 조정
+                    rb.linearVelocity = Vector3.up * 20f; // 기존 8.0f → 20.0f로 수정
 
-                    // 🔴 너무 높이 올라가는 것 방지 (최대 높이 강제 제한)
+                    // 🔴 LimitSpikeHeight() 실행 → 가시가 올라갈 최대 높이 설정
                     StartCoroutine(LimitSpikeHeight(rb));
                 }
 
@@ -66,8 +66,6 @@ public class Trap : MonoBehaviourPunCallbacks
             }
         }
     }
-
-
 
     private void OnTriggerExit(Collider other)
     {
@@ -94,10 +92,12 @@ public class Trap : MonoBehaviourPunCallbacks
             SoundManager.Instance.PlaySound(SoundManager.AudioType.Spikes);
             rb.isKinematic = false;
             rb.useGravity = false;
-            rb.linearVelocity = Vector3.up * 100.0f; // 🔴 즉시 속도 부여
+
+            // 🔴 즉시 반응하도록 속도를 높이고, 너무 높이 올라가지 않도록 조정
+            rb.linearVelocity = Vector3.up * 50.0f; // 기존 100.0f → 50.0f로 조정
         }
 
-        yield return new WaitForSeconds(0.05f); // 🔴 가시가 올라온 후 유지 시간
+        yield return new WaitForSeconds(0.08f); // 🔴 가시가 올라온 후 유지 시간 증가
 
         StartCoroutine(SmoothlyMoveSpikesDown());
 
@@ -110,12 +110,10 @@ public class Trap : MonoBehaviourPunCallbacks
         }
     }
 
-
-
     private IEnumerator SmoothlyMoveSpikesDown()
     {
         float elapsedTime = 0f;
-        float duration = 0.7f / moveDownSpeed; // 🔴 더 빠르게 내려오도록 조정
+        float duration = 0.5f / moveDownSpeed; // 🔴 더 빠르게 내려오도록 조정
 
         Vector3[] startPositions = new Vector3[spikeRigidbodies.Length];
         for (int i = 0; i < spikeRigidbodies.Length; i++)
@@ -146,7 +144,7 @@ public class Trap : MonoBehaviourPunCallbacks
 
     private IEnumerator LimitSpikeHeight(Rigidbody rb)
     {
-        float maxHeight = originalPositions[0].y + 0.05f; // 🔴 최대 높이 제한 (원래 위치 + 0.5)
+        float maxHeight = originalPositions[0].y + 0.1f; // 🔴 최대 높이 제한 (원래 위치 + 0.4)
 
         while (rb.transform.position.y < maxHeight)
         {
@@ -157,5 +155,4 @@ public class Trap : MonoBehaviourPunCallbacks
         rb.linearVelocity = Vector3.zero;
         rb.transform.position = new Vector3(rb.transform.position.x, maxHeight, rb.transform.position.z);
     }
-
 }

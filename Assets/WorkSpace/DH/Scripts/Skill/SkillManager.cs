@@ -25,6 +25,7 @@ namespace Donghyun.Ability
 
         public TMP_Text skillText;
         public string[] skillTextList;
+        public string[] itemTextList;
 
         public SkillType SkillType { get; private set; }
         void Awake()
@@ -49,8 +50,6 @@ namespace Donghyun.Ability
                     gameObject.AddComponent<DecreaseFireGaugeSkill>();
                     break;
             }
-
-            skillText.text = "기술 : " + skillTextList[(int)SkillType];
         }
     }
 

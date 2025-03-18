@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviourPun
     public GameObject terminalInventoryObj; //인벤토리 앞칸 UI 오브젝트
     private float elapsedTime = 0f;
     private bool isRunning = false;
+    Inventory inven;
 
     void Awake()
     {
@@ -43,6 +44,7 @@ public class GameManager : MonoBehaviourPun
     {
         playerPv = newPlayer.GetComponentInChildren<PhotonView>();
         player = playerPv.gameObject;
+        inven = player.GetComponent<Inventory>();
         if (PhotonNetwork.IsMasterClient)
         {
             gmPv.RPC("Init", RpcTarget.AllViaServer);
@@ -57,6 +59,7 @@ public class GameManager : MonoBehaviourPun
         Fire.Instance.isOnGround = false;
         Fire.Instance.timer = 5f;
         player.transform.position = spawnPoints[playerNumber].position;
+        inven.InitInventory();
         Fire.Instance.gameObject.transform.position = fireSavePoint.position;
     }
 
@@ -70,7 +73,7 @@ public class GameManager : MonoBehaviourPun
         Debug.Log("게임 클리어");
     }
 
-    void AllPlayerRespawn()
+    public void AllPlayerRespawn()
     {
         SoundManager.Instance.PlaySound(SoundManager.AudioType.GameOver);
         for (int i = 0; i < deadPlayers.Length; i++)
@@ -78,7 +81,6 @@ public class GameManager : MonoBehaviourPun
             deadPlayers[i] = false;
         }
         allPlayerDead = false;
-        playerPv.RPC("InitInventory", RpcTarget.All);
         gmPv.RPC("Init", RpcTarget.AllViaServer);
 
     }
@@ -86,7 +88,6 @@ public class GameManager : MonoBehaviourPun
     public void PlayerRespawn(int i)
     {
         deadPlayers[i] = false;
-        playerPv.RPC("InitInventory", RpcTarget.All);
         gmPv.RPC("Init", RpcTarget.AllViaServer);
 
     }

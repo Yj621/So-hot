@@ -45,6 +45,9 @@ namespace Donghyun.Network
         [SerializeField] private string nextScene;
         [SerializeField] private string preScene;
 
+        [Header("----- 트랜지션 -----")]
+        [SerializeField] private CircleTransition circleTransition;
+
         private static NetWorkManager instance;
 
         private PhotonView pv; //포톤 뷰
@@ -66,6 +69,7 @@ namespace Donghyun.Network
 
         void Awake()
         {
+            circleTransition.gameObject.SetActive(true);
             SetTag("LoadLobby", true);
 
             instance = this;
@@ -76,6 +80,7 @@ namespace Donghyun.Network
         {
             RoomUIInitSetting(); //방 UI 초기 설정
             PlayerInitSetting(); //플레이어 초기 설정
+            circleTransition.FadeIn();
         }
 
         //마스터 바뀔 때
@@ -284,7 +289,8 @@ namespace Donghyun.Network
 
             yield return HasPlayerInfo();
 
-            PhotonNetwork.LoadLevel(nextScene);
+            circleTransition.gameObject.SetActive(true);
+            circleTransition.FadeOut(() => { PhotonNetwork.LoadLevel(nextScene); });
         }
 
         //플레이어 정보가 모두에게 세팅되어있는가 판별
