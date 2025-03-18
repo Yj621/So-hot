@@ -1,4 +1,5 @@
 using Photon.Pun;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -9,6 +10,8 @@ public class Fire : MonoBehaviourPun
     public bool isOnGround = false; //불이 바닥에 있는지 여부 확인
     public bool isFireOnSP; //불이 세이브 포인트 위에 있는지 여부 확인
     public float timer = 5f; // 불이 바닥에서 유지되는 시간
+    [SerializeField] TextMeshProUGUI fireTimer;
+    public bool isHeld = false;
 
     private void Awake()
     {
@@ -71,6 +74,7 @@ public class Fire : MonoBehaviourPun
         if (isOnGround && !isFireOnSP)
         {
             timer -= Time.deltaTime;
+            fireTimer.text = "00:0"+((int)timer).ToString();
             if (timer <= 0)
             {
                 photonView.RPC("FireOff", RpcTarget.AllBuffered);
