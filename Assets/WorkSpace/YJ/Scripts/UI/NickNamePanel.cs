@@ -5,9 +5,13 @@ using UnityEngine;
 public class NickNamePanel : MonoBehaviourPunCallbacks
 {
     private TextMeshProUGUI nickNameText;
-    private void Start()
+    private void Awake()
     {
         nickNameText = GetComponentInChildren<TextMeshProUGUI>();
+    }
+
+    private void Start()
+    {
         PhotonView pv = GetComponent<PhotonView>();
         // 이 PhotonView가 본인 소유일 때만 닉네임을 업데이트
         if (pv.IsMine)
