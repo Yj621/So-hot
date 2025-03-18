@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using YJ.UI;
 
 namespace YJ.Network
 {
@@ -35,7 +36,7 @@ namespace YJ.Network
 
         private void Awake()
         {
-            if(VoiceManager.Instance != null)
+            if (VoiceManager.Instance != null)
             {
                 Destroy(VoiceManager.Instance.gameObject);
             }
@@ -57,7 +58,47 @@ namespace YJ.Network
         public override void OnJoinedLobby()
         {
             startUI.SetActive(true);
+            // startUI의 자식인 "Sound_Button" 찾기 및 OnClickSound() 할당
+            Transform soundButtonTransform = startUI.transform.Find("Pop_up/Buttons_Group/Sound_Button");
+            Debug.Log($"soundButtonTransform : {soundButtonTransform}");
+
+            if (soundButtonTransform != null)
+            {
+                Button soundButton = soundButtonTransform.GetComponent<Button>();
+                if (soundButton != null)
+                {
+                    soundButton.onClick.AddListener(ESCPanelController.Instance.OnClickSound);
+                }
+                else
+                {
+                    Debug.LogWarning("Sound_Button에 Button 컴포넌트가 없습니다.");
+                }
+            }
+            else
+            {
+                Debug.LogWarning("startUI 내에 Sound_Button을 찾을 수 없습니다.");
+            }
+
+            // startUI의 자식인 "Quit_Button" 찾기 및 OnClickQuit() 할당
+            Transform quitButtonTransform = startUI.transform.Find("Pop_up/Buttons_Group/Quit_Button");
+            if (quitButtonTransform != null)
+            {
+                Button quitButton = quitButtonTransform.GetComponent<Button>();
+                if (quitButton != null)
+                {
+                    quitButton.onClick.AddListener(ESCPanelController.Instance.OnClickQuit);
+                }
+                else
+                {
+                    Debug.LogWarning("Quit_Button에 Button 컴포넌트가 없습니다.");
+                }
+            }
+            else
+            {
+                Debug.LogWarning("startUI 내에 Quit_Button을 찾을 수 없습니다.");
+            }
         }
+
 
         /// <summary>
         /// NickNameUI 관련 함수
@@ -141,7 +182,7 @@ namespace YJ.Network
                 if (index != -1)
                 {
                     // 동일한 이름의 방이 이미 존재하면 정보를 갱신
-                    cachedRoomList[index] = room; 
+                    cachedRoomList[index] = room;
                 }
                 else
                 {
