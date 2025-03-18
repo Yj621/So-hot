@@ -84,9 +84,16 @@ public class Fire : MonoBehaviourPun
                 photonView.RPC("FireOff", RpcTarget.AllBuffered);
             }
             timer -= Time.deltaTime;
-            fireTimer.text = "00:0"+((int)timer).ToString();
-            iconColor.a = 1f*(timer/5);
+            fireTimer.text = "00:0" + ((int)timer).ToString();
+            iconColor.a = 1f * (timer / 5);
             fireIcon.color = iconColor;
+        }
+        if (transform.position.y < -100)
+        {
+            if (PhotonNetwork.IsMasterClient)
+            {
+                GameManager.Instance.AllPlayerRespawn();
+            }
         }
     }
 
