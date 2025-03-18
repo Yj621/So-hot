@@ -116,7 +116,9 @@ namespace JS.PlayerMove
         {
             if (transform.position.y < -100)
             {
-                GameManager.Instance.PlayerRespawn(playerNumber);
+                GameManager.Instance.deadPlayers[playerNumber] = false;
+                gameObject.transform.position = GameManager.Instance.spawnPoints[playerNumber].position;
+                inventory.InitInventory();
             }
 
             if (!photonView.IsMine) return;
@@ -345,7 +347,9 @@ namespace JS.PlayerMove
 
             if (other.CompareTag("Water"))
             {
-                GameManager.Instance.PlayerRespawn(playerNumber);
+                GameManager.Instance.deadPlayers[playerNumber] = false;
+                gameObject.transform.position = GameManager.Instance.spawnPoints[playerNumber].position;
+                inventory.InitInventory();
             }
 
         }
@@ -389,10 +393,13 @@ namespace JS.PlayerMove
             GameManager.Instance.deadPlayers[playerNumber] = true;
             animator.Play("Die");
             photonView.RPC("SetBloodEffect", RpcTarget.AllViaServer, true);
+
+            //타이머 활성화
             if (photonView.IsMine)
             {
                 UIManager.Instance.TimerStart();
             }
+
             yield return new WaitForSeconds(2f);
             photonView.RPC("SetBloodEffect", RpcTarget.AllViaServer, false);
             isDie = false;
@@ -404,19 +411,33 @@ namespace JS.PlayerMove
             }
             SetLayerUpwards(gameObject, "Ghost");
             photonView.RPC("SetGhostEffect", RpcTarget.AllViaServer, true);
-            UIManager.Instance.ActivateGhost();
+
+            //고스트 패널 활성화
+            if (photonView.IsMine)
+            {
+                UIManager.Instance.ActivateGhost();
+            }
+
             yield return new WaitForSeconds(15f);
             for (int i = 0; i < OriginalOb.Length; i++)
             {
                 OriginalOb[i].SetActive(true);
             }
             SetLayerUpwards(gameObject, "Default");
+
+            //타이머 비활성화
             if (photonView.IsMine)
             {
                 UIManager.Instance.TimerEnd();
             }
             photonView.RPC("SetGhostEffect", RpcTarget.AllViaServer, false);
-            UIManager.Instance.DeActivateGhost();
+
+            //고스트 패널 비활성화
+            if (photonView.IsMine)
+            {
+                UIManager.Instance.DeActivateGhost();
+            }
+
             isGhost = false;
             GameManager.Instance.deadPlayers[playerNumber] = false;
         }
@@ -472,7 +493,7 @@ namespace JS.PlayerMove
         public void UseItem()
         {
             if (Cursor.visible) return;
-            if (!isDie || !isGhost)
+            if (!isDie && !isGhost)
             {
                 inventory.UseItem();
             }

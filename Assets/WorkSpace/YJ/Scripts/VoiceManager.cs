@@ -49,7 +49,7 @@ public class VoiceManager : MonoBehaviourPunCallbacks
     private void Start()
     {
         recorder = GetComponent<Recorder>();
-        StartCoroutine(UpdatePlayerTextsBasedOnSpeaker());
+        StartCoroutine(UpdatePlayerText());
     }
 
     /// <summary>
@@ -135,7 +135,7 @@ public class VoiceManager : MonoBehaviourPunCallbacks
     /// <summary>
     /// 모든 Speaker 컴포넌트를 가진 플레이어를 확인하고 playerTexts를 업데이트
     /// </summary>
-    private IEnumerator UpdatePlayerTextsBasedOnSpeaker()
+    private IEnumerator UpdatePlayerText()
     {
         if (SceneManager.GetActiveScene().name.Equals("MapScene"))
         {
@@ -175,7 +175,7 @@ public class VoiceManager : MonoBehaviourPunCallbacks
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
         // 최신 Speaker 목록 갱신
-        UpdateSpeakersList();
+        UpdatePlayerText();
 
         // 입장한 플레이어의 ActorNumber를 인덱스로 사용
         int index = newPlayer.ActorNumber - 1;
@@ -204,7 +204,7 @@ public class VoiceManager : MonoBehaviourPunCallbacks
             playerTexts[index].text = "";
         }
         // 최신 Speaker 목록 갱신
-        UpdateSpeakersList();
+        UpdatePlayerText();
     }
 
 
@@ -266,7 +266,5 @@ public class VoiceManager : MonoBehaviourPunCallbacks
         Image img = playerTexts[index].GetComponentInChildren<Image>();
 
         img.sprite = selfMuted ? muteImage : defaultImage;
-        Debug.Log(img);
-        Debug.Log("Self mute toggled: " + (selfMuted ? "Muted" : "Unmuted"));
     }
 }

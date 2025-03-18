@@ -1,6 +1,8 @@
 using Photon.Pun;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Fire : MonoBehaviourPun
 {
@@ -9,6 +11,11 @@ public class Fire : MonoBehaviourPun
     public bool isOnGround = false; //불이 바닥에 있는지 여부 확인
     public bool isFireOnSP; //불이 세이브 포인트 위에 있는지 여부 확인
     public float timer = 5f; // 불이 바닥에서 유지되는 시간
+    [SerializeField] GameObject fireTimerObj;
+    [SerializeField] TextMeshProUGUI fireTimer;
+    [SerializeField] Image fireIcon;
+    Color iconColor;
+    public bool isHeld = false;
 
     private void Awake()
     {
@@ -26,6 +33,7 @@ public class Fire : MonoBehaviourPun
             //불의 상태를 모든 클라이언트에서 동기화
             photonView.RPC("SyncFireState", RpcTarget.AllBuffered, isOnFire, isOnGround, timer);
         }
+        iconColor = fireIcon.color;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -68,13 +76,17 @@ public class Fire : MonoBehaviourPun
     private void Update()
     {
         if (!photonView.IsMine) return;
+        fireTimerObj.SetActive(isOnGround && !isFireOnSP);
         if (isOnGround && !isFireOnSP)
         {
-            timer -= Time.deltaTime;
             if (timer <= 0)
             {
                 photonView.RPC("FireOff", RpcTarget.AllBuffered);
             }
+            timer -= Time.deltaTime;
+            fireTimer.text = "00:0"+((int)timer).ToString();
+            iconColor.a = 1f*(timer/5);
+            fireIcon.color = iconColor;
         }
     }
 

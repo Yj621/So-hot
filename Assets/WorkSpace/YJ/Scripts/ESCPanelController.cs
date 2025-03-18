@@ -77,7 +77,6 @@ namespace YJ.UI
             {
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
-
             }
             escUI.SetActive(false);
             CloseAllSubPanels();
@@ -93,6 +92,7 @@ namespace YJ.UI
             else
             {
                 PhotonNetwork.LeaveRoom();
+                SceneManager.LoadScene("StartScene");
             }
         }
 
