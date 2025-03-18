@@ -37,7 +37,7 @@ public class ReadyManager : MonoBehaviourPunCallbacks
         "불씨를 강하게 던질 수 있는 능력",
         "바닥에 떨어져도 일정 시간 동안 보호되는 능력",
         "뜨거움 게이지를 줄여주는 능력",
-        "주변 아이템을 탐지하는 능력"
+        "아이템을 생성하는 능력"
     };
 
     [Header("----- 이미지들 -----")]

@@ -155,7 +155,6 @@ MonoBehaviour:
   - {fileID: 2826800874914264564}
   - {fileID: 4203689533213942741}
   saveLife: 0
-  playerGroup: {fileID: 0}
 --- !u!143 &6957392686559702081
 CharacterController:
   m_ObjectHideFlags: 0

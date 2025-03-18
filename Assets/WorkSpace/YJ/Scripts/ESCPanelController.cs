@@ -33,7 +33,7 @@ namespace YJ.UI
         {
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-                if (SceneManager.GetActiveScene().name == "StartScene" && SceneManager.GetActiveScene().name == "LobbyScene")
+                if (SceneManager.GetActiveScene().name == "StartScene" || SceneManager.GetActiveScene().name == "LobbyScene")
                 {
                     return;
                 }

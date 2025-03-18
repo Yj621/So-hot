@@ -15,6 +15,14 @@ public class EndingScene : MonoBehaviour
 
     public List<float> holdDurations;
 
+    private void Awake()
+    {
+        if (VoiceManager.Instance != null)
+        {
+            Destroy(VoiceManager.Instance.gameObject);
+        }
+    }
+
     private void Start()
     {
         if (holdDurations == null || holdDurations.Count != cameraPoints.Count)

@@ -9,7 +9,8 @@ public class WordCor : MonoBehaviour
 {
     public TextMeshProUGUI[] Word;
     public Button[] Buttons;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+
     void Start()
     {
         for (int i = 0; i < Word.Length; i++)
