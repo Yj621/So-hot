@@ -48,6 +48,7 @@ public class VoiceManager : MonoBehaviourPunCallbacks
 
     private void Start()
     {
+        recorder = GetComponent<Recorder>();
         StartCoroutine(UpdatePlayerTextsBasedOnSpeaker());
     }
 
@@ -255,6 +256,8 @@ public class VoiceManager : MonoBehaviourPunCallbacks
     /// </summary>
     private void ToggleSelfMute()
     {
+        Debug.Log("본인 음소거");
+
         if (recorder == null)
         {
             Debug.LogWarning("Recorder is not assigned!");
