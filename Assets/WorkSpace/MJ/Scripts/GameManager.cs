@@ -3,6 +3,7 @@ using Photon.Pun;
 using System.Collections.Generic;
 using static TotalMultiManager;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class GameManager : MonoBehaviourPun
 {
@@ -44,6 +45,16 @@ public class GameManager : MonoBehaviourPun
     {
         playerPv = newPlayer.GetComponentInChildren<PhotonView>();
         player = newPlayer;
+        StartCoroutine(GetInvenRoutine());
+    }
+
+    IEnumerator GetInvenRoutine()
+    {
+        while(!AllhasTag("hasInventory"))
+        {
+            yield return null;
+        }
+
         inven = player.GetComponent<Inventory>();
         if (PhotonNetwork.IsMasterClient)
         {

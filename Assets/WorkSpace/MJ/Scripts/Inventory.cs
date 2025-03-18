@@ -9,6 +9,7 @@ using Donghyun.Builder;
 using Donghyun.Ability;
 using Unity.VisualScripting;
 using UnityEngine.PlayerLoop;
+using static TotalMultiManager;
 
 public class Inventory : MonoBehaviour
 {
@@ -23,6 +24,7 @@ public class Inventory : MonoBehaviour
 
     private void Start()
     {
+        SetTag("hasInventory", true);
         frontInventoryObj = GameManager.Instance.frontInventoryObj;
         terminalInventoryObj = GameManager.Instance.terminalInventoryObj;
         frontInven = frontInventoryObj.GetComponent<Image>();
