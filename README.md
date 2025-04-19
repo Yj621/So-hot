@@ -125,3 +125,7 @@ SoHot
 | 캐릭터, 스킬 선택, 채팅 및 보이스 가능 | 불을 바닥에 떨어뜨렸을시 | 아이템/스킬 사용시 텍스트 애니메이션 | 유령으로 변함 |
 
 
+## ⏩ 게임 실행 방법
+
+1. [게임 다운로드 링크](https://drive.google.com/file/d/1Jc499aamxR2MqfaHD2eJCcMS9OT7HFPy/view?usp=sharing) 다운로드
+2. 압축 해제 후, Absorber.exe 실행
