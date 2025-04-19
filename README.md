@@ -48,22 +48,6 @@
 | **GitHub** | [@kdsh627](https://github.com/kdsh627) | [@hipop1109](https://github.com/hipop1109) |[@JungKiJoo777](https://github.com/JungKiJoo777) | [@pipirongcha](https://github.com/pipirongcha) | [@Yj621](https://github.com/Yj621) |
 | **코드 구현** | [Network](https://github.com/Yj621/So-hot/tree/main/Assets/WorkSpace/DH) | [Player](https://github.com/Yj621/So-hot/tree/main/Assets/WorkSpace/JS) | [Map](https://github.com/Yj621/So-hot/tree/main/Assets/WorkSpace/KJ) | [SavePoint](https://github.com/Yj621/So-hot/tree/main/Assets/WorkSpace/MJ) | [PhotonVoice&Chat](https://github.com/Yj621/So-hot/tree/main/Assets/WorkSpace/YJ) |
 
-**📁 디렉토리 구조**
-
-> 깃허브를 통한 협업 과정에서 Assets 폴더 하위에 본인의 워크스페이스를 형성하여 작업 진행
-
-```csharp
-SoHot
-├── Assets
-│   ├── WorkSpace
-│   │   ├── DH    // 권동현 작업 공간
-│   │   ├── JS    // 장조성 작업 공간
-│   │   ├── KJ    // 정기주 작업 공간
-│   │   ├── MJ    // 하민정 작업 공간
-│   │   ├── YJ    // 정윤지 작업 공간
-├── Packages
-├── ProjectSettings
-```
 
 ## 게임 설명
 <table>
@@ -124,8 +108,28 @@ SoHot
 | ![image](https://github.com/user-attachments/assets/0a70fde7-3bf7-4121-a6e5-426e582193b3) |![image](https://github.com/user-attachments/assets/97bfe26c-54ad-414c-8bfb-0a7cf79c9138) |![image](https://github.com/user-attachments/assets/8d79207b-7fb4-4ec5-ad11-6733b15a2269)| ![image](https://github.com/user-attachments/assets/d15986fd-58d9-45ae-bff2-53ea9859b03e)
 | 캐릭터, 스킬 선택, 채팅 및 보이스 가능 | 불을 바닥에 떨어뜨렸을시 | 아이템/스킬 사용시 텍스트 애니메이션 | 유령으로 변함 |
 
+**📁 디렉토리 구조**
 
-## ⏩ 게임 실행 방법
+> 깃허브를 통한 협업 과정에서 Assets 폴더 하위에 본인의 워크스페이스를 형성하여 작업 진행
 
-1. [게임 다운로드 링크](https://drive.google.com/file/d/1Jc499aamxR2MqfaHD2eJCcMS9OT7HFPy/view?usp=sharing) 다운로드
+```csharp
+SoHot
+├── Assets
+│   ├── WorkSpace
+│   │   ├── DH    // 권동현 작업 공간
+│   │   ├── JS    // 장조성 작업 공간
+│   │   ├── KJ    // 정기주 작업 공간
+│   │   ├── MJ    // 하민정 작업 공간
+│   │   ├── YJ    // 정윤지 작업 공간
+├── Packages
+├── ProjectSettings
+```
+
+
+
+### **⏩ 게임 실행 방법**
+
+📛 현재 포톤 서버는 닫혀있으며, 지원이 불가능합니다.
+
+1. [게임 다운로드 링크](https://drive.google.com/file/d/1Jc499aamxR2MqfaHD2eJCcMS9OT7HFPy/view?usp=sharing) 다운로드
 2. 압축 해제 후, Absorber.exe 실행
